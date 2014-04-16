@@ -1,0 +1,16 @@
+voltbuild:lv_transformer
+In game description is LV Transformer
+Summary:
+Low voltage transformer for ramping up or down electricity.
+
+voltbuild:mv_transformer
+In game description is MV Transformer
+Summary:
+Medium voltage transformer for ramping up or down electricity.
+
+voltbuild:hv_transformer
+In game description is HV Transformer
+Summary:
+High voltage transformer for ramping up or down electricity.
+Only thing capable of handling any size packet of electricity.
+

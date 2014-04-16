@@ -1,0 +1,15 @@
+voltbuild:mfe_unit
+In game description is MFE Unit
+Summary:
+Medium voltage energy storage for later use.
+
+voltbuild:mfs_unit
+In game description is MFS Unit
+Summary:
+High voltage energy storage for later use.
+
+voltbuild:batbox
+In game description is BatBox
+Summary:
+Low voltage energy storage for later use.
+
