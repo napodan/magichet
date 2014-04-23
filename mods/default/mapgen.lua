@@ -283,7 +283,7 @@ minetest.register_ore({
     height_min     = -10,
 })
 
-function default.generate_ore(name, wherein, minp, maxp, seed, chunks_per_volume, chunk_size, ore_per_chunk, height_min, height_max)
+--[[function default.generate_ore(name, wherein, minp, maxp, seed, chunks_per_volume, chunk_size, ore_per_chunk, height_min, height_max)
     minetest.log('action', "WARNING: default.generate_ore is deprecated")
 
     if maxp.y < height_min or minp.y > height_max then
@@ -323,7 +323,7 @@ function default.generate_ore(name, wherein, minp, maxp, seed, chunks_per_volume
         end
     end
     --print("generate_ore done")
-end
+end]]--
 
 function default.make_papyrus(pos, size)
     for y=0,size-1 do
@@ -400,7 +400,7 @@ function generate_nyancats(seed, minp, maxp)
 end
 
 minetest.register_on_generated(function(minp, maxp, seed)
-    if maxp.y >= 2 and minp.y <= 0 then
+   --[[ if maxp.y >= 2 and minp.y <= 0 then
         -- Generate papyrus
         local perlin1 = minetest.get_perlin(354, 3, 0.7, 100)
         -- Assume X and Z lengths are equal
@@ -508,7 +508,7 @@ minetest.register_on_generated(function(minp, maxp, seed)
         end
         end
     end
-
+]]--
     -- Generate nyan cats
     generate_nyancats(seed, minp, maxp)
 end)

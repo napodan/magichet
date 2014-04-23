@@ -43,6 +43,7 @@ default.dig = {
     snow = 6,
     snowblock = 7,
     nethersand = 8,
+    drythings  = 9,
 
     -- Choppy (axe)
     tree = 1,

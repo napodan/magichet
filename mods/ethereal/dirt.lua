@@ -1,12 +1,27 @@
 
 --= Define Dirt Types
 
+-- Airlike
+minetest.register_node("ethereal:airlike", {
+    description = "Airlike node #1",
+    tiles = {"ethereal_empty_1px.png"},
+    groups = {},
+    drop = '',
+    drawtype = "plantlike",
+    use_texture_alpha = true,
+    paramtype = "light",
+    buildable_to=true,
+    walkable = false,
+    pointable = false,
+    sounds = default.node_sound_dirt_defaults()
+})
+
 -- Dry Dirt
 minetest.register_node("ethereal:dry_dirt", {
     description = "Dried Dirt",
     tiles = {"ethereal_dry_dirt.png"},
     is_ground_content = true,
-    groups = {crumbly=default.dig.tree},
+    groups = {crumbly=default.dig.drythings},
     drop = 'ethereal:dry_dirt',
     sounds = default.node_sound_dirt_defaults()
 })
@@ -68,7 +83,7 @@ minetest.register_node("ethereal:crystal_topped_dirt", {
     tiles = {"ethereal_frost_grass.png",
     "default_dirt.png","default_dirt.png^ethereal_frost_dirt_with_grass.png"},
     is_ground_content = true,
-    groups = {crumbly=default.dig.dirt_with_grass, soil=1,ethereal_grass=1},
+    groups = {crumbly=default.dig.drythings, soil=1,ethereal_grass=1},
     drop = 'default:dirt',
     sounds = default.node_sound_dirt_defaults()
 })
@@ -87,11 +102,11 @@ minetest.register_node("ethereal:mushroom_dirt", {
 -- Red Fiery Dirt
 minetest.register_node("ethereal:fiery_dirt_top", {
     description = "Fiery Dirt",
-    tiles = {"ethereal_fiery_grass.png", "default_dirt.png",
-    "default_dirt.png^ethereal_fiery_dirt_with_grass.png"},
+    tiles = {"ethereal_fiery_grass.png", "ethereal_dry_dirt.png",
+    "ethereal_dry_dirt.png^ethereal_fiery_dirt_with_grass.png"},
     is_ground_content = true,
     groups = {crumbly=default.dig.gravel, soil=1,ethereal_grass=1},
-    drop = 'default:dirt',
+    drop = 'ethereal:dry_dirt',
     sounds = default.node_sound_dirt_defaults()
 })
 

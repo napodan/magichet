@@ -15,7 +15,7 @@ if (locale:find('Russian') ~= nil) or (locale:find('ru_RU') ~= nil) then rus=tru
 local mess = {rus = {"Новое достижение:"," Открыл достижение ","awards: Показывает список достижений", "А достижений-то особых и нет!", " открыл следующие достижения:"},
               eng = {"New achievent:"," got achievment ","awards: lists your achievemnts list in unhandy form...", "You haven't do smth special yet!", " unlocked following:"},
               }
-rus=false
+--rus=false
 -- Table Save Load Functions
 function awards.save()
     local file = io.open(minetest.get_worldpath().."/awards.txt", "w")

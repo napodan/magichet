@@ -11,8 +11,9 @@ function get_groupcaps(uses, group, table)
             [default.dig.dirt_with_grass] = 0.9,
             [default.dig.dirt] = 0.75,
             [default.dig.sand] = 0.7,
-            [default.dig.gravel] = 0.9,
+            [default.dig.gravel] = 1,
             [default.dig.clay] = 0.9,
+            [default.dig.drythings] = 1.2,
             [default.dig.nethersand] = 0.75,
         }, uses=uses},
         choppy = {times={

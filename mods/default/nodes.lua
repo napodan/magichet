@@ -1530,8 +1530,16 @@ minetest.register_node("default:snow", {
             {-0.5, -0.5, -0.5,  0.5, -0.5+2/16, 0.5},
         },
     },
-
-    groups = {crumbly=default.dig.snow,falling_node=1},
+    drop = '',
+    on_dig = function(pos, node, digger)
+                 if not digger then return minetest.node_dig(pos,node,digger) end
+                 local tool = digger:get_wielded_item():get_name()
+                 if tool:find('shovel') or tool:find('spade') then
+                    minetest.item_drop(ItemStack('default:snow'), digger, pos)
+                 end
+                 minetest.node_dig(pos,node,digger)
+              end,
+    groups = {crumbly=default.dig.sand,cracky=default.dig.sandstone,snappy=default.dig.wool, oddly_breakable_by_hand=3},
     sounds = default.node_sound_dirt_defaults({
         footstep = {name="default_grass_footstep", gain=0.4},
     }),
@@ -1549,7 +1557,7 @@ minetest.register_node("default:snowblock", {
     tiles = {"default_snow.png"},
     is_ground_content = true,
 
-    groups = {crumbly=default.dig.sand},
+    groups = {crumbly=default.dig.sand,cracky=default.dig.sandstone,snappy=default.dig.wool, oddly_breakable_by_hand=3},
     sounds = default.node_sound_dirt_defaults({
         footstep = {name="default_grass_footstep", gain=0.4},
     }),

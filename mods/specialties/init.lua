@@ -222,19 +222,21 @@ end)
 local node_dig = minetest.node_dig
 
 function minetest.node_dig(pos, oldnode, digger)
-    
-	node_dig(pos, oldnode, digger)
-	
+
+    node_dig(pos, oldnode, digger)
+
     local meta = minetest.get_meta(pos)
-    local builder = meta:get_string('builder')    
+    local builder = meta:get_string('builder')
     local tool = digger:get_wielded_item():get_name()
-    
-	if digger == nil then
+
+    if not digger then
         return pos, oldnode, digger
     end
-      
+
     local pll = digger:get_player_name()
     if pll == builder then
+        print(pll)
+        print(builder)
         specialties.changeXP(pll, "builder", -1)
         return pos, oldnode, digger
     end
@@ -243,13 +245,13 @@ function minetest.node_dig(pos, oldnode, digger)
     if digger:get_wielded_item():is_empty() then
         return pos, oldnode, digger
     end
-	
+
 
     local name = digger:get_player_name()
     if tool:find("pick") ~= nil then
         specialties.changeXP(name, "miner", 1)
     end
-	
+
     if tool:find("axe") ~= nil then
         specialties.changeXP(name, "lumberjack", 1)
         if tool:find("feller") ~= nil and minetest.get_item_group(oldnode.name, "tree") ~= 0 then

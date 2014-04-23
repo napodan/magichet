@@ -41,9 +41,30 @@ minetest.register_globalstep(function(dtime)
 end)
 
 
+function findapos()
+    local pos = {x=0,y=0,z=0}
+    local vm = minetest.get_voxel_manip()
+    local minp,maxp = vm:read_from_map({x=0,y=0,z=0},{x=0,y=100,z=0})
+    local data = vm:get_data()
+    local area = VoxelArea:new{MinEdge=minp, MaxEdge=maxp}
+
+    local c_air = minetest.get_content_id("air")
+
+        for y=minp.y,maxp.y do
+                        local vi  = area:index(0, y  , 0)
+                        local vip = area:index(0, y+1, 0)
+                        if  data[vi] == c_air
+                        and data[vip] == c_air
+                        then
+                            pos.y = y
+                            break
+                        end
+        end
+    return pos
+end
 
 minetest.register_chatcommand("spawn", {
-    description = "Телепортация на спавн (максимум 1000 блоков)",
+    description = "Teleports you to the spawn point (2000 meters away max)",
     func = function(name, param)
         local pl = minetest.env:get_player_by_name(name)
         if pl ~= nil then
@@ -52,10 +73,11 @@ minetest.register_chatcommand("spawn", {
             playerPos.y = math.floor(playerPos.y)
             playerPos.z = math.floor(playerPos.z)
             local distance = math.floor(math.sqrt((0-playerPos.x)^2+(10-playerPos.y)^2+(0-playerPos.z)^2))
-            if distance<=1000 then
-               pl:setpos({x=0,y=10,z=0})
+            if distance<=2000 then
+               pl:setpos(findapos())
             else
-               minetest.chat_send_player(name, 'Ты слишком далеко от спавна... Нужно быть в 1000 блоках от него')
+               minetest.chat_send_player(name, 'You\'re too far ('.. distance ..
+                                               ') from the spawn point... Need to be within 2000 away.')
             end
         end
     end

@@ -72,7 +72,7 @@ mc_aw = -- not full
 local rus
 local locale = os.setlocale(nil, 'collate')
 if (locale:find('Russian') ~= nil) or (locale:find('ru_RU') ~= nil) then rus=true else rus = false end
-rus=false
+--rus=false
 -- the beginning of russian
 if rus then
 awards.register_achievement("check_inv",{
@@ -594,6 +594,523 @@ awards.register_achievement("award_suicide1",{
 
 else -- end of russian -- the beginning of international
 
+awards.register_achievement("check_inv",{
+    title = "Inventory, huh?",
+    description = "Впервые открыть инвентарь",
+--  icon = "connect.png",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'check_inv'}
+    },
+})
+
+awards.register_achievement("kill_hostile",{
+    title = "Kill da mob!",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'kill_hostile'}
+    },
+})
+
+awards.register_achievement("kill_passive",{
+    title = "Butcher",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'kill_passive'}
+    },
+})
+
+awards.register_achievement("dig_some_sand",{
+    title = "Sandbox!",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'dig_some_sand'}
+    },
+})
+
+awards.register_achievement("dig_some_dirt",{
+    title = "Like a worm",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'dig_some_dirt'}
+    },
+})
+
+awards.register_achievement("dig_some_clay",{
+    title = "Sculptor-to-be",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'dig_some_clay'}
+    },
+})
+
+awards.register_achievement("get_some_wood",{
+    title = "I hate trees!",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'get_some_wood'}
+    },
+})
+
+awards.register_achievement("craft_a_workbench",{
+    title = "Upgrade's near",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'craft_a_workbench'}
+    },
+})
+
+awards.register_achievement("craft_a_sword",{
+    title = "Seek a war path",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'craft_a_sword'}
+    },
+})
+
+awards.register_achievement("get_meat",{
+    title = "Carnivorous...",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'get_meat'}
+    },
+})
+
+awards.register_achievement("get_bones",{
+    title = "Dead to the bone",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'get_bones'}
+    },
+})
+
+awards.register_achievement("get_hide",{
+    title = "Hide-to-seek",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'get_hide'}
+    },
+})
+
+awards.register_achievement("craft_a_shovel",{
+    title = "Ready! Set! Go!",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'craft_a_shovel'}
+    },
+})
+
+awards.register_achievement("dig_some_sand2",{
+    title = "HUGE sanbox!!!",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'dig_some_sand2'}
+    },
+})
+
+awards.register_achievement("dig_some_dirt2",{
+    title = "Worms have no shovel",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'dig_some_dirt2'}
+    },
+})
+
+awards.register_achievement("dig_some_clay2",{
+    title = "Attack of the claymen",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'dig_some_clay2'}
+    },
+})
+
+awards.register_achievement("craft_a_pickaxe",{
+    title = '"Pick-pick" down!',
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'craft_a_pickaxe'}
+    },
+})
+
+awards.register_achievement("dig_some_coal",{
+    title = "Da fuel!",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'dig_some_coal'}
+    },
+})
+
+awards.register_achievement("dig_some_cobble",{
+    title = "Cobble! (stones, duh...)",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'dig_some_cobble'}
+    },
+})
+
+awards.register_achievement("make_a_furnace",{
+    title = "HOT!",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'make_a_furnace'}
+    },
+})
+
+awards.register_achievement("dig_iron",{
+    title = "Steel is cool!",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'dig_iron'}
+    },
+})
+
+awards.register_achievement("smelt_iron",{
+    title = "Smelt the iron!",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'smelt_iron'}
+    },
+})
+
+awards.register_achievement("upgrade1",{
+    title = "Stone age",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'upgrade1'}
+    },
+})
+
+awards.register_achievement("upgrade2",{
+    title = "Iron age",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'upgrade2'}
+    },
+})
+
+awards.register_achievement("upgrade3",{
+    title = "Bronze age",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'upgrade3'}
+    },
+})
+
+awards.register_achievement("dig_gold",{
+    title = "Goldmine",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'dig_gold'}
+    },
+})
+
+awards.register_achievement("dig_tin",{
+    title = "Um... silver?",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'dig_tin'}
+    },
+})
+
+awards.register_achievement("dig_copper",{
+    title = "Something red as well",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'dig_copper'}
+    },
+})
+
+awards.register_achievement("dig_mese",{
+    title = "Alien fossil",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'dig_mese'}
+    },
+})
+
+awards.register_achievement("upgrade4",{
+    title = "Mesecon(???) age",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'upgrade4'}
+    },
+})
+
+awards.register_achievement("dig_diamond",{
+    title = "Yours precious!",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'dig_diamond'}
+    },
+})
+
+awards.register_achievement("upgrade5",{
+    title = "Precious tools",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'upgrade5'}
+    },
+})
+
+awards.register_achievement("dig_obsidian",{
+    title = "To dig undigable",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'dig_obsidian'}
+    },
+})
+
+awards.register_achievement("bucket",{
+    title = "A pool... the small one",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'bucket'}
+    },
+})
+
+awards.register_achievement("water",{
+    title = "Bring me the water!",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'water'}
+    },
+})
+
+awards.register_achievement("lava",{
+    title = "Hot topic",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'lava'}
+    },
+})
+
+awards.register_achievement("smelt_gold",{
+    title = "9999! Or is it?",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'smelt_gold'}
+    },
+})
+
+awards.register_achievement("smelt_tin",{
+    title = "Soldier material",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'smelt_tin'}
+    },
+})
+
+awards.register_achievement("smelt_copper",{
+    title = "A piece of copper",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'smelt_copper'}
+    },
+})
+
+awards.register_achievement("dig_silver",{
+    title = "Silver?",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'dig_silver'}
+    },
+})
+
+awards.register_achievement("smelt_silver",{
+    title = "Silver!",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'smelt_silver'}
+    },
+})
+
+awards.register_achievement("smelt_mithril",{
+    title = "Elfian secret",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'smelt_mithril'}
+    },
+})
+
+awards.register_achievement("craft_an_axe",{
+    title = "Lumberjack-to-be",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'craft_an_axe'}
+    },
+})
+
+awards.register_achievement("craft_a_hoe",{
+    title = "A farmer",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'craft_a_hoe'}
+    },
+})
+
+awards.register_achievement("full_stack_of_wood",{
+    title = "Winter preparations",
+    description = "",
+--  icon = "",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'full_stack_of_wood'}
+    },
+})
+-- custom test
+awards.register_achievement("award_isghost1",{
+    title = "You are the poltergeist",
+    description = "Стать призраком",
+--  icon = "connect.png",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'isghost'}
+    },
+})
+-- custom test 2
+awards.register_achievement("award_suicide1",{
+    title = "Frustration",
+    description = "Совершить суицид",
+--  icon = "connect.png",
+    trigger={
+        type="custom",
+        target=1,
+        award_data = {name = 'suicide'}
+    },
+})
+
 end
 
 --[[  --on_dig
@@ -777,8 +1294,8 @@ minetest.register_on_craft(function(itemstack, player, old_craft_grid, craft_inv
 
   local name = itemstack:get_name()
   local pll = player:get_player_name()
-  minetest.chat_send_all(name)
-  -- craft a workbenck
+  --minetest.chat_send_all(name)
+  -- craft a workbench
   if name:find('workbench:workbench') then awards.players[pll].craft_a_workbench=1 end
   -- get any of wooden tools
   if awards.players[pll].craft_a_workbench then -- an get this ones only if workbench is crafted

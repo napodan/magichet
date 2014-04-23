@@ -34,10 +34,11 @@ function minetest.node_dig(pos, node, digger)
                  ent2.object:set_properties({visual=ent2.visual})
               --end
 
-
+              return pos, node, digger
              -- minetest.debug('on dig:\n' .. ent2.destroyer .. '\n' .. minetest.serialize(ent2.node))
            end
-   end
+       end
+
    else
   --- minetest.debug('a ghost')
     return --true,true,true
