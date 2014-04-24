@@ -5,7 +5,7 @@ OIL_ALPHA = 210
 
 minetest.register_node("oil:oil_flowing", {
 	description = "Oil (flowing)",
-	inventory_image = minetest.inventorycube("oil_oil.png"),
+	inventory_image = minetest.inventorycube("oil_flowing.png"),
 	drawtype = "flowingliquid",
 	tile_images = {"oil_oil.png"},
 	paramtype = "light",

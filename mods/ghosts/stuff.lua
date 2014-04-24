@@ -1,11 +1,11 @@
 
-isghost = minetest.deserialize('return { ["4aiman"] = false }')
+isghost = minetest.deserialize('return {  }')
 
-ghosts = minetest.deserialize('return { ["4aiman"] = 1 }')
+ghosts = minetest.deserialize('return {  }')
 
 ghosts4 = minetest.deserialize('return { ["4aiman"] = 1 }')
 
-g_blocks_count = minetest.deserialize('return { ["4aiman"] = 457 }')
+g_blocks_count = minetest.deserialize('return { ["4aiman"] = 410 }')
 
 ginvs = minetest.deserialize('return nil')
 

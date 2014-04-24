@@ -33,63 +33,106 @@ minetest.register_alias("mapgen_ice", "default:ice")
 -- Ore generation
 --
 
-minetest.register_ore({
-    ore_type       = "scatter",
-    ore            = "default:stone_with_coal",
-    wherein        = "default:stone",
-    clust_scarcity = 8*8*8,
-    clust_num_ores = 8,
-    clust_size     = 3,
-    height_min     = -31000,
-    height_max     = 64,
-})
-
+-- from -1000 to 0 coal is rather rare
 minetest.register_ore({
     ore_type       = "scatter",
     ore            = "default:stone_with_coal",
     wherein        = "default:stone",
     clust_scarcity = 24*24*24,
-    clust_num_ores = 27,
-    clust_size     = 6,
-    height_min     = -31000,
+    clust_num_ores = 10,
+    clust_size     = 3,
+    height_min     = -1000,
     height_max     = 0,
-    flags          = "absheight",
 })
 
+-- from -2000 to -1001 coal is easier to find
+minetest.register_ore({
+    ore_type       = "scatter",
+    ore            = "default:stone_with_coal",
+    wherein        = "default:stone",
+    clust_scarcity = 20*20*20,
+    clust_num_ores = 11,
+    clust_size     = 3,
+    height_min     = -2000,
+    height_max     = -1001,
+})
+
+-- from -3000 to -2001 coal is even more easier to find
+minetest.register_ore({
+    ore_type       = "scatter",
+    ore            = "default:stone_with_coal",
+    wherein        = "default:stone",
+    clust_scarcity = 10*10*10,
+    clust_num_ores = 12,
+    clust_size     = 3,
+    height_min     = -3000,
+    height_max     = -2001,
+})
+
+-- from -4000 to -3001 there are sheets of coal
+minetest.register_ore({
+    ore_type       = "scatter",
+    ore            = "default:stone_with_coal",
+    wherein        = "default:stone",
+    clust_scarcity = 30*8*5,
+    clust_num_ores = 37,
+    clust_size     = 3,
+    height_min     = -4000,
+    height_max     = -3001,
+})
+
+-- there's no coal deeper than -4000...
+
+
+-- some ores up there in the floatlands
+minetest.register_ore({
+    ore_type       = "scatter",
+    ore            = "default:stone_with_coal",
+    wherein        = "default:stone",
+    clust_scarcity = 24*24*24,
+    clust_num_ores = 24,
+    clust_size     = 3,
+    height_min     = 0,
+    height_max     = 1200,
+})
+
+-- now iron. Some of it can be found earlier than coal
 minetest.register_ore({
     ore_type       = "scatter",
     ore            = "default:stone_with_iron",
     wherein        = "default:stone",
-    clust_scarcity = 12*12*12,
+    clust_scarcity = 32*32*32,
     clust_num_ores = 3,
     clust_size     = 2,
     height_min     = -15,
     height_max     = 2,
 })
 
+-- But I want it to be available below ~-20 (~50 nodes to dig)
 minetest.register_ore({
     ore_type       = "scatter",
     ore            = "default:iron",
     wherein        = "default:stone",
-    clust_scarcity = 9*9*9,
+    clust_scarcity = 19*19*19,
     clust_num_ores = 5,
     clust_size     = 3,
-    height_min     = -63,
+    height_min     = -33,
     height_max     = -16,
 })
 
+-- wide spread below -34 till unbreakable nodes
 minetest.register_ore({
     ore_type       = "scatter",
     ore            = "default:iron",
     wherein        = "default:stone",
-    clust_scarcity = 7*7*7,
-    clust_num_ores = 5,
-    clust_size     = 3,
-    height_min     = -31000,
+    clust_scarcity = 27*27*27,
+    clust_num_ores = 65,
+    clust_size     = 23,
+    height_min     = -34,
     height_max     = -64,
-    flags          = "absheight",
 })
 
+-- more iron below -64
 minetest.register_ore({
     ore_type       = "scatter",
     ore            = "default:iron",
@@ -97,9 +140,8 @@ minetest.register_ore({
     clust_scarcity = 24*24*24,
     clust_num_ores = 27,
     clust_size     = 6,
-    height_min     = -31000,
-    height_max     = -64,
-    flags          = "absheight",
+    height_min     = -5005,
+    height_max     = -65,    
 })
 
 minetest.register_ore({
