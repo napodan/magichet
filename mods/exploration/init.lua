@@ -7,7 +7,7 @@ if input then
   dofile(minetest.get_worldpath().."/aeons.lua")
 -- otherwise set aeons to default value (e.g. vanilla Minecraft...
 else
-    aeons = {['vanilla minecraft']=true,     --     -64.....256
+    aeons = {['vanilla']=true,               --     -64.....256
              ['extra nodes']=false,          --   -1000.....256
              ['something strange']=false,    --   -2000.....256
              ['ancient civilization']=false, --   -5000.....256
@@ -26,7 +26,7 @@ function minetest.node_dig(pos, node, digger)
     local y = pos.y
     local n = node.name:find('exploration:bedrock')
     local dig = false
-    if (((y>=-60 and y<=256) or (y>=-8000 and y<=-5000)) and aeons['vanilla minecraft'] and not n) then dig=true end
+    if (((y>=-60 and y<=256) or (y>=-8000 and y<=-5000)) and aeons['vanilla'] and not n) then dig=true end
     if y>=-1000  and y<=256   and aeons['extra nodes']          and not n then dig=true end
     if y>=-2000  and y<=256   and aeons['something strange']    and not n then dig=true end
     if y>=-5000  and y<=256   and aeons['ancient civilization'] and not n then dig=true end
@@ -40,6 +40,8 @@ function minetest.node_dig(pos, node, digger)
     if dig then do_dig_node(pos,node,digger) end
     return
 end
+
+-- teleport to spawn if tried to acces inaccessible :)
 --[[
 local stepp = 0
 minetest.register_globalstep(function(dtime)
@@ -82,74 +84,6 @@ minetest.register_node("exploration:bedrock", {
 })
 
 
---[[ And generate it :)
-minetest.register_ore({
-    ore_type       = "scatter",
-    ore            = "exploration:bedrock",
-    wherein        = {"default:stone", "default:dirt", "default:gravel","air",":air"},
-    clust_scarcity = 1,
-    clust_num_ores = 50,
-    clust_size     = 4,
-    height_min     = -64,
-    height_max     = -60,
-})
-
-minetest.register_ore({
-    ore_type       = "scatter",
-    ore            = "exploration:bedrock",
-    wherein        = {"default:stone", "default:dirt", "default:gravel",":"},
-    clust_scarcity = 1,
-    clust_num_ores = 50,
-    clust_size     = 4,
-    height_min     = -1004,
-    height_max     = -1000,
-})
-
-minetest.register_ore({
-    ore_type       = "scatter",
-    ore            = "exploration:bedrock",
-    wherein        = {"default:stone", "default:dirt", "default:gravel",":"},
-    clust_scarcity = 1,
-    clust_num_ores = 50,
-    clust_size     = 4,
-    height_min     = -2004,
-    height_max     = -2000,
-})
-
-minetest.register_ore({
-    ore_type       = "scatter",
-    ore            = "exploration:bedrock",
-    wherein        = {"default:stone", "default:dirt", "default:gravel",":"},
-    clust_scarcity = 1,
-    clust_num_ores = 50,
-    clust_size     = 4,
-    height_min     = -5004,
-    height_max     = -5000,
-})
-
-minetest.register_ore({
-    ore_type       = "scatter",
-    ore            = "exploration:bedrock",
-    wherein        = {"default:stone", "default:dirt", "default:gravel",":"},
-    clust_scarcity = 1,
-    clust_num_ores = 50,
-    clust_size     = 4,
-    height_min     = -8004,
-    height_max     = -8000,
-})
-
-minetest.register_ore({
-    ore_type       = "scatter",
-    ore            = "exploration:bedrock",
-    wherein        = {"default:stone", "default:dirt", "default:gravel",":"},
-    clust_scarcity = 1,
-    clust_num_ores = 50,
-    clust_size     = 4,
-    height_min     = -16004,
-    height_max     = -16000,
-})
-
-]]--
 minetest.register_chatcommand("aeons", {
     func = function(name, param)
            aeons[param] = not aeons[param]
@@ -158,7 +92,6 @@ minetest.register_chatcommand("aeons", {
     end
 })
 
----------------------------------------
 
 minetest.register_on_generated(function(minp, maxp, seed)
 

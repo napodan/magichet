@@ -33,6 +33,18 @@ minetest.register_alias("mapgen_ice", "default:ice")
 -- Ore generation
 --
 
+-- sheets of ore above the ground
+minetest.register_ore({
+    ore_type       = "sheet",
+    ore            = "default:stone_with_coal",
+    wherein        = "default:stone",
+    clust_scarcity = 38*38*38,
+    clust_num_ores = 30,
+    clust_size     = 16,
+    height_min     = 1,
+    height_max     = 512,
+})
+
 -- from -1000 to 0 coal is rather rare
 minetest.register_ore({
     ore_type       = "scatter",
@@ -71,7 +83,7 @@ minetest.register_ore({
 
 -- from -4000 to -3001 there are sheets of coal
 minetest.register_ore({
-    ore_type       = "scatter",
+    ore_type       = "sheet",
     ore            = "default:stone_with_coal",
     wherein        = "default:stone",
     clust_scarcity = 30*8*5,
@@ -144,6 +156,20 @@ minetest.register_ore({
     height_max     = -65,    
 })
 
+
+-- regular mese is to be found at extra nodes - a little at 1st
+minetest.register_ore({
+    ore_type       = "scatter",
+    ore            = "default:stone_with_mese",
+    wherein        = "default:stone",
+    clust_scarcity = 28*28*28,
+    clust_num_ores = 6,
+    clust_size     = 18,
+    height_min     = -200,
+    height_max     = -65,
+})
+
+-- then a bit more
 minetest.register_ore({
     ore_type       = "scatter",
     ore            = "default:stone_with_mese",
@@ -151,47 +177,59 @@ minetest.register_ore({
     clust_scarcity = 18*18*18,
     clust_num_ores = 3,
     clust_size     = 2,
-    height_min     = -255,
-    height_max     = -64,
-    flags          = "absheight",
+    height_min     = -100,
+    height_max     = -201,
 })
 
+-- and even more deeper, at aliens
 minetest.register_ore({
     ore_type       = "scatter",
     ore            = "default:stone_with_mese",
     wherein        = "default:stone",
-    clust_scarcity = 14*14*14,
-    clust_num_ores = 5,
-    clust_size     = 3,
-    height_min     = -31000,
-    height_max     = -256,
-    flags          = "absheight",
+    clust_scarcity = 11*11*11,
+    clust_num_ores = 100,
+    clust_size     = 30,
+    height_min     = -16000,
+    height_max     = -8001,
 })
 
+-- mese block should be with aliens, so deep below
 minetest.register_ore({
     ore_type       = "scatter",
     ore            = "default:mese",
     wherein        = "default:stone",
     clust_scarcity = 36*36*36,
-    clust_num_ores = 3,
-    clust_size     = 2,
-    height_min     = -31000,
-    height_max     = -1024,
-    flags          = "absheight",
+    clust_num_ores = 20,
+    clust_size     = 5,
+    height_min     = -33000,
+    height_max     = -8500,
 })
 
+-- gold above the ground level
 minetest.register_ore({
-    ore_type       = "scatter",
+    ore_type       = "sheet",
+    ore            = "default:gold",
+    wherein        = "default:stone",
+    clust_scarcity = 35*35*35,
+    clust_num_ores = 15,
+    clust_size     = 20,
+    height_min     = -60,
+    height_max     = -30,
+})
+
+-- gold shouldn't be scattered, but "veined" deeper
+minetest.register_ore({
+    ore_type       = "sheet",
     ore            = "default:gold",
     wherein        = "default:stone",
     clust_scarcity = 15*15*15,
     clust_num_ores = 3,
     clust_size     = 2,
     height_min     = -255,
-    height_max     = -64,
-    flags          = "absheight",
+    height_max     = -65,
 })
 
+-- gold isn't too rare. Also, some circuits can be crafted from it
 minetest.register_ore({
     ore_type       = "scatter",
     ore            = "default:gold",
@@ -199,22 +237,34 @@ minetest.register_ore({
     clust_scarcity = 13*13*13,
     clust_num_ores = 5,
     clust_size     = 3,
-    height_min     = -31000,
+    height_min     = -5000,
     height_max     = -256,
-    flags          = "absheight",
 })
 
+-- some diamonds deep below the 1st level
 minetest.register_ore({
     ore_type       = "scatter",
     ore            = "default:stone_with_diamond",
     wherein        = "default:stone",
-    clust_scarcity = 17*17*17,
-    clust_num_ores = 4,
-    clust_size     = 3,
-    height_min     = -255,
-    height_max     = -128,
-    flags          = "absheight",
+    clust_scarcity = 57*57*57,
+    clust_num_ores = 40,
+    clust_size     = 40,
+    height_min     = -48,
+    height_max     = -60,
 })
+
+-- diamonds still in extra ores, 'cause "smth strange" is for machinery 
+minetest.register_ore({
+    ore_type       = "scatter",
+    ore            = "default:stone_with_diamond",
+    wherein        = "default:stone",
+    clust_scarcity = 57*57*57,
+    clust_num_ores = 4,
+    clust_size     = 4,
+    height_min     = -1000,
+    height_max     = -800,
+})
+
 
 minetest.register_ore({
     ore_type       = "scatter",
