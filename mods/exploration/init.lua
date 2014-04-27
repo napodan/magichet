@@ -41,8 +41,36 @@ function minetest.node_dig(pos, node, digger)
     return
 end
 
+
+function find_a_pos()
+    local pos = {x=0,y=0,z=0}
+    if global_spawnpoint then
+       pos.x = global_spawnpoint.x    
+       pos.y = global_spawnpoint.y
+       pos.z = global_spawnpoint.z    
+    end       
+    local vm = minetest.get_voxel_manip()
+    local minp,maxp = vm:read_from_map({x=pos.x,y=0,z=pos.z},{x=pos.x,y=100,z=pos.z})
+    local data = vm:get_data()
+    local area = VoxelArea:new{MinEdge=minp, MaxEdge=maxp}
+
+    local c_air = minetest.get_content_id("air")
+
+        for y=minp.y,maxp.y do
+                        local vi  = area:index(0, y  , 0)
+                        local vip = area:index(0, y+1, 0)
+                        if  data[vi] == c_air
+                        and data[vip] == c_air
+                        then
+                            pos.y = y
+                            break
+                        end
+        end
+    return pos
+end
+
+
 -- teleport to spawn if tried to acces inaccessible :)
---[[
 local stepp = 0
 minetest.register_globalstep(function(dtime)
    stepp=stepp+dtime
@@ -52,26 +80,35 @@ minetest.register_globalstep(function(dtime)
       for i,player in ipairs(players) do
           local pos = player:getpos()
           if pos then
-              local x = pos.x
-              local y = pos.y
-              local z = pos.z
-              if (not (y>-8000 and y<-5000)) and y<  -61 and not aeons['extra nodes']          then player:setpos({x=x,   y=-60, z=z}) end
-              if (not (y>-8000 and y<-5000)) and y<-1001 and not aeons['something strange']    then player:setpos({x=x, y=-1000, z=z}) end
-              if (not (y>-8000 and y<-5000)) and y<-2001 and not aeons['ancient civilization'] then player:setpos({x=x, y=-2000, z=z}) end
+              local y = pos.y              
+              local tp = false
 
-              if y>  256 and not aeons['foatlands'] then player:setpos({x=x,   y=256, z=z}) end
-              if y<-8000 and not aeons['aliens']    then player:setpos({x=x, y=-8000, z=z}) end
+              if (not (y>-8000 and y<-5000)) and y<  -61 and not aeons['extra nodes']          then tp = true end
+              if (not (y>-8000 and y<-5000)) and y<-1001 and not aeons['something strange']    then tp = true end
+              if (not (y>-8000 and y<-5000)) and y<-2001 and not aeons['ancient civilization'] then tp = true end
 
-              if y>16000 and not aeons['dimentional doors'] then player:setpos({x=x, y=16000, z=z}) end
+              if y>  256 and not aeons['foatlands'] then tp = true end
+              if y<-8000 and not aeons['aliens']    then tp = true end
 
-              if (y<17001) and not (y<16000) and aeons['dimentional doors'] then player:setpos({x=x, y=17000, z=z}) end
-              if (y>16000) and not (y>17000) and aeons['dimentional doors'] then player:setpos({x=x, y=16000, z=z}) end
+              if y>16000 and not aeons['dimentional doors'] then tp = true end
 
-              if y<=-16001 and not aeons['the bottom'] then player:setpos({x=x, y=-16000, z=z}) end
+              if (y<17001) and not (y<16000) and aeons['dimentional doors'] then tp = true end
+              if (y>16000) and not (y>17000) and aeons['dimentional doors'] then tp = true end
+
+              if y<=-16001 and not aeons['the bottom'] then tp = true end
+
+              if tp==true then
+              
+                              local spawn = find_a_pos()
+                              player:setpos({x=spawn.x,   y=spawn.y, z=spawn.z})
+              end
           end
       end
    end
-end)]]
+end)
+
+
+
 
 -- Now to define fake bedrock >:)
 minetest.register_node("exploration:bedrock", {

@@ -34,8 +34,9 @@ minetest.register_alias("mapgen_ice", "default:ice")
 --
 
 -- sheets of ore above the ground
+-- sheets make mg_v7 explode (((
 minetest.register_ore({
-    ore_type       = "sheet",
+    ore_type       = "scatter",
     ore            = "default:stone_with_coal",
     wherein        = "default:stone",
     clust_scarcity = 38*38*38,
@@ -52,7 +53,7 @@ minetest.register_ore({
     wherein        = "default:stone",
     clust_scarcity = 24*24*24,
     clust_num_ores = 10,
-    clust_size     = 3,
+    clust_size     = 6,
     height_min     = -1000,
     height_max     = 0,
 })
@@ -83,11 +84,11 @@ minetest.register_ore({
 
 -- from -4000 to -3001 there are sheets of coal
 minetest.register_ore({
-    ore_type       = "sheet",
+    ore_type       = "scatter",
     ore            = "default:stone_with_coal",
     wherein        = "default:stone",
     clust_scarcity = 30*8*5,
-    clust_num_ores = 37,
+    clust_num_ores = 7,
     clust_size     = 3,
     height_min     = -4000,
     height_max     = -3001,
@@ -111,7 +112,7 @@ minetest.register_ore({
 -- now iron. Some of it can be found earlier than coal
 minetest.register_ore({
     ore_type       = "scatter",
-    ore            = "default:stone_with_iron",
+    ore            = "default:iron",
     wherein        = "default:stone",
     clust_scarcity = 32*32*32,
     clust_num_ores = 3,
@@ -137,11 +138,11 @@ minetest.register_ore({
     ore_type       = "scatter",
     ore            = "default:iron",
     wherein        = "default:stone",
-    clust_scarcity = 27*27*27,
-    clust_num_ores = 65,
-    clust_size     = 23,
-    height_min     = -34,
-    height_max     = -64,
+    clust_scarcity = 12*12*12,
+    clust_num_ores = 10,
+    clust_size     = 20,
+    height_min     = -63,
+    height_max     = -34,
 })
 
 -- more iron below -64
@@ -207,7 +208,7 @@ minetest.register_ore({
 
 -- gold above the ground level
 minetest.register_ore({
-    ore_type       = "sheet",
+    ore_type       = "scatter",
     ore            = "default:gold",
     wherein        = "default:stone",
     clust_scarcity = 35*35*35,
@@ -219,7 +220,7 @@ minetest.register_ore({
 
 -- gold shouldn't be scattered, but "veined" deeper
 minetest.register_ore({
-    ore_type       = "sheet",
+    ore_type       = "scatter",
     ore            = "default:gold",
     wherein        = "default:stone",
     clust_scarcity = 15*15*15,
@@ -271,12 +272,12 @@ minetest.register_ore({
     ore            = "default:stone_with_diamond",
     wherein        = "default:stone",
     clust_scarcity = 15*15*15,
-    clust_num_ores = 4,
+    clust_num_ores = 6,
     clust_size     = 3,
-    height_min     = -31000,
-    height_max     = -256,
-    flags          = "absheight",
+    height_min     = -5000,
+    height_max     = -2001,    
 })
+
 
 minetest.register_ore({
     ore_type       = "scatter",

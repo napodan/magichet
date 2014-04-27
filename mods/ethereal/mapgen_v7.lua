@@ -63,18 +63,6 @@ minetest.register_biome({
 })
 
 minetest.register_biome({
-    name           = "caves",
-    node_top       = "default:desert_stone",
-    depth_top      = 0,
-    node_filler    = "ethereal:airlike",
-    depth_filler   = 18,
-    height_min     = -510,
-    height_max     = -410,
-    heat_point     = 15.0,
-    humidity_point = 25.0,
-})
-
-minetest.register_biome({
     name           = "grayness",
     node_top       = "ethereal:gray_dirt_top",
     depth_top      = 1,
