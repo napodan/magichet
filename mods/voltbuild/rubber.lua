@@ -50,7 +50,7 @@ minetest.register_node("voltbuild:rubber_sapling", {
 minetest.register_node("voltbuild:rubber_tree", {
 	description = "Rubber Tree",
 	tiles = {"default_tree_top.png", "default_tree_top.png", "default_tree.png"},
-	groups = {tree=1,snappy=1,choppy=2,oddly_breakable_by_hand=1,flammable=2},
+	groups = {tree=1,snappy=default.dig.wool,choppy=default.dig.wood,oddly_breakable_by_hand=1,flammable=2},
 	drop = "voltbuild:rubber_tree",
 	sounds = default.node_sound_wood_defaults(),
 })
@@ -101,7 +101,7 @@ minetest.register_node("voltbuild:rubber_leaves", {
 	visual_scale = 1.3,
 	tiles = {"voltbuild_rubber_leaves.png"},
 	paramtype = "light",
-	groups = {snappy=3, leafdecay=3, flammable=2, not_in_creative_inventory=1},
+	groups = {snappy=default.dig.leaves, leafdecay=3, flammable=2, not_in_creative_inventory=1},
 	drop = {
 		max_items = 1,
 		items = {
@@ -126,6 +126,7 @@ minetest.register_abm({
 	end
 })
 
+-- TODO: replace with LVM & schematics
 minetest.register_on_generated(function(minp, maxp, blockseed)
 	if math.random(1, 100) > 50 then
 		return
@@ -217,12 +218,3 @@ minetest.register_tool("voltbuild:alunra_treetap",{
 		return minetest.item_place(itemstack,user,pointed_thing)
 	end,
 })
-
-if minetest.get_modpath("treecapitator") then
-	treecapitator.register_tree({
-	trees = {"voltbuild:rubber_tree_full","voltbuild:rubber_tree_empty",
-		"voltbuild:rubber_tree"},
-	leaves = {"voltbuild:rubber_leaves"},
-	range = 4,
-	})
-end

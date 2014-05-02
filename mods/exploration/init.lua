@@ -1,24 +1,32 @@
-local aeons = {}
+local save_timer = 10
+local stmr = 0
+
+-- init aeons tables
+local aeons = {['vanilla']={},              --     -64.....256
+               ['extra nodes']={},          --   -1000.....256
+               ['something strange']={},    --   -2000.....256
+               ['ancient civilization']={}, --   -5000.....256
+               ['hell is underneath']={},   --   -8000.....256
+               ['floatlands']={},           --   -8000.....512
+               ['aliens']={},               --  -16000.....512
+               ['meadows of heaven']={},    --  -16000...16000
+               ['dimentional doors']={},    --  -16000...16000, 17000..32000 [force load]
+               ['the bottom']={},           -- -maxint..maxint
+              }
 
 -- if there's some saved data, then load it
 local input = io.open(minetest.get_worldpath().."/aeons.lua", "r")
 if input then
   io.close(input)
   dofile(minetest.get_worldpath().."/aeons.lua")
--- otherwise set aeons to default value (e.g. vanilla Minecraft...
-else
-    aeons = {['vanilla']=true,               --     -64.....256
-             ['extra nodes']=false,          --   -1000.....256
-             ['something strange']=false,    --   -2000.....256
-             ['ancient civilization']=false, --   -5000.....256
-             ['hell is underneath']=false,   --   -8000.....256
-             ['floatlands']=false,           --   -8000.....512
-             ['aliens']=false,               --  -16000.....512
-             ['meadows of heaven']=false,    --  -16000...16000
-             ['dimentional doors']=false,    --  -16000...16000, 17000..32000 [force load]
-             ['the bottom']=false,           -- -maxint..maxint
-             }
 end
+
+
+minetest.register_on_joinplayer(function(player)
+    local pll = player:get_player_name()
+    aeons['vanilla'][pll] = true
+end)
+
 
 -- Then to override digging func to prohibit it until some event.
 local do_dig_node = minetest.node_dig
@@ -26,17 +34,19 @@ function minetest.node_dig(pos, node, digger)
     local y = pos.y
     local n = node.name:find('exploration:bedrock')
     local dig = false
-    if (((y>=-60 and y<=256) or (y>=-8000 and y<=-5000)) and aeons['vanilla'] and not n) then dig=true end
-    if y>=-1000  and y<=256   and aeons['extra nodes']          and not n then dig=true end
-    if y>=-2000  and y<=256   and aeons['something strange']    and not n then dig=true end
-    if y>=-5000  and y<=256   and aeons['ancient civilization'] and not n then dig=true end
-    if y>=-8000  and y<=256   and aeons['hell is underneath']   and not n then dig=true end
-    if y>=-8000  and y<=512   and aeons['floatlands']           and not n then dig=true end
-    if y>=-16000 and y<=512   and aeons['aliens']               and not n then dig=true end
-    if y>=-16000 and y<=16000 and aeons['meadows of heaven']    and not n then dig=true end
-    if (((y>=-16000 and y<=16000) or (y>=17000 and y<=32000)) and aeons['dimentional doors'] and not n) then dig=true end
-    if y<= 16000 and aeons['the bottom']                        and not n then dig=true end
+    local pll = digger:get_player_name()
+    if (((y>=-60 and y<=256) or (y>=-8000 and y<=-5000)) and aeons['vanilla'][pll] and not n) then dig=true end
+    if y>=-1000  and y<=256   and aeons['extra nodes'][pll]          and not n then dig=true end
+    if y>=-2000  and y<=256   and aeons['something strange'][pll]    and not n then dig=true end
+    if y>=-5000  and y<=256   and aeons['ancient civilization'][pll] and not n then dig=true end
+    if y>=-8000  and y<=256   and aeons['hell is underneath'][pll]   and not n then dig=true end
+    if y>=-8000  and y<=512   and aeons['floatlands'][pll]           and not n then dig=true end
+    if y>=-16000 and y<=512   and aeons['aliens'][pll]               and not n then dig=true end
+    if y>=-16000 and y<=16000 and aeons['meadows of heaven'][pll]    and not n then dig=true end
+    if (((y>=-16000 and y<=16000) or (y>=17000 and y<=32000)) and aeons['dimentional doors'][pll] and not n) then dig=true end
+    if y<= 16000 and aeons['the bottom'][pll]                        and not n then dig=true end
     -- return nils if we have failed all checks
+ --   dig=true
     if dig then do_dig_node(pos,node,digger) end
     return
 end
@@ -73,6 +83,23 @@ end
 -- teleport to spawn if tried to acces inaccessible :)
 local stepp = 0
 minetest.register_globalstep(function(dtime)
+   
+   -- save data every save_timer seconds
+   stmr = stmr + dtime
+   if stmr > save_timer then
+      stmr = 0
+      local output = io.open(minetest.get_worldpath().."/aeons.lua", "w")
+      if output then
+         o  = minetest.serialize(aeons)
+         i  = string.find(o, "return")
+         o1 = string.sub(o, 1, i-1)
+         o2 = string.sub(o, i-1, -1)
+         output:write(o1 .. "\n")
+         output:write("aeons = minetest.deserialize('" .. o2 .. "')\n")
+         io.close(output)
+      end                    
+   end
+   
    stepp=stepp+dtime
    if stepp>0.5 then
       stepp=0
@@ -81,26 +108,45 @@ minetest.register_globalstep(function(dtime)
           local pos = player:getpos()
           if pos then
               local y = pos.y              
-              local tp = false
+              local tp = nil
 
-              if (not (y>-8000 and y<-5000)) and y<  -61 and not aeons['extra nodes']          then tp = true end
-              if (not (y>-8000 and y<-5000)) and y<-1001 and not aeons['something strange']    then tp = true end
-              if (not (y>-8000 and y<-5000)) and y<-2001 and not aeons['ancient civilization'] then tp = true end
+              if (not (y>-8000 and y<-5000)) and y<  -61 and not aeons['extra nodes'][pll]          then tp = 'extra nodes' end
+              if (not (y>-8000 and y<-5000)) and y<-1001 and not aeons['something strange'][pll]    then tp = 'something strange' end
+              if (not (y>-8000 and y<-5000)) and y<-2001 and not aeons['ancient civilization'][pll] then tp = 'ancient civilization' end
 
-              if y>  256 and not aeons['foatlands'] then tp = true end
-              if y<-8000 and not aeons['aliens']    then tp = true end
+              if y>  256 and not aeons['foatlands'][pll] then tp = 'foatlands' end
+              if y<-8000 and not aeons['aliens'][pll]    then tp = 'aliens' end
 
-              if y>16000 and not aeons['dimentional doors'] then tp = true end
+              if y>16000 and not aeons['dimentional doors'][pll] then tp = 'dimentional doors' end
 
-              if (y<17001) and not (y<16000) and aeons['dimentional doors'] then tp = true end
-              if (y>16000) and not (y>17000) and aeons['dimentional doors'] then tp = true end
+              if (y<17001) and not (y<16000) and aeons['dimentional doors'][pll] then tp = 'dimentional doors' end
+              if (y>16000) and not (y>17000) and aeons['dimentional doors'][pll] then tp = 'dimentional doors' end
 
-              if y<=-16001 and not aeons['the bottom'] then tp = true end
+              if y<=-16001 and not aeons['the bottom'][pll] then tp = 'the bottom' end
 
-              if tp==true then
-              
-                              local spawn = find_a_pos()
-                              player:setpos({x=spawn.x,   y=spawn.y, z=spawn.z})
+              if tp then
+                 local objs = minetest.get_objects_inside_radius(pos, 10)
+                 for i, obj in ipairs(objs) do
+                     if obj:is_player() then
+                        local pll = obj:get_player_name()
+                        -- anyone can take anyone else with him/her deeper than allowed...
+                        if aeons[tp][pll] then
+                           tp = nil
+                           return
+                        end
+                     end
+                 end
+
+                 if minetest.find_node_near(pos, 5, "exploration:notp_"..tp) then
+                    -- do NOT teleport if there's a notp node near
+                    -- ToDo: make it activated with mesecons/electricity
+                    return
+                 end
+
+                 -- teleport if nothing prevents from it
+                 local spawn = find_a_pos()
+                 player:setpos({x=spawn.x,   y=spawn.y, z=spawn.z})                 
+
               end
           end
       end
@@ -120,16 +166,16 @@ minetest.register_node("exploration:bedrock", {
     groups = {cracky=default.dig.obsidian},
 })
 
-
+-- chat command to hack aeons
 minetest.register_chatcommand("aeons", {
     func = function(name, param)
-           aeons[param] = not aeons[param]
-           minetest.chat_send_player(name,minetest.serialize(aeons[param]))
+           aeons[param][name] = not aeons[param][name]
+           minetest.chat_send_player(name, param .. ' is like this now: ' .. minetest.serialize(aeons[param][name]))
            return
     end
 })
 
-
+-- barriers that separate aeons
 minetest.register_on_generated(function(minp, maxp, seed)
 
     minetest.after(10,function(dtime)

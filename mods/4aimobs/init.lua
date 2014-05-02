@@ -282,8 +282,10 @@ default_definition = {
         local n1 = minetest.get_node(pos1)
         local n2 = minetest.get_node(pos2)
 
-        if n1.name:find('air') and n2.name:find('air') then
+        if n1.name=='air' and n2.name:find=='air' then
            self:set_animation('jump')
+        else
+           self:set_animation('walk')
         end
 
         -- "floating"

@@ -5,6 +5,8 @@
 --licensed as CC0. Say a good word about them to everyone you met ;)
 
 function explorertools_place(item, player, pointed)
+  local control = player:get_player_control()
+  if not control.sneak then return end
   local idx = player:get_wield_index() + 1
   if idx < 9 then
     local inv = player:get_inventory()

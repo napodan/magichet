@@ -156,7 +156,7 @@ minetest.register_node("ethereal:frost_leaves", {
     tiles = {"ethereal_frost_leaves.png"},
     paramtype = "light",
     waving = 1,
-    groups = {snappy=default.dig.ice, leafdecay=3, puts_out_fire=1},
+    groups = {cracky=default.dig.ice, leafdecay=3, puts_out_fire=1},
     drop = {
         max_items = 1,
         items = {

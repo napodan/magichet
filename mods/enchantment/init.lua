@@ -92,6 +92,11 @@ local words = {'ain ', 'young ', 'sprites ', 'unatas ', 'kafuzi ', 'cropi ', 'ya
 -- List of magick textures. Add yours to have shelves spawn them. x16 prefered.
 local glyphs = {'enchantment_glyph1.png','enchantment_glyph2.png','enchantment_glyph3.png','enchantment_glyph4.png','enchantment_glyph5.png'}
 
+local leech_timers = {}
+local enplhuds = {}
+local hudtime = 0
+local hudtimemax = 0.1
+
 -- Func to get random element from a table
 local function random_elem(array)
    return array[math.random(#array)]
@@ -948,6 +953,7 @@ minetest.register_chatcommand("enchant", {
         local wstack = player:get_wielded_item()
         wstack:set_metadata(param)
         player:set_wielded_item(wstack)
+        wielded_chant[name] = nil
 --        minetest.chat_send_player(name,'Your specialties total XP is ' .. get_sxp(name))
         return
     end
@@ -957,8 +963,9 @@ minetest.register_on_joinplayer(function(player)
 --hud with boons
    -- if not pchants then pchants = {} end
     pll = player:get_player_name()
+    enplhuds[pll] = {}
         for i,chant in pairs(pchants) do
-           pchants[i][pll] = false
+           pchants[i][pll] = false                      
         end -- to turn on/off effects
 end)
 
@@ -970,43 +977,60 @@ end)
 -- are able to check pchants[pll] and act accordinggly
 minetest.register_globalstep(function(dtime)
     local players = minetest.get_connected_players()
-    for j,player in ipairs(players) do
+    for j,player in ipairs(players) do       
         local pll = player:get_player_name()
         local wstack = player:get_wielded_item()
         local itemname = wstack:get_name()
-        -- We don't want to continue if it's not anarmor piece or a tool
+        -- We don't want to continue if it's not an armor piece or a tool
 
         local meta = wstack:get_metadata()
         local boons = string.split(meta,';')
+
 
         if wielded_chant[pll] ~= itemname then
             for i,chant in pairs(pchants) do
                 pchants[i][pll] = false
             end -- to turn on/off effects
-            wielded_chant[pll] = itemname
+            -- set this to nill when need to update chants!            
         end
-
+--[[
         if not minetest.get_item_group(itemname, 'armor_use')
         or not minetest.registered_tools[itemname]
         then
            return
         end
+]]--
 
+--        local grav = false
 
-        local grav = false
-
+        if  not pchants["Antigravity 1"][pll]
+        and not pchants["Antigravity 2"][pll]
+        and not pchants["Antigravity 3"][pll]
+        and not pchants["Antigravity 4"][pll]
+        and not pchants["Antigravity 5"][pll]
+        then
+            -- if it's not antigravity then set gravity modifier to 1            
+            if isghost and isghost[pll] then
+                player:set_physics_override({ gravity = 1*ggm,})
+            else
+                player:set_physics_override({ gravity = 1,})
+            end
+        end
+                
+        local real_leechers = 0        
         for j,boon in ipairs(boons) do
-            if pchants[boon] and not pchants[boon][pll] then
-
+            -- update boons only if there was a change!            
+            if pchants[boon] and not pchants[boon][pll] then              
                if boon:find('Antigravity') then
-                  grav = true
+                   print('grav')
+          --        grav = true
                   local lv = string.match(boon,"%d+")
                   if isghost[pll] then
                      player:set_physics_override({ gravity = 1-math.max((ggm+0.1*tonumber(lv)),0.9) ,})
                   else
                      player:set_physics_override({ gravity = 1-math.max((0.1*tonumber(lv)),0.9),})
                   end
-
+                  
                elseif boon:find('Aqualung') then
                   local air = player:get_breath()
                   if air <10 then
@@ -1017,14 +1041,11 @@ minetest.register_globalstep(function(dtime)
 
                elseif boon:find('Fire affinity') then
                   local pos = player:getpos()
-
-                  if minetest.find_node_near(pos, 1, 'default:lava_source')
-                  or minetest.find_node_near(pos, 1, 'default:lava_flowing')
-                  or minetest.find_node_near(pos, 1, 'group:fire')
-                  or minetest.find_node_near(pos, 1, 'group:hot')
-                  then
-
-                  --if node:find('fire') or node:find('lava') then
+                  if minetest.find_node_near(pos, 2, 'default:lava_source')
+                  or minetest.find_node_near(pos, 2, 'default:lava_flowing')
+                  or minetest.find_node_near(pos, 2, 'group:fire')
+                  or minetest.find_node_near(pos, 2, 'group:hot')
+                  then                  
                      node = true
                   else
                      node = false
@@ -1038,18 +1059,103 @@ minetest.register_globalstep(function(dtime)
                   end
                end
                -- only after enabling the effect we can store this fact
-               pchants[boon][pll] = true
+                  pchants[boon][pll] = true
+            end
 
-           end
+              -- print(leech_timers[pll])
+              -- print(boon)
+               -- leeching on statuses!
+               local boontp = string.sub(boon,1,-3)
+               local boonlv = tonumber(string.sub(boon,-1))
+                               
+               if boonlv>2 then
+                  --boonlv = boonlv-2
+
+               local pos = player:getpos()
+               local controls = player:get_player_control()
+               
+               -- if player holds down right mouse button and aux1 then distribute the effect
+               if pos and controls.RMB and controls.aux1 then
+                  local leechers = minetest.get_objects_inside_radius(pos, boonlv+2)
+                  
+                  -- track seeding time!
+                  if not leech_timers[pll] 
+                  then leech_timers[pll] = dtime
+                  else leech_timers[pll] = leech_timers[pll] + dtime 
+                  end
+                                    
+                -- update leechers count once per second
+                  if leech_timers[pll]>1 then
+                      leech_timers[pll] = 0                        
+                      for num,leecher in pairs(leechers) do
+                        if leecher:is_player() then                                            
+                         local lname = leecher:get_player_name()
+                           if lname ~= pll then
+                              real_leechers = real_leechers +1
+                              -- minetest.chat_send_all(lname..' leeches '..pll .. ' on ' .. boon)
+                           
+                              -- grant leecher the very same effect but 2 levels lower
+                              pchants[boontp..' '..tostring(boonlv-2)][lname] = true
+                           end    
+                        end							  
+                       -- add wear                          
+                      end
+                      minetest.chat_send_all(real_leechers)
+                      -- regardless of material wear the tool
+                      wstack:add_wear(400*real_leechers)
+                      
+                      player:set_wielded_item(wstack)--player:inv:set_stack("itm", 1, stack)
+                  end
+               end
+        end
+            
 
         end
-               if not grav then
-                   -- if it's not antigravity then set gravity modifier to 1
-                   player:set_physics_override({ gravity = 1,})
-               end
+
+
+-- remove boons
+        for j,boon in pairs(pchants) do
+            
+            local boontp = string.sub(j,1,-3)
+            local boonlv = tonumber(string.sub(j,-1))
+           -- print(enplhuds[pll][boontp])
+            if (enplhuds[pll][boontp] and not pchants[j][pll])then
+            player:hud_remove(enplhuds[pll][boontp])
+            enplhuds[pll][boontp]=nil
+            end
+        end
+
+
+-- add them        
+      --  hudtime = hudtime+dtime
+      --  if hudtime>hudtimemax then
+      --  hudtime = 0
+        local numhud = 0
+        for j,boon in ipairs(boons) do
+              local boontp = string.sub(boon,1,-3)
+              local boonlv = tonumber(string.sub(boon,-1))
+              if pchants[boon] and pchants[boon][pll] and not enplhuds[pll][boontp] then
+                 numhud = numhud +1              
+                  -- if not enplhuds[pll] then enplhuds[pll]={} end                  
+                  yy = numhud
+                  if yy>7 then yy = yy-7 end
+                  if yy>7 then yy = yy-7 end
+                  if yy>7 then yy = yy-7 end                                    
+                  enplhuds[pll][boontp] = player:hud_add({
+                                                          hud_elem_type = "image",
+                                                          position = {x=0, y=0.20},
+                                                          offset = {x=10+40*math.floor((numhud-1)/7), y=yy*40},
+                                                          alignment = {x=1, y=1},
+                                                          scale = {x=1, y=1},
+                                                          --number = 0xFFFFFF ,
+                                                          text = "enchantment_".. string.gsub(boontp, ' ', '_') ..".png^enchantment_".. boonlv ..".png^",
+                                                        })
+              end
+        end
+------------------------------------------------------------------------------------                               
+        wielded_chant[pll] = itemname
     end
 end)
-
 
 minetest.register_on_dignode(function(pos, oldnode, digger)
 -- for effects like treasurer or tenderness, infinity etc
@@ -1104,7 +1210,7 @@ local get_guts = function(item)
    if item:find('sandstone') then return 'default:sand'   end
    if item:find('cobble')    then return 'default:gravel' end
    if item:find('tree')      then return 'default:wood'   end
-   if item:find('wood')      then return 'default:sticks' end
+   if item:find('wood')      then return 'default:stick'  end
    return item
 end
 
