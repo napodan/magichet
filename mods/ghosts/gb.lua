@@ -209,7 +209,7 @@ minetest.register_craftitem("ghosts:ghostly_block", {
     inventory_image = "default_cloud.png",
     wield_image = "gb_0.png",
     wield_scale = {x=1, y=1, z=1},
-    liquids_pointable = true,
+    liquids_pointable = false,
     stack_max = 32000,
 
     on_place = function(itemstack, placer, pointed_thing)

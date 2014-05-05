@@ -1,5 +1,5 @@
 minetest.register_node("voltbuild:watermill",{description="Watermill",
-	groups={energy=1,cracky=2},
+	groups={energy=1,cracky=default.dig.stone},
 	tiles={"itest_watermill_top.png", "itest_watermill_top.png", "itest_watermill_side.png"},
 	documentation={summary="Generates electricity from water nodes near this machine.\n"..
 		"More water nodes surrounding it help generate electricity faster."},

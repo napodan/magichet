@@ -1,5 +1,5 @@
 minetest.register_node("voltbuild:geothermal_generator",{description="Geothermal Generator",
-	groups={energy=1,cracky=2},
+	groups={energy=1,cracky=default.dig.stone},
 	tiles = {"voltbuild_geothermal_generator_side.png"},
 	documentation={summary="Generates electricity from lava nodes directly next to this machine.\n"..
 		"More lava nodes surrounding it help generate electricity faster."},

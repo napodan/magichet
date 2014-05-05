@@ -1,5 +1,5 @@
-local itest_world_upgrade = minetest.setting_getbool("voltbuild_itest_world_upgrade") or false
-local generate_docs = minetest.setting_getbool("voltbuild_generate_docs")
+-- generate docs if needed
+local generate_docs = minetest.setting_getbool("voltbuild_generate_docs") or false
 
 modpath = minetest.get_modpath("voltbuild")
 moreores_path = minetest.get_modpath("moreores")
@@ -115,7 +115,7 @@ function voltbuild.deep_copy (table_from,table_to)
 end
 
 
-dofile(modpath.."/builtin.lua")
+--dofile(modpath.."/builtin.lua") -- removed, 'cause I have no need for it :)
 dofile(modpath.."/mapgen.lua")
 dofile(modpath.."/voltbuild_objects.lua")
 dofile(modpath.."/components.lua")
@@ -127,10 +127,13 @@ dofile(modpath.."/generators.lua")
 dofile(modpath.."/storage.lua")
 dofile(modpath.."/consumers.lua")
 dofile(modpath.."/craft.lua")
-if itest_world_upgrade then
-	dofile(modpath.."/itest_upgrade_compat.lua")
-	print("voltbuild is using one way upgrade")
+
+--localize BEFORE generating docs
+local localize = minetest.get_modpath("localization")
+if localize then
+   dofile(localize.."/init.lua")
 end
+
 if generate_docs then
 	print("Generating voltbuild documentation.")
 	local key,value
@@ -301,4 +304,4 @@ if generate_docs then
 	end
 end
 
-print("voltbuild loaded!")
+print("[OK] voltbuild2 loaded!")

@@ -1,19 +1,27 @@
 minetest.register_node("mesecons_noteblock:noteblock", {
 	description = "Noteblock",
 	tiles = {"mesecons_noteblock.png"},
-	groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2},
+	groups = {snappy=default.dig.leaves,choppy=default.dig.wood,oddly_breakable_by_hand=2},
 	drawtype = "allfaces_optional",
 	visual_scale = 1.3,
 	paramtype="light",
 	after_place_node = function(pos)
 		minetest.add_node(pos, {name="mesecons_noteblock:noteblock", param2=0})
+	end,        
+	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing) -- change sound when right_click'ed
+                if not clicker or not clicker:is_player() then return end
+                -- do it only if shift is not pressed!
+                if not clicker:get_player_control().sneak then
+                        local param2 = node.param2+1
+                        if param2==12 then param2=0 end
+                        minetest.add_node(pos, {name = node.name, param2 = param2})
+                        mesecon.noteblock_play(pos, param2)
+                end
 	end,
-	on_punch = function (pos, node) -- change sound when punched
-		local param2 = node.param2+1
-		if param2==12 then param2=0 end
-		minetest.add_node(pos, {name = node.name, param2 = param2})
-		mesecon.noteblock_play(pos, param2)
-	end,
+        -- play note if punched!
+        on_punch = function(pos, node)
+            mesecon.noteblock_play(pos, node.param2)
+        end, 
 	sounds = default.node_sound_wood_defaults(),
 	mesecons = {effector = { -- play sound when activated
 		action_on = function (pos, node)

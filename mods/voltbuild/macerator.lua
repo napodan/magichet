@@ -12,7 +12,7 @@ local macerator_properties = {
 	tiles = {"itest_macerator_side.png", "itest_macerator_side.png", "itest_macerator_side.png",
 		"itest_macerator_side.png", "itest_macerator_side.png", "itest_macerator_front.png"},
 	paramtype2 = "facedir",
-	groups = {energy=1, energy_consumer=1, cracky=2,tubedevice=1,tubedevice_receiver=1},
+	groups = {energy=1, energy_consumer=1, cracky=default.dig.stone,tubedevice=1,tubedevice_receiver=1},
 	legacy_facedir_simple = true,
 	sounds = default.node_sound_stone_defaults(),
 	voltbuild = {max_energy=12,max_tier=1,energy_cost=2,max_stress=2000,speed=5,max_psize=32},

@@ -5,7 +5,7 @@ local generator_definition = {
 	tiles = {"itest_generator_side.png", "itest_generator_side.png", "itest_generator_side.png",
 		"itest_generator_side.png", "itest_generator_side.png", "itest_generator_front.png"},
 	paramtype2 = "facedir",
-	groups = {energy=1, cracky=2},
+	groups = {energy=1, cracky=default.dig.stone},
 	legacy_facedir_simple = true,
 	sounds = default.node_sound_stone_defaults(),
 	documentation = {summary = "A generator that uses coal to generate electricty.\n"..

@@ -158,7 +158,7 @@ local bows1 = {}
        local pll=player:get_player_name()
        ------
 
-
+        
         local inv  = player:get_inventory()
         local i    = player:get_wield_index()
         local list = player:get_wield_list()
@@ -200,30 +200,31 @@ if bows[pll] and bows[pll]>-1 then
      --if ttt then player:hud_remove(ttt) end
 end
 
-
-
+        local wstack = player:get_wielded_item()
+        local ui = wstack:get_name()
+     
         if ui and type(ui)=="string" and ui~="" then
 
             if ui:find("throwing:bow_wood0") then
-               inv:set_stack(list, i ,ItemStack("throwing:bow_wood1"))
+               player:set_wielded_item(ItemStack("throwing:bow_wood1"))
                gbus = false
                bows[pll] = 0
                minetest.after(01.05,function() gbus = true end)
 
             elseif ui:find("throwing:bow_wood1") then
-               inv:set_stack(list, i ,ItemStack("throwing:bow_wood2"))
+               player:set_wielded_item(ItemStack("throwing:bow_wood2"))
                gbus = false
                bows[pll] = 1
                minetest.after(01.1,function() gbus = true end)
               -- return
             elseif ui:find("throwing:bow_wood2") then
-               inv:set_stack(list, i ,ItemStack("throwing:bow_wood3"))
+               player:set_wielded_item(ItemStack("throwing:bow_wood3"))
                gbus = false
                bows[pll] = 2
                minetest.after(01.15,function() gbus = true end)
               -- return
             elseif ui:find("throwing:bow_wood3") then
-               inv:set_stack(list, i ,ItemStack("throwing:bow_wood0"))
+               player:set_wielded_item(ItemStack("throwing:bow_wood0"))
                gbus = false
                bows[pll] = 3
                minetest.after(01.2,function() gbus = true end)

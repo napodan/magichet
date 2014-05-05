@@ -1,5 +1,5 @@
 minetest.register_node("voltbuild:batbox",{description="BatBox",
-	groups={energy=1, cracky=2, energy_consumer=1, energy_storage=1},
+	groups={energy=1, choppy=default.dig.wood, energy_consumer=1, energy_storage=1},
 	paramtype2 = "facedir",
 	legacy_facedir_simple = true,
 	tiles={"itest_batbox_side.png", "itest_batbox_side.png", "itest_batbox_output.png", "itest_batbox_side.png", "itest_batbox_side.png", "itest_batbox_side.png"},
@@ -25,7 +25,7 @@ components.register_abm({
 })
 
 minetest.register_node("voltbuild:mfe_unit",{description="MFE Unit",
-	groups={energy=1, cracky=2, energy_consumer=1, energy_storage=1},
+	groups={energy=1, cracky=default.dig.cobble, energy_consumer=1, energy_storage=1},
 	paramtype2 = "facedir",
 	legacy_facedir_simple = true,
 	tiles={"itest_mfe_side.png", "itest_mfe_side.png", "itest_mfe_output.png", "itest_mfe_side.png", "itest_mfe_side.png", "itest_mfe_side.png"},
@@ -51,7 +51,7 @@ components.register_abm({
 })
 
 minetest.register_node("voltbuild:mfs_unit",{description="MFS Unit",
-	groups={energy=1, cracky=2, energy_consumer=1, energy_storage=1},
+	groups={energy=1, cracky=default.dig.stone, energy_consumer=1, energy_storage=1},
 	paramtype2 = "facedir",
 	legacy_facedir_simple = true,
 	tiles={"itest_mfsu_side.png", "itest_mfsu_side.png", "itest_mfsu_output.png", "itest_mfsu_side.png", "itest_mfsu_side.png", "itest_mfsu_side.png"},

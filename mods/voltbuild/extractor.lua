@@ -14,7 +14,7 @@ local extractor_properties = {
 	description = "Extractor",
 	tiles = {"itest_extractor_side.png", "itest_extractor_side.png", "itest_extractor_side.png", "itest_extractor_side.png", "itest_extractor_side.png", "itest_extractor_front.png"},
 	paramtype2 = "facedir",
-	groups = {energy=1, energy_consumer=1, cracky=2,tubedevice=1,tubedevice_receiver=1},
+	groups = {energy=1, energy_consumer=1, cracky=default.dig.stone,tubedevice=1,tubedevice_receiver=1},
 	legacy_facedir_simple = true,
 	sounds = default.node_sound_stone_defaults(),
 	voltbuild = {max_tier=1,energy_cost=2,max_stress=2000,max_psize=32,max_energy=12},

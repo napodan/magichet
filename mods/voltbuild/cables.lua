@@ -222,12 +222,12 @@ for zp = 0, 1 do
 	local tgroups = ""
 
 	if tname ~= "000000" then
-		tgroups = {snappy=3, energy_conductor=1, not_in_creative_inventory=1}
+		tgroups = {snappy=default.dig.leaves, energy_conductor=1, not_in_creative_inventory=1}
 		cabledesc = desc.." ("..tname..")... You hacker, you."
 		iimg=nil
 		wscale = {x=1,y=1,z=1}
 	else
-		tgroups = {snappy=3, energy_conductor=1}
+		tgroups = {snappy=default.dig.leaves, energy_conductor=1}
 		cabledesc = desc
 		iimg=inv_texture
 		outboxes={-width/2,-width/2,-width/2,width/2,width/2,width/2}

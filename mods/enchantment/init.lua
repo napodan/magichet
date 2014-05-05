@@ -530,10 +530,11 @@ ee = nil
 
 -- The below one is used to create a list of items which can be enchanted.
 -- This means, that anything not registered up to this point won't get into
--- the list. I have some back thought about this
+-- the list. I have some back thoughts about this
 local chanted_items = {}
 for j,def in pairs(minetest.registered_items) do
-    if def and def.tool_capabilities and def.tool_capabilities["enchantability"] then
+    if def and def.tool_capabilities and def.tool_capabilities["enchantability"] and def.tool_capabilities["enchantability"]>0 then
+       --print(def.name..' can be enchanted!')
        table.insert(chanted_items,def)
     end
 end
@@ -604,12 +605,13 @@ end
 -- Needs a description feature, like +++++. ToDo. #chants=#(+).
 --
 for j,def in ipairs(chanted_items) do
-    -- I don't want to enchant an allready buffed tool
+    -- I don't want to enchant an already buffed tool
     if not def.name:find('specialties') then
      --  print('[Mod] Enchantments - Registering chants for '..def.name)
 
        for i,ii in ipairs(hhh) do
            local ddd = deepcopy(def)
+           ddd.groups = {not_in_creative_inventory=1,not_in_craft_guide=1}
            local dsc = string.sub(ddd.description,1)
            local dnm = string.sub(ddd.name,1)
            local speedup, casualty, slvl, clvl
@@ -649,9 +651,10 @@ for j,def in ipairs(chanted_items) do
 
        end
        local ddd = deepcopy(def)
+       ddd.groups = {not_in_creative_inventory=1,not_in_craft_guide=1}
        ddd.tool_capabilities["enchantability"] = -1
        minetest.register_tool('enchantment:'..string.split(ddd.name,':')[2],ddd)
-       --print('enchantment:'..string.split(ddd.name,':')[2])
+      -- print('not in CI:   enchantment:'..string.split(ddd.name,':')[2])       
     end
 end
 
@@ -1008,6 +1011,7 @@ minetest.register_globalstep(function(dtime)
         and not pchants["Antigravity 3"][pll]
         and not pchants["Antigravity 4"][pll]
         and not pchants["Antigravity 5"][pll]
+        and not itemname=='jetpack:jet'
         then
             -- if it's not antigravity then set gravity modifier to 1            
             if isghost and isghost[pll] then
@@ -1022,13 +1026,15 @@ minetest.register_globalstep(function(dtime)
             -- update boons only if there was a change!            
             if pchants[boon] and not pchants[boon][pll] then              
                if boon:find('Antigravity') then
-                   print('grav')
+                   print(player.grav)
           --        grav = true
                   local lv = string.match(boon,"%d+")
+                  if not itemname=='jetpack:jet' then
                   if isghost[pll] then
                      player:set_physics_override({ gravity = 1-math.max((ggm+0.1*tonumber(lv)),0.9) ,})
                   else
                      player:set_physics_override({ gravity = 1-math.max((0.1*tonumber(lv)),0.9),})
+                  end
                   end
                   
                elseif boon:find('Aqualung') then

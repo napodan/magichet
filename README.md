@@ -100,7 +100,7 @@ deeper than any minecrafter can dig in both Nether & Overworld) and a very
 beautiful rivers realm high above the overworld (even farther from the Overworld
 than the Nether).
 
-But some places of that 65000^2 world would be inaccessible until certain
+But some places of that 65000^3 world would be inaccessible until certain
 conditions are not met.
 
 ###II-2 Tools
@@ -194,7 +194,7 @@ The ones that are not present in vanilla Minecraft are "/home x" and
 "/sethome x". Those 2 will help you to jump to any of your homes if you're
 close enough (~300 blocks away).
 
-Also, the "/spawn" command won't work if you're more than 1000 blocks away.
+Also, the "/spawn" command won't work if you're more than 2000 blocks away.
 That CAN be easily changed to have no limit, but I'm not the one who will make
 this change. Increasing the distance is a whole different case - make your
 suggestions.
@@ -280,7 +280,7 @@ But maybe there ARE some cases when redistribution would help?
 
 ###II-8 Vehicles
 
-Boats, cars, helicopters and even UFOs!
+Boats, cars, jetpacks, helicopters and even UFOs!
 Find recipes on your own ;)
 
 ###II-10 Industry
@@ -292,14 +292,13 @@ decide whether he's techie or "highly-spirited".
 However, there are some new things like electricity-driven hospitals.
 Some of BuildCraft features are also introduced. Feel free to find which ;)
 
-
 ###II-9 Inventory tools
 
 Your inventory is multi-paged unlike MC's one.
 You'll even have crafting guide (no need to see wiki for this anymore!) and
 INBUILT SKIN SELECTION feature!
 
-Besides this there are separate pages of your inventory for specialties,
+Aside from this there are separate pages of your inventory for specialties,
 backpacks, armor and much more (in time).
 
 So this game is way more user-friendly and provide anything you might want to
@@ -345,7 +344,6 @@ Anyway, there quite a lot of them and the list is being changed and if we are to
 **4aiman** for making this game out of his and other people's mods<br />
 **PilzAdam** for creation of the Minitest game which was partially used to make this one. Also for all his mods and stuff.<br />
 **Zeg9** for creating yet another craft guide and some other really cool stuff<br />
-**Blockmen** for tuning all kinds of obstacles and some MC-like stuff like fences<br />
 **0gb_us** for his old more_chests mod that was used for purposes he probably won't justify :D<br />
 **Menche** for filling a huge hole by making desert stone to be craftable into desert furnaces<br />
 **Chinchow** for creation of the astonishing Ethereal mapgen based on v7<br />
@@ -389,11 +387,12 @@ But all standalone repos will become GPLv3.
 Parts that are already GPL-ed will stay GPL-ed all the way.
 
 That means that:
- * derivatives without telling me a word **are prohibited** until BETA
+ * derivatives without telling me a word **are prohibited** until BETA 
  * I will gladly let anyone fork this if asked by that particular anyone
  * I want to properly credit anyone who made this possible w/o feeling any pressure
+ * I would appreciate any help
+ * If anyone would help me in any way with this game - I'll grant the rights to copy, change and redistribute as long as license will stay CC BY-NC-ND  (3.0)
  * I want to fix things myself
  * I don't want to digress
  * I want to add some things w/o being forced to support forks
- * I would appreciate any help
  * I need time to create some basic features that are still not listed here

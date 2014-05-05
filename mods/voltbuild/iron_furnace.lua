@@ -25,7 +25,7 @@ local furnace_properties = {
 	documentation = {summary = "An improved furnace created by steel ingots."},
 	tiles = {"itest_iron_furnace_side.png", "itest_iron_furnace_side.png", "itest_iron_furnace_side.png","itest_iron_furnace_side.png", "itest_iron_furnace_side.png", "itest_iron_furnace_front.png"},
 	paramtype2 = "facedir",
-	groups = {energy=1, energy_consumer=1, cracky=2},
+	groups = {energy=1, energy_consumer=1, cracky=default.dig.stone},
 	tube = default_furnace_prop.tube,
 	legacy_facedir_simple = true,
 	sounds = default.node_sound_stone_defaults(),

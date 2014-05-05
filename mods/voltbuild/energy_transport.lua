@@ -27,8 +27,12 @@ function voltbuild.blast(pos,intensity)
 	local destroy = minetest.registered_nodes[node.name]["on_blast"]
 	if destroy and type(destroy) == "function" then
 		destroy(pos,intensity)
-	else 
+	else                
 		minetest.env:set_node(pos,{name="air"})
+                -- fallback to simulate MC-like blasts. LaMe.
+                if math.random() > 0.6 then
+                   minetest.item_drop(ItemStack(node.name), nil, pos)
+                end
 	end
 end
 

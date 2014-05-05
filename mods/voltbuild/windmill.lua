@@ -1,7 +1,7 @@
 wind_speed = math.random(0,7)
 
 minetest.register_node("voltbuild:windmill",{description="Windmill",
-	groups={energy=1,cracky=2},
+	groups={energy=1,cracky=default.dig.stone},
 	tiles={"itest_windmill_top.png", "itest_windmill_top.png", "itest_windmill_side.png"},
 	documentation = {summary = "Generator that produces more electricity the higher it is.\n"..
 		"Minimize the number of nodes anywhere near this generator for best electricity production."},

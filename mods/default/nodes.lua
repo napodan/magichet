@@ -601,13 +601,13 @@ minetest.register_node("default:water_source", {
     inventory_image = minetest.inventorycube("default_water.png"),
     drawtype = "liquid",
     tiles = {
-        {name="default_water_source_animated.png", animation={type="vertical_frames", aspect_w=16, aspect_h=16, length=2.0}}
+        {name="default_water_source_animated.png", animation={type="vertical_frames", aspect_w=32, aspect_h=32, length=2.0}}
     },
     special_tiles = {
         -- New-style water source material (mostly unused)
         {
             name="default_water_source_animated.png",
-            animation={type="vertical_frames", aspect_w=16, aspect_h=16, length=2.0},
+            animation={type="vertical_frames", aspect_w=32, aspect_h=32, length=2.0},
             backface_culling = false,
         }
     },
@@ -1131,7 +1131,7 @@ minetest.register_node("default:furnace", {
     on_construct = function(pos)
         local meta = minetest.env:get_meta(pos)
         meta:set_string("formspec", default.furnace_inactive_formspec)
-        meta:set_string("infotext", "Furnace")
+        meta:set_string("infotext", "Furnace")        
                 meta:set_string("percent", "0")
         local inv = meta:get_inventory()
         inv:set_size("fuel", 1)

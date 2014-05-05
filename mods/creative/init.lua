@@ -38,7 +38,7 @@ minetest.after(0, function()
     })
     local creative_list = {}
     for name,def in pairs(minetest.registered_items) do
-        if (not def.groups.not_in_creative_inventory or def.groups.not_in_creative_inventory == 0)
+        if (not def.groups.not_in_creative_inventory or def.groups.not_in_creative_inventory == 0) and not name:find('enchantment:')
                 and def.description and def.description ~= "" then
             table.insert(creative_list, name)
         end

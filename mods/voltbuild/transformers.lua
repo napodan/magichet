@@ -13,7 +13,7 @@ function send_alldirs_except(pos,dir,power)
 end
 
 minetest.register_node("voltbuild:lv_transformer",{description="LV Transformer",
-	groups={energy=1,cracky=2,energy_consumer=1},
+	groups={energy=1,cracky=default.dig.stone,energy_consumer=1},
 	paramtype2 = "facedir",
 	legacy_facedir_simple = true,
 	tiles={"itest_lv_transformer_lv.png", "itest_lv_transformer_lv.png", "itest_lv_transformer_mv.png", "itest_lv_transformer_lv.png", "itest_lv_transformer_lv.png", "itest_lv_transformer_lv.png"},
@@ -51,7 +51,7 @@ minetest.register_abm({
 })
 
 minetest.register_node("voltbuild:mv_transformer",{description="MV Transformer",
-	groups={energy=1,cracky=2,energy_consumer=1},
+	groups={energy=1,cracky=default.dig.stone,energy_consumer=1},
 	paramtype2 = "facedir",
 	legacy_facedir_simple = true,
 	tiles={"itest_mv_transformer_mv.png", "itest_mv_transformer_mv.png", "itest_mv_transformer_hv.png", "itest_mv_transformer_mv.png", "itest_mv_transformer_mv.png", "itest_mv_transformer_mv.png"},
@@ -89,7 +89,7 @@ minetest.register_abm({
 })
 
 minetest.register_node("voltbuild:hv_transformer",{description="HV Transformer",
-	groups={energy=1,cracky=2,energy_consumer=1},
+	groups={energy=1,cracky=default.dig.stone,energy_consumer=1},
 	paramtype2 = "facedir",
 	legacy_facedir_simple = true,
 	tiles={"itest_hv_transformer_hv.png", "itest_hv_transformer_hv.png", "itest_hv_transformer_ev.png", "itest_hv_transformer_hv.png", "itest_hv_transformer_hv.png", "itest_hv_transformer_hv.png"},

@@ -114,7 +114,7 @@ minetest.register_globalstep(function(dtime)
               if (not (y>-8000 and y<-5000)) and y<-1001 and not aeons['something strange'][pll]    then tp = 'something strange' end
               if (not (y>-8000 and y<-5000)) and y<-2001 and not aeons['ancient civilization'][pll] then tp = 'ancient civilization' end
 
-              if y>  256 and not aeons['foatlands'][pll] then tp = 'foatlands' end
+              if y>  256 and not aeons['floatlands'][pll] then tp = 'floatlands' end
               if y<-8000 and not aeons['aliens'][pll]    then tp = 'aliens' end
 
               if y>16000 and not aeons['dimentional doors'][pll] then tp = 'dimentional doors' end

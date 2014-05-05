@@ -1,0 +1,61 @@
+TODOs
+=====
+
+Engine
+------
++ forbid console_key to close the console
++ make "Return" to close the console
+- move console to the bottom of the screen
+- fix "sheet" ore placement
+- add an optional bg setting for chat
+- create an api for per item definition swap
+
+Game
+----
+- proper on_blast for every node (!)
+- proper IC2 recipes
+- different meshes for "ghostly_blocks"
+~ replace 8x4 grid by 9x4 within all mods which are to include (!)
+~ make all leaves and other handle_with_caution nodes to drop NOTHING (!)
+- change stone to desert_stone in fiery biomes
+- make node fillers to go even deeper
+- make bamboo replace water
++ make aluntra and ignis be a rare drop
+- delete optional dependencies to speedup the game a little (!)
+- make a wrench to dig machinery
+- blast machinery on dig otherwise
+- make wrench be able to rotate nodes
+- remove itest upgrade aliases
+~ Translate into Russian
+- and made some global option to switch to it "in one click"
+~ fix typos... (will always bne like "~")
+- create in-game documentation in a form of books
+- add villages
+- add villagers
+~ add MC-like mobs
+~ speed-up existing mobs
++ double energy requirements for hospital
++ slow down hospitals
++ make medpacks harder to get
+- debuff hospitals even more if concidered like cheating
+~ just one-per-mod "loaded" message
++ generate voltbuild docs AFTER localization
+- redo mapp into LVM (!)
+- make torches be entities
+- make chests be entities (hide a node inside the entity to store inv) (!)
+- add metallic covers to voltbuild (means hammers, plates, machinery) (!)
+- fix iron furnace (!)
+- wiring tutorial (!)
+- made jetpack an armour
+- create quests for layers
++ add CO(2) liquid
+- add CO(2) generation
+- make furnaces break down after mass CO(2) production
+- meta:set_string("efficiency", "100")
+
+Legend
+------
+*-* means it's NOT done yet
+*~* means it's NOT done yet, but is in progress
+*+* means it's ALREADY has been done
+*(!)* means it's TOP priority

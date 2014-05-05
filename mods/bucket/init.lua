@@ -6,6 +6,8 @@ local LIQUID_MAX = 8  --The number of water levels when liquid_finite is enabled
 minetest.register_alias("bucket", "bucket:bucket_empty")
 minetest.register_alias("bucket_water", "bucket:bucket_water")
 minetest.register_alias("bucket_lava", "bucket:bucket_lava")
+minetest.register_alias("bucket_ignis", "bucket:bucket_ignis")
+minetest.register_alias("bucket_CO2", "bucket:bucket_CO2")
 
 minetest.register_craft({
     output = 'bucket:bucket_empty 1',
@@ -38,7 +40,7 @@ function bucket.register_liquid(source, flowing, itemname, inventory_image, name
             inventory_image = inventory_image,
             stack_max = 1,
             liquids_pointable = true,
-            groups = {not_in_creative_inventory=1},
+            --groups = {not_in_creative_inventory=1},
             on_place = function(itemstack, user, pointed_thing)
                 -- Must be pointing to node
                 if pointed_thing.type ~= "node" then
@@ -47,12 +49,6 @@ function bucket.register_liquid(source, flowing, itemname, inventory_image, name
 
                 -- Call on_rightclick if the pointed node defines it
                 if user and not user:get_player_control().sneak then
-                    local n = minetest.get_node(pointed_thing.under)
-                    local nn = n.name
-                    if minetest.registered_nodes[nn] and minetest.registered_nodes[nn].on_rightclick then
-                        return minetest.registered_nodes[nn].on_rightclick(pointed_thing.under, n, user, itemstack) or itemstack
-                    end
-                end
 
                 local place_liquid = function(pos, node, source, flowing, fullness)
                     if math.floor(fullness/128) == 1 or (not minetest.setting_getbool("liquid_finite")) then
@@ -92,6 +88,7 @@ function bucket.register_liquid(source, flowing, itemname, inventory_image, name
                 end
                 return {name="bucket:bucket_empty"}
             end
+                end
         })
     end
 end
@@ -109,27 +106,137 @@ minetest.register_craftitem("bucket:bucket_empty", {
         -- Check if pointing to a liquid source
         node = minetest.get_node(pointed_thing.under)
         local nname=node.name
+        local water = false
         local pll = user:get_player_name()
         if nname:find("lava") and awards.players[pll].bucket then awards.players[pll].lava=1 end
         if nname:find("water") and awards.players[pll].bucket then awards.players[pll].water=1 end
         liquiddef = bucket.liquids[node.name]
         if liquiddef ~= nil and liquiddef.itemname ~= nil and (node.name == liquiddef.source or
             (node.name == liquiddef.flowing and minetest.setting_getbool("liquid_finite"))) then
-
             minetest.add_node(pointed_thing.under, {name="air"})
-
             if node.name == liquiddef.source then node.param2 = LIQUID_MAX end
+        
+        local nn
+        if nname:find("water") then           
+           nn = "bucket:bucket_water"
+           -- ~5% chance to get ignis
+           local rnd = math.random(1, 20)
+           --print(rnd)
+           if rnd == 1 then
+              nn = "bucket:bucket_ignis"              
+           end
+           return ItemStack({name = nn, metadata = tostring(node.param2)})
+        else
             return ItemStack({name = liquiddef.itemname, metadata = tostring(node.param2)})
+        end
         end
     end,
 })
+
+-- CO(2) definition
+-- flowing CO2 (Remember, that O(2) is lighter than CO(2) ;))
+minetest.register_node("bucket:CO2_flowing", {
+    description = "Flowing CO(2)",
+    inventory_image = minetest.inventorycube("bucket_CO2.png"),
+    tiles =  {
+        {
+            image="bucket_CO2_flowing_animated.png",
+            backface_culling=false,
+            animation={type="vertical_frames", aspect_w=32, aspect_h=32, length=0.8}
+        }
+    },
+   -- alpha = 60,
+    drawtype = "nodebox",
+    sunlight_propagates = true,
+    paramtype = "light",
+    use_texture_alpha = true,
+    buildable_to = true,
+    walkable = false,
+    diggable = false,
+    pointable = false,
+    node_box = {
+        type = "fixed",
+        fixed = {
+            {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
+        },
+    },
+    selection_box = {
+        type = "fixed",
+        fixed = {
+            {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
+        },
+    },
+    drop = "",
+    liquidtype = "flowing",
+    liquid_alternative_flowing = "bucket:CO2_flowing",
+    liquid_alternative_source = "bucket:CO2_source",
+    liquid_viscosity = 0,
+    post_effect_color = {a=54, r=200, g=200, b=200},
+    groups = {liquid=4, puts_out_fire=2, not_in_creative_inventory=1},
+})
+
+
+minetest.register_node("bucket:CO2_source", {
+    description = "CO2 Source",
+    inventory_image = minetest.inventorycube("bucket_CO2.png"),
+    tiles = {
+        {name="bucket_CO2_source_animated.png", animation={type="vertical_frames", aspect_w=32, aspect_h=32, length=2.0}}
+    },
+    special_tiles = {
+        -- New-style water source material (mostly unused)
+        {
+            name="bucket_CO2_source_animated.png",
+            animation={type="vertical_frames", aspect_w=32, aspect_h=32, length=2.0},
+            backface_culling = false,
+        }
+    },
+   -- alpha = 60,
+    drawtype = "nodebox",
+    sunlight_propagates = true,
+    paramtype = "light",
+    use_texture_alpha = true,
+    buildable_to = true,
+    walkable = false,
+    diggable = false,
+    pointable = false,
+    node_box = {
+        type = "fixed",
+        fixed = {
+            {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
+        },
+    },
+    selection_box = {
+        type = "fixed",
+        fixed = {
+            {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
+        },
+    },
+    drop = "",
+    drowning = 3,
+    liquidtype = "source",
+    liquid_alternative_flowing = "bucket:CO2_flowing",
+    liquid_alternative_source = "bucket:CO2_source",
+    liquid_viscosity = 0,
+    post_effect_color = {a=54, r=200, g=200, b=200},
+    groups = {liquid=4, puts_out_fire=2},
+})
+
+-- Ignis first, 'cause water will override all but bucket.
+-- Yeah, I'm too lazy to define this separately
+bucket.register_liquid(
+    "default:water_source",
+    "default:water_flowing",
+    "bucket:bucket_ignis",
+    "bucket_ignis.png",
+    "Bucket with ignis water"
+)
 
 bucket.register_liquid(
     "default:water_source",
     "default:water_flowing",
     "bucket:bucket_water",
     "bucket_water.png",
-    "Water Bucket"
+    "Bucket with water"
 )
 
 bucket.register_liquid(
@@ -137,12 +244,28 @@ bucket.register_liquid(
     "default:lava_flowing",
     "bucket:bucket_lava",
     "bucket_lava.png",
-    "Lava Bucket"
+    "Bucket with lava"
 )
 
+-- CO(2) Bucket )))
+bucket.register_liquid(
+    "bucket:CO2_source",
+    "bucket:CO2_flowing",
+    "bucket:bucket_CO2",
+    "bucket.png",
+    "Bucket with CO(2)"
+)
 minetest.register_craft({
     type = "fuel",
     recipe = "bucket:bucket_lava",
     burntime = 60,
     replacements = {{"bucket:bucket_lava", "bucket:bucket_empty"}},
+})
+
+-- ignis make water ignite and produce CO(2)
+minetest.register_craft({
+    type = "fuel",
+    recipe = "bucket:bucket_ignis",
+    burntime = 1,
+    replacements = {{"bucket:bucket_ignis", "bucket:bucket_CO2"}},
 })

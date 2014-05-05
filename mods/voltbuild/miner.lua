@@ -22,7 +22,7 @@ voltbuild.metadata_check.scanner = function (pos,listname,stack,maxtier)
 end
 
 minetest.register_node("voltbuild:mining_pipe",{description="Mining pipe",
-	groups={cracky=2},
+	groups={cracky=default.dig.stone},
 	drawtype = "nodebox",
 	node_box = {
 			type = "fixed",
@@ -35,7 +35,7 @@ minetest.register_node("voltbuild:mining_pipe",{description="Mining pipe",
 minetest.register_node("voltbuild:miner", {
 	description = "Miner",
 	tiles = {"itest_electric_furnace_side.png", "itest_electric_furnace_side.png", "itest_electric_furnace_side.png", "itest_electric_furnace_side.png", "itest_electric_furnace_side.png", "itest_electric_furnace_front.png"},
-	groups = {energy=1, energy_consumer=1, cracky=2},
+	groups = {energy=1, energy_consumer=1, cracky=default.dig.stone},
 	sounds = default.node_sound_stone_defaults(),
 	documentation = {summary = "Machine that does mining up to a certain distance.\n"..
 		"Requires mining pipes, a drill, and electricity to function. Also recommended is a scanner.\n"..

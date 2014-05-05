@@ -1,7 +1,7 @@
 minetest.register_craftitem("voltbuild:medpack", {
 	description = "Medpack",
 	inventory_image = "voltbuild_medpack.png",
-	on_place = minetest.item_eat(8, "default:glass 4"),
+	on_use = minetest.item_eat(8, "default:glass 4"),
 })
 
 minetest.register_node("voltbuild:hospital", {
@@ -9,10 +9,10 @@ minetest.register_node("voltbuild:hospital", {
 	tiles = {"voltbuild_hospital_top.png","voltbuild_hospital_bottom.png","voltbuild_hospital_side.png",
 		"voltbuild_hospital_side.png","voltbuild_hospital_back.png","voltbuild_hospital_front.png"},
 	paramtype2 = "facedir",
-	groups = {energy=1,energy_consumer=1,cracky=2},
+	groups = {energy=1,energy_consumer=1,cracky=default.dig.stone},
 	legacy_facedir_simple = true,
 	sounds = default.node_sound_stone_defaults(),
-	voltbuild = {max_tier=2,energy_cost=40,max_stress=2000,max_energy=120,max_psize=128,optime=10.0},
+	voltbuild = {max_tier=2,energy_cost=80,max_stress=2000,max_energy=120,max_psize=128,optime=10.0},
 	documentation = {summary = "A building that heals nearby players when powered."},
 	on_construct = function(pos)
 		local meta = minetest.env:get_meta(pos)
@@ -31,7 +31,7 @@ minetest.register_node("voltbuild:hospital", {
 
 components.register_abm({
 	nodenames = {"voltbuild:hospital"},
-	interval = 1.0,
+	interval = 3.0,
 	chance = 1,
 	action = function (pos,node,active_object_count,active_object_count_wider)
 		local meta = minetest.env:get_meta(pos)
@@ -65,7 +65,7 @@ components.register_abm({
 			meta:set_float("stime",meta:get_float("stime")-heal_time)
 			meta:set_int("energy",meta:get_int("energy")-energy_cost)
 			for k,player in pairs(players) do
-				player:set_hp(player:get_hp()+5)
+				player:set_hp(player:get_hp()+1)
 			end
 		end
 		meta:set_string("formspec", consumers.get_formspec(pos)..

@@ -49,12 +49,12 @@ minetest.register_craftitem( "voltbuild:copper_dust", {
 })
 
 minetest.register_node("voltbuild:machine",{description="Machine",
-	groups={cracky=2},
+	groups={cracky=default.dig.stone},
 	tiles={"itest_machine.png"},
 })
 
 minetest.register_node("voltbuild:advanced_machine",{description="Advanced machine",
-	groups={cracky=2},
+	groups={cracky=default.dig.stone},
 	tiles={"itest_advanced_machine.png"},
 })
 
@@ -84,7 +84,7 @@ minetest.register_craftitem( "voltbuild:silicon_mesecon", {
 })
 
 minetest.register_node("voltbuild:silicon_mese_block",{description="Silicon-doped mese block",
-	groups={cracky=2},
+	groups={cracky=default.dig.stone},
 	tiles={"itest_silicon_mese_block.png"},
 })
 
@@ -606,19 +606,19 @@ minetest.register_craft({
 	output = "voltbuild:ignis_dust 2",
 	recipe = "voltbuild:ice_with_ignis",
 })
-
+-- edited to consume more materials
 minetest.register_craft({
 	output = "voltbuild:medpack",
-	recipe = {{"default:glass","default:apple","default:glass"},
-		{"default:apple","default:apple","default:apple"},
-		{"default:glass","default:apple","default:glass"}},
+	recipe = {{"voltbuild:refined_iron_ingot","default:apple","voltbuild:refined_iron_ingot"},
+		{"default:apple","voltbuild:circuit","default:apple"},
+		{"voltbuild:refined_iron_ingot","default:apple","voltbuild:refined_iron_ingot"}},
 })
 
 minetest.register_craft({
 	output = "voltbuild:hospital",
 	recipe = {{"voltbuild:medpack","voltbuild:ov_scanner","voltbuild:medpack"},
 		{"voltbuild:medpack","voltbuild:machine","voltbuild:medpack"},
-		{"voltbuild:extractor","voltbuild:circuit","voltbuild:compressor"}},
+		{"voltbuild:extractor","voltbuild:advanced_circuit","voltbuild:compressor"}},
 })
 
 minetest.register_craft({

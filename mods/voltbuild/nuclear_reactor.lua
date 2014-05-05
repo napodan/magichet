@@ -416,7 +416,7 @@ local nuclear_reactor = {
 		"voltbuild_nuclear_reactor.png","voltbuild_nuclear_reactor.png",
 		"voltbuild_nuclear_reactor.png","voltbuild_nuclear_reactor.png"},
 	paramtype2 = "facedir",
-	groups = {energy=1, cracky=2,tubedevice=1,tubedevice_receiver=1},
+	groups = {energy=1, cracky=default.dig.iron,tubedevice=1,tubedevice_receiver=1},
 	voltbuild = {max_energy=12288,max_tier=2,max_stress=2000,fueltime=10.0,optime=1.0},
 	documentation = {summary = "A complicated DANGEROUS generator.\n"..
 		"It requires a Reaction Chamber and uranium to start generating internal electricity, radiation, and blow up.\n"..

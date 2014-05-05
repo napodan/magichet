@@ -216,7 +216,7 @@ components.register_clockitem("voltbuild:overclock", {
 	inventory_image = "voltbuild_overclock.png",
 	voltbuild = {component=1,
 		stress_cost_effect = function(stress)
-			return stress+20
+			return stress+10
 		end,
 		clock_speed_effect = function (x)
 			return x
@@ -253,7 +253,7 @@ minetest.register_craftitem("voltbuild:fan",{
 		after_effects = function(pos)
 			local meta = minetest.env:get_meta(pos)
 			local stress = meta:get_int("stress")
-			meta:set_int("stress",math.max(stress-20,0))
+			meta:set_int("stress",math.max(stress-10,0))
 		end},
 	documentation = {summary="Slowly relieves a machine's stress."}
 })

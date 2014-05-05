@@ -1,6 +1,7 @@
 -- ZCG mod for minetest
 -- See README for more information
 -- Released by Zeg9 under WTFPL
+-- edited by 4aiman, licensed as GPLv3
 
 zcg = {}
 
