@@ -12,12 +12,12 @@ function pane(node, desc, dropitem, recipeitem)
 	}
 
 	local function update_pane(pos)
-		if minetest.env:get_node(pos).name:find("xpanes:pane_"..node) == nil then
+		if minetest.get_node(pos).name:find("xpanes:pane_"..node) == nil then
 			return
 		end
 		local sum = 0
 		for i = 1, 4 do
-			local node = minetest.env:get_node({x = pos.x + directions[i].x, y = pos.y + directions[i].y, z = pos.z + directions[i].z})
+			local node = minetest.get_node({x = pos.x + directions[i].x, y = pos.y + directions[i].y, z = pos.z + directions[i].z})
 			if minetest.registered_nodes[node.name].walkable ~= false then
 				sum = sum + 2 ^ (i - 1)
 			end
@@ -25,7 +25,7 @@ function pane(node, desc, dropitem, recipeitem)
 		if sum == 0 then
 			sum = 15
 		end
-		minetest.env:add_node(pos, {name = "xpanes:pane_"..node.."_"..sum})
+		minetest.add_node(pos, {name = "xpanes:pane_"..node.."_"..sum})
 	end
 
 	local function update_nearby(pos)
@@ -114,3 +114,5 @@ end
 
 pane("glass", "Glass Pane", "", "default:glass")
 pane("iron", "Iron Fence", "xpanes:pane_iron", "default:steel_ingot")
+
+print('[OK] XPanes loaded')

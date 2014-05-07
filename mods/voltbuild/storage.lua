@@ -1,7 +1,7 @@
 storage = {}
 
 function storage.charge(pos)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	local energy = meta:get_int("energy")
 	meta:set_int("energy",voltbuild.charge_item(pos,energy))
 end
@@ -9,21 +9,21 @@ end
 storage.discharge = voltbuild.discharge_item
 
 function storage.send(pos,energy,dir)
-	local node = minetest.env:get_node(pos)
-	local meta = minetest.env:get_meta(pos)
+	local node = minetest.get_node(pos)
+	local meta = minetest.get_meta(pos)
 	local e = meta:get_int("energy")
 	local packet_size = minetest.registered_nodes[node.name]["voltbuild"]["max_psize"]
 	energy = math.min(e,packet_size,energy)
 	local sent = send_packet(pos,dir,energy)
 	if sent~=nil then
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		local e = meta:get_int("energy")
 		meta:set_int("energy",e-sent)
 	end
 end
 
 function storage.on_construct(pos)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
 	inv:set_size("charge", 1)
 	inv:set_size("discharge", 1)
@@ -42,9 +42,9 @@ function storage.get_formspec(pos)
 end
 
 function storage.energy_release(pos)
-	local node = minetest.env:get_node(pos)
+	local node = minetest.get_node(pos)
 	local senddir = param22dir(node.param2)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	local e = meta:get_int("energy")
 	local packet_size = minetest.registered_nodes[node.name]["voltbuild"]["max_psize"]
 	energy = math.min(e,packet_size)
@@ -53,7 +53,7 @@ end
 
 function storage.abm (pos, node, active_object_count, active_objects_wider)
 	local senddir = param22dir(node.param2)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	local psize = minetest.registered_nodes[node.name]["voltbuild"]["max_psize"]
 	storage.charge(pos)
 	storage.send(pos,psize,senddir)

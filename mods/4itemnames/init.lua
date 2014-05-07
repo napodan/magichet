@@ -47,7 +47,7 @@ minetest.register_globalstep(function(dtime)
            then --hud_change(huds[pll], 'text', desc) doesn't work for me :`(
                 player:hud_remove(huds[pll])
            end
-           local off = {x=0, y=-70}
+           local off = {x=0, y=-80}
            if airhudmod then off.y=off.y-20 end
            huds[pll] = player:hud_add({
                                           hud_elem_type = "text",

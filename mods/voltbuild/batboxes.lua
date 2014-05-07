@@ -7,7 +7,7 @@ minetest.register_node("voltbuild:batbox",{description="BatBox",
 		max_stress=2000,active=true},
 	documentation = {summary="Low voltage energy storage for later use."},
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_int("energy",0)
 		meta:set_string("formspec", storage.get_formspec(pos))
 		storage.on_construct(pos)
@@ -33,7 +33,7 @@ minetest.register_node("voltbuild:mfe_unit",{description="MFE Unit",
 		active=true},
 	documentation = {summary="Medium voltage energy storage for later use."},
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_int("energy",0)
 		meta:set_string("formspec", storage.get_formspec(pos))
 		storage.on_construct(pos)
@@ -59,7 +59,7 @@ minetest.register_node("voltbuild:mfs_unit",{description="MFS Unit",
 		active=true},
 	documentation = {summary="High voltage energy storage for later use."},
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_int("energy",0)
 		meta:set_string("formspec", storage.get_formspec(pos))
 		storage.on_construct(pos)

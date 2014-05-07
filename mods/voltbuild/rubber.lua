@@ -27,11 +27,11 @@ function spawn_rubber_tree(pos)
 		else
 			node.name = "voltbuild:rubber_tree"
 		end
-		minetest.env:set_node(npos,node)
+		minetest.set_node(npos,node)
 	end
 	for _,lpos in ipairs(rubber_tree_leaves_pos) do
 		local npos = addVect(pos,lpos)
-		minetest.env:set_node(npos,{name="voltbuild:rubber_leaves"})
+		minetest.set_node(npos,{name="voltbuild:rubber_leaves"})
 	end
 end
 
@@ -92,7 +92,7 @@ minetest.register_abm({
 	chance = 15,
 	action = function(pos, node)
 		node.name = "voltbuild:rubber_tree_full"
-		minetest.env:set_node(pos, node)
+		minetest.set_node(pos, node)
 	end
 })
 
@@ -115,7 +115,7 @@ minetest.register_node("voltbuild:rubber_leaves", {
                     end
                 else
                     if digger:get_wielded_item():get_name() == "default:shears" or nn ~= "voltbuild:rubber_leaves" then
-                        local obj = minetest.env:add_item(pos, nn)
+                        local obj = minetest.add_item(pos, nn)
                         if obj ~= nil then
                             obj:get_luaentity().collect = true
                             local x = math.random(1, 5)
@@ -149,7 +149,7 @@ minetest.register_on_generated(function(minp, maxp, blockseed)
 		return
 	end
 	local tmp = {x=(maxp.x-minp.x)/2+minp.x, y=(maxp.y-minp.y)/2+minp.y, z=(maxp.z-minp.z)/2+minp.z}
-	local pos = minetest.env:find_node_near(tmp, maxp.x-minp.x, {"default:dirt_with_grass"})
+	local pos = minetest.find_node_near(tmp, maxp.x-minp.x, {"default:dirt_with_grass"})
 	if pos ~= nil then
 		spawn_rubber_tree(pos)
 	end
@@ -180,17 +180,17 @@ minetest.register_tool("voltbuild:treetap",{
 		groupcaps={fleshy={times={}, uses=50, maxlevel=0}}},
 	on_place = function (itemstack, user, pointed_thing)
 		local npos = pointed_thing.under
-		local node = minetest.env:get_node(npos)
+		local node = minetest.get_node(npos)
 		if node.name == "voltbuild:rubber_tree_full" then
 			node.name = "voltbuild:rubber_tree_empty"
 			local drop = math.random(1,3)
-			minetest.env:set_node(npos,node)
+			minetest.set_node(npos,node)
 			local dropstack = ItemStack(
 				{name = "voltbuild:sticky_resin", count = drop})
 			if node.param2 == nil then node.param2 = 1 end
 			local droppos = addVect(addVect(npos,param22dir((node.param2+1)%4)),
 				{x=math.random()/2-0.25,y=0,z=math.random()/2-0.25})
-			minetest.env:add_item(droppos,dropstack)
+			minetest.add_item(droppos,dropstack)
 			itemstack = damage_treetap(itemstack)
 		elseif node.name == "voltbuild:rubber_tree_empty" then
 		end
@@ -208,29 +208,29 @@ minetest.register_tool("voltbuild:alunra_treetap",{
 		groupcaps={fleshy={times={}, uses=50, maxlevel=0}}},
 	on_place = function (itemstack, user, pointed_thing)
 		local npos = pointed_thing.under
-		local node = minetest.env:get_node(npos)
+		local node = minetest.get_node(npos)
 		if node.param2 == nil then node.param2 = 1 end
 		local droppos = addVect(addVect(npos,param22dir((node.param2+1)%4)),
 			{x=math.random()/2-0.25,y=0,z=math.random()/2-0.25})
 		while string.match(node.name,"voltbuild:rubber_tree") do
 			npos.y = npos.y-1
-			node = minetest.env:get_node(npos)
+			node = minetest.get_node(npos)
 		end
 		npos.y = npos.y+1
-		node = minetest.env:get_node(npos)
+		node = minetest.get_node(npos)
 		while string.match(node.name,"voltbuild:rubber_tree") do
 			if node.name == "voltbuild:rubber_tree_full" then
 				node.name = "voltbuild:rubber_tree_empty"
 				local drop = math.random(1,3)
-				minetest.env:set_node(npos,node)
+				minetest.set_node(npos,node)
 				local dropstack = ItemStack(
 					{name = "voltbuild:sticky_resin", count = drop})
-				minetest.env:add_item(droppos,dropstack)
+				minetest.add_item(droppos,dropstack)
 				itemstack = damage_treetap(itemstack)
 			elseif node.name == "voltbuild:rubber_tree_empty" then
 			end
 			npos.y = npos.y+1
-			node = minetest.env:get_node(npos)
+			node = minetest.get_node(npos)
 		end
 		return minetest.item_place(itemstack,user,pointed_thing)
 	end,

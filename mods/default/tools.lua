@@ -713,9 +713,9 @@ minetest.register_tool("default:shears", {
 --
 
 local function set_fire(pointed_thing)
-        local n = minetest.env:get_node(pointed_thing.above)
+        local n = minetest.get_node(pointed_thing.above)
         if n.name ~= ""  and n.name == "air" then
-            minetest.env:set_node(pointed_thing.above, {name="fire:flame_normal"})
+            minetest.set_node(pointed_thing.above, {name="fire:flame_normal"})
         end
 end
 

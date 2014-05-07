@@ -307,7 +307,7 @@ minetest.register_node("default:jungleleaves", {
             end
         else
             if digger:get_wielded_item():get_name() == "default:shears" or nn ~= "default:jungleleaves" then
-                local obj = minetest.env:add_item(pos, nn)
+                local obj = minetest.add_item(pos, nn)
                 if obj ~= nil then
                     obj:get_luaentity().collect = true
                     local x = math.random(1, 5)
@@ -324,7 +324,7 @@ minetest.register_node("default:jungleleaves", {
         end
     end,
     after_place_node = function(pos, placer, itemstack)
-        minetest.env:set_node(pos, {name="default:jungleleaves", param2=1})
+        minetest.set_node(pos, {name="default:jungleleaves", param2=1})
     end,
 })
 
@@ -395,7 +395,7 @@ minetest.register_node("default:leaves", {
             end
         else
             if digger:get_wielded_item():get_name() == "default:shears" or nn ~= "default:leaves" then
-                local obj = minetest.env:add_item(pos, nn)
+                local obj = minetest.add_item(pos, nn)
                 if obj ~= nil then
                     obj:get_luaentity().collect = true
                     local x = math.random(1, 5)
@@ -412,7 +412,7 @@ minetest.register_node("default:leaves", {
         end
     end,
     after_place_node = function(pos, placer, itemstack)
-        minetest.env:set_node(pos, {name="default:leaves", param2=1})
+        minetest.set_node(pos, {name="default:leaves", param2=1})
     end,
 })
 
@@ -752,14 +752,14 @@ minetest.register_node("default:sign_wall", {
     legacy_wallmounted = true,
     sounds = default.node_sound_defaults(),
     on_construct = function(pos)
-        --local n = minetest.env:get_node(pos)
-        local meta = minetest.env:get_meta(pos)
+        --local n = minetest.get_node(pos)
+        local meta = minetest.get_meta(pos)
         meta:set_string("formspec", "field[text;;${text}]")
         meta:set_string("infotext", "\"\"")
     end,
     on_receive_fields = function(pos, formname, fields, sender)
         --print("Sign at "..minetest.pos_to_string(pos).." got "..dump(fields))
-        local meta = minetest.env:get_meta(pos)
+        local meta = minetest.get_meta(pos)
         fields.text = fields.text or ""
         print((sender:get_player_name() or "").." wrote \""..fields.text..
                 "\" to sign at "..minetest.pos_to_string(pos))
@@ -793,16 +793,16 @@ local function get_chest_neighborpos(pos, param2, side)
 end
 
 local function hacky_swap_node(pos,name, param2)
-    local node = minetest.env:get_node(pos)
-    local meta = minetest.env:get_meta(pos)
+    local node = minetest.get_node(pos)
+    local meta = minetest.get_meta(pos)
     if node.name == name then
         return
     end
     node.name = name
     node.param2 = param2 or node.param2
     local meta0 = meta:to_table()
-    minetest.env:set_node(pos,node)
-    meta = minetest.env:get_meta(pos)
+    minetest.set_node(pos,node)
+    meta = minetest.get_meta(pos)
     meta:from_table(meta0)
 end
 
@@ -816,10 +816,10 @@ minetest.register_node("default:chest", {
     legacy_facedir_simple = true,
     sounds = default.node_sound_wood_defaults(),
     on_construct = function(pos)
-        local param2 = minetest.env:get_node(pos).param2
-        local meta = minetest.env:get_meta(pos)
-        if minetest.env:get_node(get_chest_neighborpos(pos, param2, "right")).name == "default:chest" then
-            minetest.env:set_node(pos, {name="default:chest_right",param2=param2})
+        local param2 = minetest.get_node(pos).param2
+        local meta = minetest.get_meta(pos)
+        if minetest.get_node(get_chest_neighborpos(pos, param2, "right")).name == "default:chest" then
+            minetest.set_node(pos, {name="default:chest_right",param2=param2})
             local p = get_chest_neighborpos(pos, param2, "right")
             meta:set_string("formspec",
                     "size[9,11.5]"..
@@ -829,7 +829,7 @@ minetest.register_node("default:chest", {
                     "list[current_player;main;0,10.5;9,1;]")
             meta:set_string("infotext", "Large Chest")
             hacky_swap_node(p, "default:chest_left", param2)
-            local m = minetest.env:get_meta(p)
+            local m = minetest.get_meta(p)
             m:set_string("formspec",
                     "size[9,11.5]"..
                     "list[context;main;0,0;9,3;]"..
@@ -837,8 +837,8 @@ minetest.register_node("default:chest", {
                     "list[current_player;main;0,7;9,3;9]"..
                     "list[current_player;main;0,10.5;9,1;]")
             m:set_string("infotext", "Large Chest")
-        elseif minetest.env:get_node(get_chest_neighborpos(pos, param2, "left")).name == "default:chest" then
-            minetest.env:set_node(pos, {name="default:chest_left",param2=param2})
+        elseif minetest.get_node(get_chest_neighborpos(pos, param2, "left")).name == "default:chest" then
+            minetest.set_node(pos, {name="default:chest_left",param2=param2})
             local p = get_chest_neighborpos(pos, param2, "left")
             meta:set_string("formspec",
                     "size[9,11.5]"..
@@ -848,7 +848,7 @@ minetest.register_node("default:chest", {
                     "list[current_player;main;0,10.5;9,1;]")
             meta:set_string("infotext", "Large Chest")
             hacky_swap_node(p, "default:chest_right", param2)
-            local m = minetest.env:get_meta(p)
+            local m = minetest.get_meta(p)
             m:set_string("formspec",
                     "size[9,11.5]"..
                     "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";main;0,0;9,3;]"..
@@ -868,7 +868,7 @@ minetest.register_node("default:chest", {
         inv:set_size("main", 9*3)
     end,
     after_dig_node = function(pos, oldnode, oldmetadata, digger)
-        local meta = minetest.env:get_meta(pos)
+        local meta = minetest.get_meta(pos)
         local meta2 = meta
         meta:from_table(oldmetadata)
         local inv = meta:get_inventory()
@@ -876,7 +876,7 @@ minetest.register_node("default:chest", {
             local stack = inv:get_stack("main", i)
             if not stack:is_empty() then
                 local p = {x=pos.x+math.random(0, 10)/10-0.5, y=pos.y, z=pos.z+math.random(0, 10)/10-0.5}
-                minetest.env:add_item(p, stack)
+                minetest.add_item(p, stack)
             end
         end
         meta:from_table(meta2:to_table())
@@ -903,16 +903,16 @@ minetest.register_node("default:chest_left", {
     drop = "default:chest",
     sounds = default.node_sound_wood_defaults(),
     on_destruct = function(pos)
-        local m = minetest.env:get_meta(pos)
+        local m = minetest.get_meta(pos)
         if m:get_string("infotext") == "Chest" then
             return
         end
-        local param2 = minetest.env:get_node(pos).param2
+        local param2 = minetest.get_node(pos).param2
         local p = get_chest_neighborpos(pos, param2, "left")
-        if not p or minetest.env:get_node(p).name ~= "default:chest_right" then
+        if not p or minetest.get_node(p).name ~= "default:chest_right" then
             return
         end
-        local meta = minetest.env:get_meta(p)
+        local meta = minetest.get_meta(p)
         meta:set_string("formspec",
                 "size[9,8.5]"..
                 "list[context;main;0,0;9,3;]"..
@@ -922,7 +922,7 @@ minetest.register_node("default:chest_left", {
         hacky_swap_node(p, "default:chest")
     end,
     after_dig_node = function(pos, oldnode, oldmetadata, digger)
-        local meta = minetest.env:get_meta(pos)
+        local meta = minetest.get_meta(pos)
         local meta2 = meta
         meta:from_table(oldmetadata)
         local inv = meta:get_inventory()
@@ -930,7 +930,7 @@ minetest.register_node("default:chest_left", {
             local stack = inv:get_stack("main", i)
             if not stack:is_empty() then
                 local p = {x=pos.x+math.random(0, 10)/10-0.5, y=pos.y, z=pos.z+math.random(0, 10)/10-0.5}
-                minetest.env:add_item(p, stack)
+                minetest.add_item(p, stack)
             end
         end
         meta:from_table(meta2:to_table())
@@ -957,16 +957,16 @@ minetest.register_node("default:chest_right", {
     drop = "default:chest",
     sounds = default.node_sound_wood_defaults(),
     on_destruct = function(pos)
-        local m = minetest.env:get_meta(pos)
+        local m = minetest.get_meta(pos)
         if m:get_string("infotext") == "Chest" then
             return
         end
-        local param2 = minetest.env:get_node(pos).param2
+        local param2 = minetest.get_node(pos).param2
         local p = get_chest_neighborpos(pos, param2, "right")
-        if not p or minetest.env:get_node(p).name ~= "default:chest_left" then
+        if not p or minetest.get_node(p).name ~= "default:chest_left" then
             return
         end
-        local meta = minetest.env:get_meta(p)
+        local meta = minetest.get_meta(p)
         meta:set_string("formspec",
                 "size[9,8.5]"..
                 "list[context;main;0,0;9,3;]"..
@@ -976,7 +976,7 @@ minetest.register_node("default:chest_right", {
         hacky_swap_node(p, "default:chest")
     end,
     after_dig_node = function(pos, oldnode, oldmetadata, digger)
-        local meta = minetest.env:get_meta(pos)
+        local meta = minetest.get_meta(pos)
         local meta2 = meta
         meta:from_table(oldmetadata)
         local inv = meta:get_inventory()
@@ -984,7 +984,7 @@ minetest.register_node("default:chest_right", {
             local stack = inv:get_stack("main", i)
             if not stack:is_empty() then
                 local p = {x=pos.x+math.random(0, 10)/10-0.5, y=pos.y, z=pos.z+math.random(0, 10)/10-0.5}
-                minetest.env:add_item(p, stack)
+                minetest.add_item(p, stack)
             end
         end
         meta:from_table(meta2:to_table())
@@ -1129,7 +1129,7 @@ minetest.register_node("default:furnace", {
     legacy_facedir_simple = true,
     sounds = default.node_sound_stone_defaults(),
     on_construct = function(pos)
-        local meta = minetest.env:get_meta(pos)
+        local meta = minetest.get_meta(pos)
         meta:set_string("formspec", default.furnace_inactive_formspec)
         meta:set_string("infotext", "Furnace")        
                 meta:set_string("percent", "0")
@@ -1139,7 +1139,7 @@ minetest.register_node("default:furnace", {
         inv:set_size("dst", 4)
     end,
     after_dig_node = function(pos, oldnode, oldmetadata, digger)
-        local meta = minetest.env:get_meta(pos)
+        local meta = minetest.get_meta(pos)
         local meta2 = meta
         meta:from_table(oldmetadata)
         local inv = meta:get_inventory()
@@ -1148,14 +1148,14 @@ minetest.register_node("default:furnace", {
                 local stack = inv:get_stack(list, i)
                 if not stack:is_empty() then
                     local p = {x=pos.x+math.random(0, 10)/10-0.5, y=pos.y, z=pos.z+math.random(0, 10)/10-0.5}
-                    minetest.env:add_item(p, stack)
+                    minetest.add_item(p, stack)
                 end
             end
         end
         meta:from_table(meta2:to_table())
     end,
     allow_metadata_inventory_put = function(pos, listname, index, stack, player)
-        local meta = minetest.env:get_meta(pos)
+        local meta = minetest.get_meta(pos)
         local inv = meta:get_inventory()
         if listname == "fuel" then
             if minetest.get_craft_result({method="fuel",width=1,items={stack}}).time ~= 0 then
@@ -1173,7 +1173,7 @@ minetest.register_node("default:furnace", {
         end
     end,
     allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
-        local meta = minetest.env:get_meta(pos)
+        local meta = minetest.get_meta(pos)
         local inv = meta:get_inventory()
         local stack = inv:get_stack(from_list, from_index)
         if to_list == "fuel" then
@@ -1208,7 +1208,7 @@ minetest.register_node("default:furnace_active", {
     legacy_facedir_simple = true,
     sounds = default.node_sound_stone_defaults(),
     after_dig_node = function(pos, oldnode, oldmetadata, digger)
-        local meta = minetest.env:get_meta(pos)
+        local meta = minetest.get_meta(pos)
         local meta2 = meta
         meta:from_table(oldmetadata)
         local inv = meta:get_inventory()
@@ -1217,14 +1217,14 @@ minetest.register_node("default:furnace_active", {
                 local stack = inv:get_stack(list, i)
                 if not stack:is_empty() then
                     local p = {x=pos.x+math.random(0, 10)/10-0.5, y=pos.y, z=pos.z+math.random(0, 10)/10-0.5}
-                    minetest.env:add_item(p, stack)
+                    minetest.add_item(p, stack)
                 end
             end
         end
         meta:from_table(meta2:to_table())
     end,
     allow_metadata_inventory_put = function(pos, listname, index, stack, player)
-        local meta = minetest.env:get_meta(pos)
+        local meta = minetest.get_meta(pos)
         local inv = meta:get_inventory()
         if listname == "fuel" then
             if minetest.get_craft_result({method="fuel",width=1,items={stack}}).time ~= 0 then
@@ -1242,7 +1242,7 @@ minetest.register_node("default:furnace_active", {
         end
     end,
     allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
-        local meta = minetest.env:get_meta(pos)
+        local meta = minetest.get_meta(pos)
         local inv = meta:get_inventory()
         local stack = inv:get_stack(from_list, from_index)
         if to_list == "fuel" then
@@ -1267,7 +1267,7 @@ minetest.register_abm({
     interval = 1.0,
     chance = 1,
     action = function(pos, node, active_object_count, active_object_count_wider)
-        local meta = minetest.env:get_meta(pos)
+        local meta = minetest.get_meta(pos)
         for i, name in ipairs({
                 "fuel_totaltime",
                 "fuel_time",
@@ -1545,8 +1545,8 @@ minetest.register_node("default:snow", {
     }),
     on_construct = function(pos)
         pos.y = pos.y - 1
-        if minetest.env:get_node(pos).name == "default:dirt_with_grass" then
-            minetest.env:set_node(pos, {name="default:dirt_with_snow"})
+        if minetest.get_node(pos).name == "default:dirt_with_grass" then
+            minetest.set_node(pos, {name="default:dirt_with_snow"})
         end
     end,
 })

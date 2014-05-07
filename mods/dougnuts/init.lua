@@ -66,7 +66,7 @@ end
 minetest.register_chatcommand("spawn", {
     description = "Teleports you to the spawn point (2000 meters away max)",
     func = function(name, param)
-        local pl = minetest.env:get_player_by_name(name)
+        local pl = minetest.get_player_by_name(name)
         if pl ~= nil then
            local playerPos = pl:getpos()
             playerPos.x = math.floor(playerPos.x)

@@ -305,22 +305,22 @@ minetest.register_on_joinplayer(function(player)
      -- add hunger hud background
      hungerhudb[pll]=player:hud_add({
         hud_elem_type = "statbar",
-        position = {x=0.5,y=0.9},
+        position = {x=0.5,y=1},
         direction=1,
         text = "hunger_tile_b.png",
         number = max_drumsticks,
         alignment = {x=-1,y=-1},
-        offset = {x=12, y=0},
+        offset = {x=12, y=-60},
      })
      -- add hungerhud
      hungerhud[pll]=player:hud_add({
         hud_elem_type = "statbar",
-        position = {x=0.5,y=0.9},
+        position = {x=0.5,y=1},
         direction=1,
         text = "hunger_tile.png",
         number = max_drumsticks,
         alignment = {x=-1,y=-1},
-        offset = {x=12, y=0},
+        offset = {x=12, y=-60},
      })
     end)
   end

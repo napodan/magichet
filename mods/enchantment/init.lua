@@ -757,7 +757,7 @@ minetest.register_node("enchantment:table", {
         local inv = meta:get_inventory()
         inv:set_size("itm", 1*1)
         meta:set_string("formspec", empty_formspec())
-        minetest.get_node_timer(pos):start(0)
+        --minetest.get_node_timer(pos):start(0)
     end,
     -- keep it here only 'cause I'll forget this and won't have an Internet
     -- connection by the time I'll be in need of this

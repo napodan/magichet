@@ -1,12 +1,12 @@
 consumers={}
 consumers.tube = {
 	insert_object=function(pos,node,stack,direction)
-		local meta=minetest.env:get_meta(pos)
+		local meta=minetest.get_meta(pos)
 		local inv=meta:get_inventory()
 		return inv:add_item("src",stack)
 	end,
 	can_insert=function(pos,node,stack,direction)
-		local meta=minetest.env:get_meta(pos)
+		local meta=minetest.get_meta(pos)
 		local inv=meta:get_inventory()
 		local cooking_method = minetest.registered_nodes[node.name]["cooking_method"]
 		local produced
@@ -37,7 +37,7 @@ function consumers.get_progressbar(v,mv,bg,fg)
 end
 
 function consumers.on_construct(pos)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
 	inv:set_size("discharge", 1)
 	voltbuild.on_construct(pos)

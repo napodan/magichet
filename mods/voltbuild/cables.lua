@@ -32,7 +32,7 @@ function is_cable(nodename)
 end
 
 function cable_autoroute(pos)
-	nctr = minetest.env:get_node(pos)
+	nctr = minetest.get_node(pos)
 	if (is_cable(nctr.name) == nil)
 		and minetest.get_item_group(nctr.name, "energy") ~= 1 then return end
 
@@ -43,12 +43,12 @@ function cable_autoroute(pos)
 	pzm=0
 	pzp=0
 
-	nxm = minetest.env:get_node({ x=pos.x-1, y=pos.y  , z=pos.z   })
-	nxp = minetest.env:get_node({ x=pos.x+1, y=pos.y  , z=pos.z   })
-	nym = minetest.env:get_node({ x=pos.x  , y=pos.y-1, z=pos.z   })
-	nyp = minetest.env:get_node({ x=pos.x  , y=pos.y+1, z=pos.z   })
-	nzm = minetest.env:get_node({ x=pos.x  , y=pos.y  , z=pos.z-1 })
-	nzp = minetest.env:get_node({ x=pos.x  , y=pos.y  , z=pos.z+1 })
+	nxm = minetest.get_node({ x=pos.x-1, y=pos.y  , z=pos.z   })
+	nxp = minetest.get_node({ x=pos.x+1, y=pos.y  , z=pos.z   })
+	nym = minetest.get_node({ x=pos.x  , y=pos.y-1, z=pos.z   })
+	nyp = minetest.get_node({ x=pos.x  , y=pos.y+1, z=pos.z   })
+	nzm = minetest.get_node({ x=pos.x  , y=pos.y  , z=pos.z-1 })
+	nzp = minetest.get_node({ x=pos.x  , y=pos.y  , z=pos.z+1 })
 
 	if is_cable(nxm.name) 
 		or minetest.get_item_group(nxm.name, "energy") == 1 then pxm=1 end
@@ -65,11 +65,11 @@ function cable_autoroute(pos)
 
 	nsurround = pxm..pxp..pym..pyp..pzm..pzp
 	if is_cable(nctr.name) then
-		local meta=minetest.env:get_meta(pos)
+		local meta=minetest.get_meta(pos)
 		local meta0=meta:to_table()
 		nctr.name=string.sub(nctr.name,1,-7)..nsurround
-		minetest.env:add_node(pos, nctr)
-		local meta=minetest.env:get_meta(pos)
+		minetest.add_node(pos, nctr)
+		local meta=minetest.get_meta(pos)
 		meta:from_table(meta0)
 	end
 
@@ -261,7 +261,7 @@ for zp = 0, 1 do
 		drop = name.."_000000",
 		cablelike=1,
 		on_construct = function(pos)
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			meta:set_int("cablelike",1)
 			if minetest.registered_nodes[name.."_"..tname].on_construct_ then
 				minetest.registered_nodes[name.."_"..tname].on_construct_(pos)
@@ -358,7 +358,7 @@ local adjlist = {{x=0,y=0,z=1},{x=0,y=0,z=-1},{x=0,y=1,z=0},{x=0,y=-1,z=0},{x=1,
 
 detector_cables_off = register_cable("voltbuild:detector_cable_off",512,0.5,"Detector cable",12/16,detector_texture,detector_texture, detector_texture,"itest_detector_cable_inv.png",{
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_int("get_current",1)
 		meta:set_int("current",0)
 	end,
@@ -368,7 +368,7 @@ detector_cables_off = register_cable("voltbuild:detector_cable_off",512,0.5,"Det
 
 detector_cables_on = register_cable("voltbuild:detector_cable_on",512,0.5,"Detector cable on, you hacker you",12/16,detector_texture,detector_texture, detector_texture,"itest_detector_cable_inv.png",{
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_int("get_current",1)
 		meta:set_int("current",0)
 	end,
@@ -382,9 +382,9 @@ minetest.register_abm({
 	interval = 1.0,
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		if meta:get_int("current")>0 then
-			minetest.env:add_node(pos, {name="voltbuild:detector_cable_on_000000"})
+			minetest.add_node(pos, {name="voltbuild:detector_cable_on_000000"})
 			mesecon:receptor_on(pos)
 			cable_scanforobjects(pos)
 		end
@@ -396,9 +396,9 @@ minetest.register_abm({
 	interval = 1.0,
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		if meta:get_int("current")<=0 then
-			minetest.env:add_node(pos, {name="voltbuild:detector_cable_off_000000"})
+			minetest.add_node(pos, {name="voltbuild:detector_cable_off_000000"})
 			mesecon:receptor_off(pos)
 			cable_scanforobjects(pos)
 		end
@@ -412,19 +412,19 @@ register_cable("voltbuild:splitter_cable",512,0.5,"Splitter cable",12/16,splitte
 	mesecons = {effector = {
 		rules = adjlist,
 		action_on = function(pos,node)
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			meta:set_int("c",0)
 		end,
 		action_off = function(pos,node)
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			meta:set_int("c",1)
 		end}},
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_int("c",1)
 	end,
 	voltbuild = {can_go = function(pos,node,dir)
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			if meta:get_int("c") == 0 then return {} end
 			return adjlist
 		end}})

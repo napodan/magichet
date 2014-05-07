@@ -787,3 +787,4 @@ minetest.register_abm({
     end,
 })
 
+print('[OK] Fire (4aiman\'s version) loaded')

@@ -13,7 +13,7 @@ minetest.register_node("voltbuild:windmill",{description="Windmill",
 			return math.min(wind_speed*alt,optime*6)
 		end},
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_int("energy",0)
 		meta:set_int("energyf",0)
 		meta:set_int("obstacles",200)
@@ -31,7 +31,7 @@ components.register_abm({
 	interval=1.0,
 	chance=1,
 	action = function(pos, node, active_object_count, active_objects_wider)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		local speed = minetest.registered_nodes[node.name]["voltbuild"]["speed"](pos)
 		local optime = minetest.registered_nodes[node.name]["voltbuild"]["optime"]
 		voltbuild.generation_abm(pos,node,active_object_count, active_objects_wider)
@@ -54,14 +54,14 @@ minetest.register_abm({
 		for x = pos.x-4,pos.x+4 do
 		for y = pos.y-2,pos.y+4 do
 		for z = pos.z-4,pos.z+4 do
-			local n = minetest.env:get_node({x=x,y=y,z=z})
+			local n = minetest.get_node({x=x,y=y,z=z})
 			if n.name ~= "air" and n.name ~= "ignore" then
 				obstacles = obstacles + 1
 			end
 		end
 		end
 		end
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_int("obstacles",obstacles)
 		math.randomseed(os.time())
 		wind_speed =  math.random(0,7)

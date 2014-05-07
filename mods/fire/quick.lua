@@ -30,14 +30,14 @@ function spreadFlames(p0)
       if newFlames < maxNewFlames then
          newFlames = newFlames + 1
          local minp,maxp = get_area_p0p1(p0)
-         local nearby = minetest.env:find_nodes_in_area(minp,maxp,"group:flammable")
+         local nearby = minetest.find_nodes_in_area(minp,maxp,"group:flammable")
          for n,pos in pairs(nearby) do
-            minetest.env:set_node(pos,{name="fire:quick_flame"})
+            minetest.set_node(pos,{name="fire:quick_flame"})
          end
-         minetest.env:remove_node(p0)
+         minetest.remove_node(p0)
       end
    else
-      minetest.env:remove_node(p0)
+      minetest.remove_node(p0)
    end
 end
 

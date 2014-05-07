@@ -328,7 +328,7 @@ minetest.register_ore({
     ore            = "default:stone_with_copper",
     wherein        = "default:stone",
     clust_scarcity = 12*12*12,
-    clust_num_ores = 4,
+    clust_num_ores = 16,
     clust_size     = 20,
     height_min     = -630,
     height_max     = -160,

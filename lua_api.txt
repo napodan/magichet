@@ -1,0 +1,7 @@
+
+minetest.alter_efficiency = function (pos, value)
+^ Alters efficiency of a node at pos adding value points to it.
+  If efficiency will go below 0, node will be removed and it's
+  inventories' items will be placed as entities in the world.
+
+  

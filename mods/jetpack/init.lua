@@ -41,7 +41,8 @@ minetest.register_globalstep(function(dtime)
           local pos = player:getpos()
           local wstack = player:get_wielded_item():get_name()
           pos.y = pos.y-1
-          if not minetest.registered_nodes[minetest.get_node(pos).name].walkable and wstack=='jetpack:jet' and pos.y<128 then            
+          local node = minetest.registered_nodes[minetest.get_node(pos).name]
+          if node and not node.walkable and wstack=='jetpack:jet' and pos.y<128 then            
              if player:get_player_control().jump then
                   player:set_physics_override({gravity=-0.4,speed=1.2})
              else

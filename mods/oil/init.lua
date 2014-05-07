@@ -54,25 +54,25 @@ bucket.register_liquid(
 minetest.register_on_generated(function(minp, maxp)
     if math.random() > 0.95 then
         -- Generate Oil only under Water
-        if minetest.env:get_node(minp).name == "default:water_source" then
+        if minetest.get_node(minp).name == "default:water_source" then
             made_oil_fountain = false
             -- Generate much Oil
             for x = math.random(-6,-4),math.random(4,6),1 do
                 for y = math.random(-6,-4),math.random(4,6),1 do
                     for z = math.random(-6,-4),math.random(4,6),1 do
                         np = {x=minp.x+x,y=minp.y+y,z=minp.z+z}
-                        while minetest.env:get_node(np).name == "default:water_source" or minetest.env:get_node(np).name == "air" do
+                        while minetest.get_node(np).name == "default:water_source" or minetest.get_node(np).name == "air" do
                             np.y = np.y - 1
                         end
                         np.y = np.y + 1
                         if np.y < -5 then
-                            minetest.env:add_node(np, {name="oil:oil_source"})
+                            minetest.add_node(np, {name="oil:oil_source"})
                             if made_oil_fountain == false then
                                 if math.random() > 0.50 then
                                     for y_ = np.y,5,1 do
                                         local np_ = np
                                         np_.y = y_
-                                        minetest.env:add_node(np_, {name="oil:oil_source"})
+                                        minetest.add_node(np_, {name="oil:oil_source"})
                                     end
                                     made_oil_fountain = true
                                     local np__ = np
@@ -266,18 +266,18 @@ minetest.register_abm({
 	    end
 	    local p = {x=pos.x,y=pos.y,z=pos.z}
 	    p.y = p.y - node.param2
-	    if minetest.env:get_node({x=pos.x,y=pos.y+1,z=pos.z}).name ~= "default:torch" then
+	    if minetest.get_node({x=pos.x,y=pos.y+1,z=pos.z}).name ~= "default:torch" then
 	        did_work = false
 	        for x = p.x-10,p.x+10,1 do
 	            if did_work == true then break end
 	            for z = p.z-10,p.z+10,1 do
 	                local np = {x=x,y=p.y,z=z}
-	                if minetest.env:get_node(np).name == "oil:oil_source" then
-	                    minetest.env:add_node(pos, {name="oil:pump_oil",param2=node.param2})
+	                if minetest.get_node(np).name == "oil:oil_source" then
+	                    minetest.add_node(pos, {name="oil:pump_oil",param2=node.param2})
 	                    if np.y < 0 then
-	                        minetest.env:add_node(np, {name="default:water_source"})
+	                        minetest.add_node(np, {name="default:water_source"})
 	                    else
-	                        minetest.env:add_node(np, {name="air"})
+	                        minetest.add_node(np, {name="air"})
 	                    end
 	                    did_work = true
 	                    break
@@ -286,16 +286,16 @@ minetest.register_abm({
 	        end
 	        if did_work == false then
 	            node.param2 = node.param2 + 1
-	            minetest.env:add_node(pos, {name=node.name,param2=node.param2})
+	            minetest.add_node(pos, {name=node.name,param2=node.param2})
 	        end
 	    end
 	        --[[
-	        if minetest.env:get_node(p).name == "oil:oil_source" then
-	            minetest.env:add_node(pos, {name="oil:pump_oil",param2=node.param2})
-	            minetest.env:add_node(p, {name="oil:oil_flowing"})
+	        if minetest.get_node(p).name == "oil:oil_source" then
+	            minetest.add_node(pos, {name="oil:pump_oil",param2=node.param2})
+	            minetest.add_node(p, {name="oil:oil_flowing"})
 	        else
 	            node.param2 = node.param2 + 1
-	            minetest.env:add_node(pos, {name=node.name,param2=node.param2})
+	            minetest.add_node(pos, {name=node.name,param2=node.param2})
 	        end
 	     --]]
 	end})
@@ -305,31 +305,31 @@ minetest.register_abm({
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)
 		local p = {x=pos.x+1,y=pos.y,z=pos.z}
-	    local n = minetest.env:get_node(p)
+	    local n = minetest.get_node(p)
 	    if n.name == "oil:pipe_empty" then
-	        minetest.env:add_node(p, {name="oil:pipe_oil", param2=n.param2,param1=5})
-	        minetest.env:add_node(pos, {name="oil:pump_empty",param2=node.param2})
+	        minetest.add_node(p, {name="oil:pipe_oil", param2=n.param2,param1=5})
+	        minetest.add_node(pos, {name="oil:pump_empty",param2=node.param2})
 	    end
 	    
 	    local p = {x=pos.x-1,y=pos.y,z=pos.z}
-	    local n = minetest.env:get_node(p)
+	    local n = minetest.get_node(p)
 	    if n.name == "oil:pipe_empty" then
-	        minetest.env:add_node(p, {name="oil:pipe_oil", param2=n.param2,param1=5})
-	        minetest.env:add_node(pos, {name="oil:pump_empty",param2=node.param2})
+	        minetest.add_node(p, {name="oil:pipe_oil", param2=n.param2,param1=5})
+	        minetest.add_node(pos, {name="oil:pump_empty",param2=node.param2})
 	    end
 	    
 	    local p = {x=pos.x,y=pos.y,z=pos.z+1}
-	    local n = minetest.env:get_node(p)
+	    local n = minetest.get_node(p)
 	    if n.name == "oil:pipe_empty" then
-	        minetest.env:add_node(p, {name="oil:pipe_oil", param2=n.param2,param1=5})
-	        minetest.env:add_node(pos, {name="oil:pump_empty",param2=node.param2})
+	        minetest.add_node(p, {name="oil:pipe_oil", param2=n.param2,param1=5})
+	        minetest.add_node(pos, {name="oil:pump_empty",param2=node.param2})
 	    end
 	    
 	    local p = {x=pos.x,y=pos.y,z=pos.z-1}
-	    local n = minetest.env:get_node(p)
+	    local n = minetest.get_node(p)
 	    if n.name == "oil:pipe_empty" then
-	        minetest.env:add_node(p, {name="oil:pipe_oil", param2=n.param2,param1=5})
-	        minetest.env:add_node(pos, {name="oil:pump_empty",param2=node.param2})
+	        minetest.add_node(p, {name="oil:pipe_oil", param2=n.param2,param1=5})
+	        minetest.add_node(pos, {name="oil:pump_empty",param2=node.param2})
 	    end
 	end})
 
@@ -338,49 +338,49 @@ minetest.register_on_placenode(function(pos, newnode, placer)
     pos.y = pos.y - 1 -- Fix a weird Bug
     
     if newnode.name == "oil:pipe_empty" then
-        if minetest.env:get_node({x=pos.x,y=pos.y,z=pos.z+1}).name == "oil:pipe_empty" then
+        if minetest.get_node({x=pos.x,y=pos.y,z=pos.z+1}).name == "oil:pipe_empty" then
             newnode.param2 = 0
         end
-        if minetest.env:get_node({x=pos.x,y=pos.y,z=pos.z-1}).name == "oil:pipe_empty" then
+        if minetest.get_node({x=pos.x,y=pos.y,z=pos.z-1}).name == "oil:pipe_empty" then
             newnode.param2 = 0
         end
-        if minetest.env:get_node({x=pos.x+1,y=pos.y,z=pos.z}).name == "oil:pipe_empty" then
+        if minetest.get_node({x=pos.x+1,y=pos.y,z=pos.z}).name == "oil:pipe_empty" then
             newnode.param2 = 1
         end
-        if minetest.env:get_node({x=pos.x-1,y=pos.y,z=pos.z}).name == "oil:pipe_empty" then
+        if minetest.get_node({x=pos.x-1,y=pos.y,z=pos.z}).name == "oil:pipe_empty" then
             newnode.param2 = 1
         end
-        minetest.env:add_node(pos,newnode)
+        minetest.add_node(pos,newnode)
     end
     if newnode.name == "oil:pipe_wood" then
-        if minetest.env:get_node({x=pos.x,y=pos.y,z=pos.z+1}).name == "oil:pipe_wood" then
+        if minetest.get_node({x=pos.x,y=pos.y,z=pos.z+1}).name == "oil:pipe_wood" then
             newnode.param2 = 0
         end
-        if minetest.env:get_node({x=pos.x,y=pos.y,z=pos.z-1}).name == "oil:pipe_wood" then
+        if minetest.get_node({x=pos.x,y=pos.y,z=pos.z-1}).name == "oil:pipe_wood" then
             newnode.param2 = 0
         end
-        if minetest.env:get_node({x=pos.x+1,y=pos.y,z=pos.z}).name == "oil:pipe_wood" then
+        if minetest.get_node({x=pos.x+1,y=pos.y,z=pos.z}).name == "oil:pipe_wood" then
             newnode.param2 = 1
         end
-        if minetest.env:get_node({x=pos.x-1,y=pos.y,z=pos.z}).name == "oil:pipe_wood" then
+        if minetest.get_node({x=pos.x-1,y=pos.y,z=pos.z}).name == "oil:pipe_wood" then
             newnode.param2 = 1
         end
-        minetest.env:add_node(pos,newnode)
+        minetest.add_node(pos,newnode)
     end
     if newnode.name == "oil:gfcable_empty" then
-        if minetest.env:get_node({x=pos.x,y=pos.y,z=pos.z+1}).name == "oil:gfcable_empty" then
+        if minetest.get_node({x=pos.x,y=pos.y,z=pos.z+1}).name == "oil:gfcable_empty" then
             newnode.param2 = 0
         end
-        if minetest.env:get_node({x=pos.x,y=pos.y,z=pos.z-1}).name == "oil:gfcable_empty" then
+        if minetest.get_node({x=pos.x,y=pos.y,z=pos.z-1}).name == "oil:gfcable_empty" then
             newnode.param2 = 0
         end
-        if minetest.env:get_node({x=pos.x+1,y=pos.y,z=pos.z}).name == "oil:gfcable_empty" then
+        if minetest.get_node({x=pos.x+1,y=pos.y,z=pos.z}).name == "oil:gfcable_empty" then
             newnode.param2 = 1
         end
-        if minetest.env:get_node({x=pos.x-1,y=pos.y,z=pos.z}).name == "oil:gfcable_empty" then
+        if minetest.get_node({x=pos.x-1,y=pos.y,z=pos.z}).name == "oil:gfcable_empty" then
             newnode.param2 = 1
         end
-        minetest.env:add_node(pos,newnode)
+        minetest.add_node(pos,newnode)
     end
 end)
 
@@ -399,37 +399,37 @@ minetest.register_abm({
 	    if node.param1 == nil then node.param1 = 5 end -- No Flow-Direction
 	    if node.param1 ~= 0 then
 	        local p = {x=pos.x+1,y=pos.y,z=pos.z}
-	        local n = minetest.env:get_node(p)
+	        local n = minetest.get_node(p)
 	        if n.name == "oil:pipe_empty" then
-	            minetest.env:add_node(p, {name="oil:pipe_oil", param2=n.param2, param1=1})
-	            minetest.env:add_node(pos, {name="oil:pipe_empty",param2=node.param2})
+	            minetest.add_node(p, {name="oil:pipe_oil", param2=n.param2, param1=1})
+	            minetest.add_node(pos, {name="oil:pipe_empty",param2=node.param2})
 	        end
 	    end
 	    
 	    if node.param1 ~= 1 then
 	        local p = {x=pos.x-1,y=pos.y,z=pos.z}
-	        local n = minetest.env:get_node(p)
+	        local n = minetest.get_node(p)
 	        if n.name == "oil:pipe_empty" then
-	            minetest.env:add_node(p, {name="oil:pipe_oil", param2=n.param2, param1=0})
-	            minetest.env:add_node(pos, {name="oil:pipe_empty",param2=node.param2})
+	            minetest.add_node(p, {name="oil:pipe_oil", param2=n.param2, param1=0})
+	            minetest.add_node(pos, {name="oil:pipe_empty",param2=node.param2})
 	        end
 	    end
 	    
 	    if node.param1 ~= 2 then
 	        local p = {x=pos.x,y=pos.y,z=pos.z+1}
-	        local n = minetest.env:get_node(p)
+	        local n = minetest.get_node(p)
 	        if n.name == "oil:pipe_empty" then
-	            minetest.env:add_node(p, {name="oil:pipe_oil", param2=n.param2, param1=3})
-	            minetest.env:add_node(pos, {name="oil:pipe_empty",param2=node.param2})
+	            minetest.add_node(p, {name="oil:pipe_oil", param2=n.param2, param1=3})
+	            minetest.add_node(pos, {name="oil:pipe_empty",param2=node.param2})
 	        end
 	    end
 	    
 	    if node.param1 ~= 3 then
 	        local p = {x=pos.x,y=pos.y,z=pos.z-1}
-	        local n = minetest.env:get_node(p)
+	        local n = minetest.get_node(p)
 	        if n.name == "oil:pipe_empty" then
-	            minetest.env:add_node(p, {name="oil:pipe_oil", param2=n.param2, param1=2})
-	            minetest.env:add_node(pos, {name="oil:pipe_empty",param2=node.param2})
+	            minetest.add_node(p, {name="oil:pipe_oil", param2=n.param2, param1=2})
+	            minetest.add_node(pos, {name="oil:pipe_empty",param2=node.param2})
 	        end
 	    end
 	end})
@@ -442,37 +442,37 @@ minetest.register_abm({
 	    if node.param1 == nil then node.param1 = 5 end -- No Flow-Direction
 	    if node.param1 ~= 0 then
 	        local p = {x=pos.x+1,y=pos.y,z=pos.z}
-	        local n = minetest.env:get_node(p)
+	        local n = minetest.get_node(p)
 	        if n.name == "oil:gfcable_empty" then
-	            minetest.env:add_node(p, {name="oil:gfcable_energy", param2=n.param2, param1=1})
-	            minetest.env:add_node(pos, {name="oil:gfcable_empty",param2=node.param2})
+	            minetest.add_node(p, {name="oil:gfcable_energy", param2=n.param2, param1=1})
+	            minetest.add_node(pos, {name="oil:gfcable_empty",param2=node.param2})
 	        end
 	    end
 	    
 	    if node.param1 ~= 1 then
 	        local p = {x=pos.x-1,y=pos.y,z=pos.z}
-	        local n = minetest.env:get_node(p)
+	        local n = minetest.get_node(p)
 	        if n.name == "oil:gfcable_empty" then
-	            minetest.env:add_node(p, {name="oil:gfcable_energy", param2=n.param2, param1=0})
-	            minetest.env:add_node(pos, {name="oil:gfcable_empty",param2=node.param2})
+	            minetest.add_node(p, {name="oil:gfcable_energy", param2=n.param2, param1=0})
+	            minetest.add_node(pos, {name="oil:gfcable_empty",param2=node.param2})
 	        end
 	    end
 	    
 	    if node.param1 ~= 2 then
 	        local p = {x=pos.x,y=pos.y,z=pos.z+1}
-	        local n = minetest.env:get_node(p)
+	        local n = minetest.get_node(p)
 	        if n.name == "oil:gfcable_empty" then
-	            minetest.env:add_node(p, {name="oil:gfcable_energy", param2=n.param2, param1=3})
-	            minetest.env:add_node(pos, {name="oil:pipe_empty",param2=node.param2})
+	            minetest.add_node(p, {name="oil:gfcable_energy", param2=n.param2, param1=3})
+	            minetest.add_node(pos, {name="oil:pipe_empty",param2=node.param2})
 	        end
 	    end
 	    
 	    if node.param1 ~= 3 then
 	        local p = {x=pos.x,y=pos.y,z=pos.z-1}
-	        local n = minetest.env:get_node(p)
+	        local n = minetest.get_node(p)
 	        if n.name == "oil:gfcable_empty" then
-	            minetest.env:add_node(p, {name="oil:gfcable_energy", param2=n.param2, param1=2})
-	            minetest.env:add_node(pos, {name="oil:gfcable_empty",param2=node.param2})
+	            minetest.add_node(p, {name="oil:gfcable_energy", param2=n.param2, param1=2})
+	            minetest.add_node(pos, {name="oil:gfcable_empty",param2=node.param2})
 	        end
 	    end
 	end})
@@ -485,37 +485,37 @@ minetest.register_abm({
 	    if node.param1 == nil then node.param1 = 5 end -- No Flow-Direction
 	    if node.param1 ~= 0 then
 	        local p = {x=pos.x+1,y=pos.y,z=pos.z}
-	        local n = minetest.env:get_node(p)
+	        local n = minetest.get_node(p)
 	        if n.name == "oil:pipe_empty" then
-	            minetest.env:add_node(p, {name="oil:pipe_fuel", param2=n.param2,param1=1})
-	            minetest.env:add_node(pos, {name="oil:pipe_empty",param2=node.param2})
+	            minetest.add_node(p, {name="oil:pipe_fuel", param2=n.param2,param1=1})
+	            minetest.add_node(pos, {name="oil:pipe_empty",param2=node.param2})
 	        end
 	    end
 	    
 	    if node.param1 ~= 1 then
 	        local p = {x=pos.x-1,y=pos.y,z=pos.z}
-	        local n = minetest.env:get_node(p)
+	        local n = minetest.get_node(p)
 	        if n.name == "oil:pipe_empty" then
-	            minetest.env:add_node(p, {name="oil:pipe_fuel", param2=n.param2,param1=0})
-	            minetest.env:add_node(pos, {name="oil:pipe_empty",param2=node.param2})
+	            minetest.add_node(p, {name="oil:pipe_fuel", param2=n.param2,param1=0})
+	            minetest.add_node(pos, {name="oil:pipe_empty",param2=node.param2})
 	        end
 	    end
 	    
 	    if node.param1 ~= 2 then
 	        local p = {x=pos.x,y=pos.y,z=pos.z+1}
-	        local n = minetest.env:get_node(p)
+	        local n = minetest.get_node(p)
 	        if n.name == "oil:pipe_empty" then
-	            minetest.env:add_node(p, {name="oil:pipe_fuel", param2=n.param2,param1=3})
-	            minetest.env:add_node(pos, {name="oil:pipe_empty",param2=node.param2})
+	            minetest.add_node(p, {name="oil:pipe_fuel", param2=n.param2,param1=3})
+	            minetest.add_node(pos, {name="oil:pipe_empty",param2=node.param2})
 	        end
 	    end
 	    
 	    if node.param1 ~= 3 then
 	        local p = {x=pos.x,y=pos.y,z=pos.z-1}
-	        local n = minetest.env:get_node(p)
+	        local n = minetest.get_node(p)
 	        if n.name == "oil:pipe_empty" then
-	            minetest.env:add_node(p, {name="oil:pipe_fuel", param2=n.param2,param1=2})
-	            minetest.env:add_node(pos, {name="oil:pipe_empty",param2=node.param2})
+	            minetest.add_node(p, {name="oil:pipe_fuel", param2=n.param2,param1=2})
+	            minetest.add_node(pos, {name="oil:pipe_empty",param2=node.param2})
 	        end
 	    end
 	end})
@@ -526,31 +526,31 @@ minetest.register_abm({
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)
 		local p = {x=pos.x+1,y=pos.y,z=pos.z}
-	    local n = minetest.env:get_node(p)
+	    local n = minetest.get_node(p)
 	    if n.name == "oil:pipe_empty" then
-	        minetest.env:add_node(p, {name="oil:pipe_fuel", param2=n.param2,param1=5})
-	        minetest.env:add_node(pos, {name="oil:pipe_wood",param2=node.param2})
+	        minetest.add_node(p, {name="oil:pipe_fuel", param2=n.param2,param1=5})
+	        minetest.add_node(pos, {name="oil:pipe_wood",param2=node.param2})
 	    end
 	    
 	    local p = {x=pos.x-1,y=pos.y,z=pos.z}
-	    local n = minetest.env:get_node(p)
+	    local n = minetest.get_node(p)
 	    if n.name == "oil:pipe_empty" then
-	        minetest.env:add_node(p, {name="oil:pipe_fuel", param2=n.param2,param1=5})
-	        minetest.env:add_node(pos, {name="oil:pipe_wood",param2=node.param2})
+	        minetest.add_node(p, {name="oil:pipe_fuel", param2=n.param2,param1=5})
+	        minetest.add_node(pos, {name="oil:pipe_wood",param2=node.param2})
 	    end
 	    
 	    local p = {x=pos.x,y=pos.y,z=pos.z+1}
-	    local n = minetest.env:get_node(p)
+	    local n = minetest.get_node(p)
 	    if n.name == "oil:pipe_empty" then
-	        minetest.env:add_node(p, {name="oil:pipe_fuel", param2=n.param2,param1=5})
-	        minetest.env:add_node(pos, {name="oil:pipe_wood",param2=node.param2})
+	        minetest.add_node(p, {name="oil:pipe_fuel", param2=n.param2,param1=5})
+	        minetest.add_node(pos, {name="oil:pipe_wood",param2=node.param2})
 	    end
 	    
 	    local p = {x=pos.x,y=pos.y,z=pos.z-1}
-	    local n = minetest.env:get_node(p)
+	    local n = minetest.get_node(p)
 	    if n.name == "oil:pipe_empty" then
-	        minetest.env:add_node(p, {name="oil:pipe_fuel", param2=n.param2,param1=5})
-	        minetest.env:add_node(pos, {name="oil:pipe_wood",param2=node.param2})
+	        minetest.add_node(p, {name="oil:pipe_fuel", param2=n.param2,param1=5})
+	        minetest.add_node(pos, {name="oil:pipe_wood",param2=node.param2})
 	    end
 	end})
 
@@ -564,31 +564,31 @@ minetest.register_abm({
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)
         local p = {x=pos.x+1,y=pos.y,z=pos.z}
-	    local n = minetest.env:get_node(p)
+	    local n = minetest.get_node(p)
 	    if n.name == "oil:pipe_oil" then
-	        minetest.env:add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
-	        minetest.env:add_node(pos, {name="oil:refinery_working",param2=1})
+	        minetest.add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
+	        minetest.add_node(pos, {name="oil:refinery_working",param2=1})
 	    end
 	    
 	    local p = {x=pos.x-1,y=pos.y,z=pos.z}
-	    local n = minetest.env:get_node(p)
+	    local n = minetest.get_node(p)
 	    if n.name == "oil:pipe_oil" then
-	        minetest.env:add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
-	        minetest.env:add_node(pos, {name="oil:refinery_working",param2=1})
+	        minetest.add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
+	        minetest.add_node(pos, {name="oil:refinery_working",param2=1})
 	    end
 	    
 	    local p = {x=pos.x,y=pos.y,z=pos.z+1}
-	    local n = minetest.env:get_node(p)
+	    local n = minetest.get_node(p)
 	    if n.name == "oil:pipe_oil" then
-	        minetest.env:add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
-	        minetest.env:add_node(pos, {name="oil:refinery_working",param2=1})
+	        minetest.add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
+	        minetest.add_node(pos, {name="oil:refinery_working",param2=1})
 	    end
 	    
 	    local p = {x=pos.x,y=pos.y,z=pos.z-1}
-	    local n = minetest.env:get_node(p)
+	    local n = minetest.get_node(p)
 	    if n.name == "oil:pipe_oil" then
-	        minetest.env:add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
-	        minetest.env:add_node(pos, {name="oil:refinery_working",param2=1})
+	        minetest.add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
+	        minetest.add_node(pos, {name="oil:refinery_working",param2=1})
 	    end
 	end})
 
@@ -599,7 +599,7 @@ minetest.register_abm({
 	action = function(pos, node, active_object_count, active_object_count_wider)
 	    if node.param2 == nil then
 	        print("[Oil] ERROR: Refinery with wrong param2 found at " .. dump(pos) .. " -> deleting itself")
-	        minetest.env:remove_node(pos)
+	        minetest.remove_node(pos)
 	    else
 	        did_something = false
 	        trash_param1 = true
@@ -608,36 +608,36 @@ minetest.register_abm({
 	            -- The Refinery tried 5 Times to find Oil but didn't found anything -> Deactivate itself
 	            did_something = false
 	            node.param2 = 1337 -- Nothing should happen
-	            minetest.env:add_node(pos,{name="oil:refinery_empty"})
+	            minetest.add_node(pos,{name="oil:refinery_empty"})
 	        end
 	        if node.param2 == 0 then
 	            local found_oil = false
 	            --------------------
 	            local p = {x=pos.x+1,y=pos.y,z=pos.z}
-	            local n = minetest.env:get_node(p)
+	            local n = minetest.get_node(p)
 	            if n.name == "oil:pipe_oil" then
-	                minetest.env:add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
+	                minetest.add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
 	                found_oil = true
 	            end
 	            
 	            local p = {x=pos.x-1,y=pos.y,z=pos.z}
-	            local n = minetest.env:get_node(p)
+	            local n = minetest.get_node(p)
 	            if n.name == "oil:pipe_oil" then
-	                minetest.env:add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
+	                minetest.add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
 	                found_oil = true
 	            end
 	            
 	            local p = {x=pos.x,y=pos.y,z=pos.z+1}
-	            local n = minetest.env:get_node(p)
+	            local n = minetest.get_node(p)
 	            if n.name == "oil:pipe_oil" then
-	                minetest.env:add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
+	                minetest.add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
 	                found_oil = true
 	            end
 	            
 	            local p = {x=pos.x,y=pos.y,z=pos.z-1}
-	            local n = minetest.env:get_node(p)
+	            local n = minetest.get_node(p)
 	            if n.name == "oil:pipe_oil" then
-	                minetest.env:add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
+	                minetest.add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
 	                found_oil = true
 	            end
 	            --------------------
@@ -664,30 +664,30 @@ minetest.register_abm({
                 --------------------
                 did_something = false -- Assume did_something is false
 	            local p = {x=pos.x+1,y=pos.y,z=pos.z}
-	            local n = minetest.env:get_node(p)
+	            local n = minetest.get_node(p)
 	            if n.name == "oil:pipe_wood" and did_something == false then
-	                minetest.env:add_node(p, {name="oil:pipe_wood_fuel", param2=n.param2,param1=5})
+	                minetest.add_node(p, {name="oil:pipe_wood_fuel", param2=n.param2,param1=5})
 	                did_something = true
 	            end
 	            
 	            local p = {x=pos.x-1,y=pos.y,z=pos.z}
-	            local n = minetest.env:get_node(p)
+	            local n = minetest.get_node(p)
 	            if n.name == "oil:pipe_wood" and did_something == false then
-	                minetest.env:add_node(p, {name="oil:pipe_wood_fuel", param2=n.param2,param1=5})
+	                minetest.add_node(p, {name="oil:pipe_wood_fuel", param2=n.param2,param1=5})
 	                did_something = true
 	            end
 	            
 	            local p = {x=pos.x,y=pos.y,z=pos.z+1}
-	            local n = minetest.env:get_node(p)
+	            local n = minetest.get_node(p)
 	            if n.name == "oil:pipe_wood" and did_something == false then
-	                minetest.env:add_node(p, {name="oil:pipe_wood_fuel", param2=n.param2,param1=5})
+	                minetest.add_node(p, {name="oil:pipe_wood_fuel", param2=n.param2,param1=5})
 	                did_something = true
 	            end
 	            
 	            local p = {x=pos.x,y=pos.y,z=pos.z-1}
-	            local n = minetest.env:get_node(p)
+	            local n = minetest.get_node(p)
 	            if n.name == "oil:pipe_wood" and did_something == false then
-	                minetest.env:add_node(p, {name="oil:pipe_wood_fuel", param2=n.param2,param1=5})
+	                minetest.add_node(p, {name="oil:pipe_wood_fuel", param2=n.param2,param1=5})
 	                did_something = true
 	            end
 	            --------------------
@@ -701,7 +701,7 @@ minetest.register_abm({
 	            if trash_param1 then
 	                node.param1 = nil
 	            end
-	            minetest.env:add_node(pos, node)
+	            minetest.add_node(pos, node)
 	        end
 	    end
 	end})
@@ -724,31 +724,31 @@ minetest.register_abm({
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)
         local p = {x=pos.x+1,y=pos.y,z=pos.z}
-	    local n = minetest.env:get_node(p)
+	    local n = minetest.get_node(p)
 	    if n.name == "oil:pipe_fuel" then
-	        minetest.env:add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
-	        minetest.env:add_node(pos, {name="oil:siphon_fuel"})
+	        minetest.add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
+	        minetest.add_node(pos, {name="oil:siphon_fuel"})
 	    end
 	    
 	    local p = {x=pos.x-1,y=pos.y,z=pos.z}
-	    local n = minetest.env:get_node(p)
+	    local n = minetest.get_node(p)
 	    if n.name == "oil:pipe_fuel" then
-	        minetest.env:add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
-	        minetest.env:add_node(pos, {name="oil:siphon_fuel"})
+	        minetest.add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
+	        minetest.add_node(pos, {name="oil:siphon_fuel"})
 	    end
 	    
 	    local p = {x=pos.x,y=pos.y,z=pos.z+1}
-	    local n = minetest.env:get_node(p)
+	    local n = minetest.get_node(p)
 	    if n.name == "oil:pipe_fuel" then
-	        minetest.env:add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
-	        minetest.env:add_node(pos, {name="oil:siphon_fuel"})
+	        minetest.add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
+	        minetest.add_node(pos, {name="oil:siphon_fuel"})
 	    end
 	    
 	    local p = {x=pos.x,y=pos.y,z=pos.z-1}
-	    local n = minetest.env:get_node(p)
+	    local n = minetest.get_node(p)
 	    if n.name == "oil:pipe_fuel" then
-	        minetest.env:add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
-	        minetest.env:add_node(pos, {name="oil:siphon_fuel"})
+	        minetest.add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
+	        minetest.add_node(pos, {name="oil:siphon_fuel"})
 	    end
 	end})
 
@@ -757,8 +757,8 @@ minetest.register_abm({
 	interval = 1,
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)
-        minetest.env:add_item({x=pos.x,y=pos.y+1,z=pos.z}, "oil:fuel_bucket")
-        minetest.env:add_node(pos, {name="oil:siphon_empty"})
+        minetest.add_item({x=pos.x,y=pos.y+1,z=pos.z}, "oil:fuel_bucket")
+        minetest.add_node(pos, {name="oil:siphon_empty"})
 	end})
 
 minetest.register_abm({
@@ -769,30 +769,30 @@ minetest.register_abm({
 	    local found_fuel = false
 	    --------------------
 	    local p = {x=pos.x+1,y=pos.y,z=pos.z}
-	    local n = minetest.env:get_node(p)
+	    local n = minetest.get_node(p)
 	    if n.name == "oil:pipe_fuel" and found_fuel == false then
-	        minetest.env:add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
+	        minetest.add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
 	        found_fuel = true
 	    end
 	    
 	    local p = {x=pos.x-1,y=pos.y,z=pos.z}
-	    local n = minetest.env:get_node(p)
+	    local n = minetest.get_node(p)
 	    if n.name == "oil:pipe_fuel" and found_fuel == false then
-	        minetest.env:add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
+	        minetest.add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
 	        found_fuel = true
 	    end
 	    
 	    local p = {x=pos.x,y=pos.y,z=pos.z+1}
-	    local n = minetest.env:get_node(p)
+	    local n = minetest.get_node(p)
 	    if n.name == "oil:pipe_fuel" and found_fuel == false then
-	        minetest.env:add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
+	        minetest.add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
 	        found_fuel = true
 	    end
 	    
 	    local p = {x=pos.x,y=pos.y,z=pos.z-1}
-	    local n = minetest.env:get_node(p)
+	    local n = minetest.get_node(p)
 	    if n.name == "oil:pipe_fuel" and found_fuel == false then
-	        minetest.env:add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
+	        minetest.add_node(p, {name="oil:pipe_empty", param2=n.param2,param1=n.param1})
 	        found_fuel = true
 	    end
 	    --------------------
@@ -800,33 +800,35 @@ minetest.register_abm({
 	        local energy_gone = false
 	        ----------
 	        local p = {x=pos.x+1,y=pos.y,z=pos.z}
-	        local n = minetest.env:get_node(p)
+	        local n = minetest.get_node(p)
 	        if n.name == "oil:gfcable_empty" and energy_gone == false then
-	            minetest.env:add_node(p, {name="oil:gfcable_energy", param2=n.param2,param1=n.param1})
+	            minetest.add_node(p, {name="oil:gfcable_energy", param2=n.param2,param1=n.param1})
 	            energy_gone = true
 	        end
 	        
 	        local p = {x=pos.x-1,y=pos.y,z=pos.z}
-	        local n = minetest.env:get_node(p)
+	        local n = minetest.get_node(p)
 	        if n.name == "oil:gfcable_empty" and energy_gone == false then
-	            minetest.env:add_node(p, {name="oil:gfcable_energy", param2=n.param2,param1=n.param1})
+	            minetest.add_node(p, {name="oil:gfcable_energy", param2=n.param2,param1=n.param1})
 	            energy_gone = true
 	        end
 	        
 	        local p = {x=pos.x,y=pos.y,z=pos.z+1}
-	        local n = minetest.env:get_node(p)
+	        local n = minetest.get_node(p)
 	        if n.name == "oil:gfcable_empty" and energy_gone == false then
-	            minetest.env:add_node(p, {name="oil:gfcable_energy", param2=n.param2,param1=n.param1})
+	            minetest.add_node(p, {name="oil:gfcable_energy", param2=n.param2,param1=n.param1})
 	            energy_gone = true
 	        end
 	        
 	        local p = {x=pos.x,y=pos.y,z=pos.z-1}
-	        local n = minetest.env:get_node(p)
+	        local n = minetest.get_node(p)
 	        if n.name == "oil:gfcable_empty" and energy_gone == false then
-	            minetest.env:add_node(p, {name="oil:gfcable_energy", param2=n.param2,param1=n.param1})
+	            minetest.add_node(p, {name="oil:gfcable_energy", param2=n.param2,param1=n.param1})
 	            energy_gone = true
 	        end
 	        ----------
 	    end
 	end})
 
+
+print('[OK] Oil loaded!')

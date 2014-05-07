@@ -21,15 +21,15 @@ function voltbuild_create_infotext(name)
 end
 
 function voltbuild_hacky_swap_node(pos,name)
-	local node = minetest.env:get_node(pos)
-	local meta = minetest.env:get_meta(pos)
+	local node = minetest.get_node(pos)
+	local meta = minetest.get_meta(pos)
 	if node.name == name then
 		return
 	end
 	node.name = name
 	local meta0 = meta:to_table()
-	minetest.env:set_node(pos,node)
-	meta = minetest.env:get_meta(pos)
+	minetest.set_node(pos,node)
+	meta = minetest.get_meta(pos)
 	meta:from_table(meta0)
 	meta:set_string("infotext",voltbuild_create_infotext(node.name))
 end
@@ -51,8 +51,8 @@ function param22dir(param2)
 end
 
 function get_node_field(name,meta,key,pos)
-	if meta == nil then meta = minetest.env:get_meta(pos) end
-	if name == nil then name = minetest.env:get_node(pos).name end
+	if meta == nil then meta = minetest.get_meta(pos) end
+	if name == nil then name = minetest.get_node(pos).name end
 	if meta:get_string(key) ~= "" then return meta:get_int(key) end
 	if minetest.registered_nodes[name] and
 		minetest.registered_nodes[name].voltbuild and
@@ -63,8 +63,8 @@ function get_node_field(name,meta,key,pos)
 end
 
 function get_node_field_float(name,meta,key,pos)
-	if meta == nil then meta = minetest.env:get_meta(pos) end
-	if name == nil then name = minetest.env:get_node(pos).name end
+	if meta == nil then meta = minetest.get_meta(pos) end
+	if name == nil then name = minetest.get_node(pos).name end
 	if meta:get_string(key) ~= "" then return meta:get_float(key) end
 	if minetest.registered_nodes[name] and
 		minetest.registered_nodes[name].voltbuild and
@@ -304,4 +304,4 @@ if generate_docs then
 	end
 end
 
-print("[OK] voltbuild2 loaded!")
+print("[OK] Voltbuild 2 loaded!")

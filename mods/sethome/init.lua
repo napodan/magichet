@@ -89,7 +89,7 @@ minetest.register_chatcommand("home", {
         	bookmark = "-"
         end
         if player_name then pname = player_name else pname = name end
-        local player = minetest.env:get_player_by_name(name)
+        local player = minetest.get_player_by_name(name)
         if player == nil then
             -- just a check to prevent server death
             return false
@@ -143,7 +143,7 @@ minetest.register_chatcommand("sethome", {
         	bookmark = "-"
         end
         if player_name then pname = player_name else pname = name end
-        local player = minetest.env:get_player_by_name(name)
+        local player = minetest.get_player_by_name(name)
         local pos = player:getpos()
         minetest.chat_send_player(name, "Saving "..pname.." w/ name "..bookmark)
         if not homepos[pname] then
@@ -195,7 +195,7 @@ minetest.register_chatcommand("showhomes", {
     	    end
         end
         if player_name then pname = player_name else pname = name end
-        local player = minetest.env:get_player_by_name(name)
+        local player = minetest.get_player_by_name(name)
         if player == nil then
             -- just a check to prevent server death
             return false
@@ -211,3 +211,5 @@ minetest.register_chatcommand("showhomes", {
         end
     end,
 })
+
+print('[OK] Set Home loaded')

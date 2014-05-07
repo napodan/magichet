@@ -361,7 +361,7 @@ minetest.register_node("ghosts:reincarnator", {
 
         meta:set_string("formspec", formspec)
         meta:set_string("stored","0")
-        minetest.env:get_node_timer(pos):start(5)
+        minetest.get_node_timer(pos):start(5)
     end,
 
     on_timer = function(pos,elapsed)
@@ -710,7 +710,7 @@ end)
                         local z = math.random(0, 9)/3
                         pos.x = pos.x + x
                         pos.z = pos.z + z
-                        minetest.env:add_item(pos, stack)
+                        minetest.add_item(pos, stack)
                         stack:clear()
                         inv:set_stack("main", i, stack)
                         pos.x = pos.x - x
@@ -874,3 +874,5 @@ minetest.register_craft({
         {'ghosts:ghostly_block', 'ghosts:ghostly_block', 'ghosts:ghostly_block'} ,
     }
 })
+
+print("[OK] Ghosts loaded")

@@ -1,5 +1,5 @@
 function send_alldirs_except(pos,dir,power)
-	local meta=minetest.env:get_meta(pos)
+	local meta=minetest.get_meta(pos)
 	if meta:get_int("energy")<power then return end
 	for _,d in ipairs(adjlist) do
 		if d.x~=dir.x or d.y~=dir.y or d.z~=dir.z then
@@ -20,17 +20,17 @@ minetest.register_node("voltbuild:lv_transformer",{description="LV Transformer",
 	voltbuild = {max_energy=2560,max_psize=128},
 	documentation = {summary = "Low voltage transformer for ramping up or down electricity."},
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_int("energy",0)
 		meta:set_int("send_lv",0)
 	end,
 	mesecons = {effector = {
 		action_on = function (pos, node)
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			meta:set_int("send_lv",1)
 		end,
 		action_off = function (pos, node)
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			meta:set_int("send_lv",0)
 		end}}
 })
@@ -41,7 +41,7 @@ minetest.register_abm({
 	chance=1,
 	action = function(pos, node, active_object_count, active_objects_wider)
 		local senddir = param22dir(node.param2)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		if meta:get_int("send_lv") == 0 then
 			storage.send(pos,128,senddir)
 		else
@@ -58,17 +58,17 @@ minetest.register_node("voltbuild:mv_transformer",{description="MV Transformer",
 	voltbuild = {max_energy=10240,max_psize=512},
 	documentation = {summary = "Medium voltage transformer for ramping up or down electricity."},
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_int("energy",0)
 		meta:set_int("send_mv",0)
 	end,
 	mesecons = {effector = {
 		action_on = function (pos, node)
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			meta:set_int("send_mv",1)
 		end,
 		action_off = function (pos, node)
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			meta:set_int("send_mv",0)
 		end}}
 })
@@ -79,7 +79,7 @@ minetest.register_abm({
 	chance=1,
 	action = function(pos, node, active_object_count, active_objects_wider)
 		local senddir = param22dir(node.param2)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		if meta:get_int("send_mv") == 0 then
 			storage.send(pos,512,senddir)
 		else
@@ -97,17 +97,17 @@ minetest.register_node("voltbuild:hv_transformer",{description="HV Transformer",
 	documentation = {summary = "High voltage transformer for ramping up or down electricity.\n"..
 		"Only thing capable of handling any size packet of electricity."},
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_int("energy",0)
 		meta:set_int("send_hv",0)
 	end,
 	mesecons = {effector = {
 		action_on = function (pos, node)
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			meta:set_int("send_hv",1)
 		end,
 		action_off = function (pos, node)
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			meta:set_int("send_hv",0)
 		end}}
 })
@@ -118,7 +118,7 @@ minetest.register_abm({
 	chance=1,
 	action = function(pos, node, active_object_count, active_objects_wider)
 		local senddir = param22dir(node.param2)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		if meta:get_int("send_hv") == 0 then
 			storage.send(pos,2048,senddir)
 		else

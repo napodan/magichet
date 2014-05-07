@@ -128,7 +128,7 @@ local reactor_wiring = {
 		"bottom middle of the design for electricity to leave the nuclear reactor.\n"..
 		"For connecting to a Reaction Chamber, the Shielded Reactor Wiring is best."},
 	automata = {step = function(automata_name,automata_pos,index)
-		local meta = minetest.env:get_meta(automata_pos)
+		local meta = minetest.get_meta(automata_pos)
 		local inv = meta:get_inventory()
 		if automata_name == "automata_energy" then
 			local neighbors = nuclear.neighbors[automata_name](index,inv)
@@ -153,7 +153,7 @@ minetest.register_craftitem("voltbuild:reactor_fan",{
 	voltbuild = {nuclear=1},
 	documentation = {summary="Slowly relieves internal stress from one square in the design."},
 	automata = {step = function(automata_name,automata_pos,index)
-		local meta = minetest.env:get_meta(automata_pos)
+		local meta = minetest.get_meta(automata_pos)
 		local inv = meta:get_inventory()
 		if automata_name == "automata_heat" then
 			meta:set_int(automata_name..index,math.max(meta:get_int(automata_name..index)-20,0))
@@ -168,7 +168,7 @@ minetest.register_craftitem("voltbuild:reactor_steam_gen",{
 	voltbuild = {nuclear=1},
 	documentation = {summary = "Takes a little heat from a square in the design and turns it into internal electricity."},
 	automata = {step = function(automata_name,automata_pos,index)
-		local meta = minetest.env:get_meta(automata_pos)
+		local meta = minetest.get_meta(automata_pos)
 		local inv = meta:get_inventory()
 		if automata_name == "automata_energy" then
 			local heat = meta:get_int("automata_heat"..index)
@@ -214,7 +214,7 @@ minetest.register_craftitem("voltbuild:nuclear_reaction_chamber", {
 	documentation = {summary = "Uses uranium to produce internal electricity, radiation, and stress.\n"..
 		"All three of those must be managed within the design if you want electricity safely."},
 	automata = {step = function(automata_name,automata_pos,index)
-		local meta = minetest.env:get_meta(automata_pos)
+		local meta = minetest.get_meta(automata_pos)
 		local inv = meta:get_inventory()
 		local uranium = inv:get_stack("nuclear_fuel",1)
 		if not uranium:is_empty() then
@@ -285,7 +285,7 @@ minetest.register_craftitem("voltbuild:nuclear_reaction_chamber", {
 
 --nuclear_reactor has a custom formspec for it's special customizability
 nuclear.get_formspec = function(pos)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	local rad_percent = math.min((meta:get_int("rads")/nuclear.max_radiation)*100,100)
 	local stress_percent = math.min((meta:get_int("stress")/minetest.registered_nodes["voltbuild:nuclear_reactor"]["voltbuild"]["max_stress"])*100,100)
 	local energy_percent = voltbuild.get_percent(pos)
@@ -309,7 +309,7 @@ voltbuild.metadata_check.nuclear_fuel = function (pos,listname,stack,maxtier)
 end
 
 voltbuild.metadata_check.nuclear = function (pos,listname,stack,maxtier)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	local item = minetest.registered_items[stack:get_name()]
 	local nuclear = nil
 	if item and item.voltbuild then
@@ -325,7 +325,7 @@ local nuclear_blast
 if use_old_voltbuild_blasts then
 	print("Using old voltbuild blast for nuclear reactor!")
 	nuclear_blast = function(pos,intensity)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		local rads = meta:get_int("rads")
 		local xVect,yVect,zVect
 		local blast_size = 20
@@ -337,7 +337,7 @@ if use_old_voltbuild_blasts then
 				for zVect=pos.z-zLimit,pos.z+zLimit do
 					if xVect ~= pos.x or yVect ~= pos.y or zVect ~= pos.z then
 						local p = {x=xVect,y=yVect,z=zVect}
-						local node = minetest.env:get_node(p)
+						local node = minetest.get_node(p)
 						local destroy = minetest.registered_nodes[node.name]["on_blast"]
 						local immortal = minetest.registered_nodes[node.name]["groups"]["immortal"]
 						if node.name == "ignore" or node.name == "air" then
@@ -345,13 +345,13 @@ if use_old_voltbuild_blasts then
 							destroy(p,10)
 						elseif immortal then
 						else
-							minetest.env:remove_node(p)
+							minetest.remove_node(p)
 						end
 					end
 				end
 			end
 		end
-		minetest.env:remove_node(pos)
+		minetest.remove_node(pos)
 		local object=nil
 		local key = nil
 		for  key,object in pairs(objects) do
@@ -362,7 +362,7 @@ if use_old_voltbuild_blasts then
 	end
 else
 	nuclear_blast = function (pos, intensity)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		local rads = meta:get_int("rads")
 		local xVect,yVect,zVect
 		local blast_size = 20
@@ -379,7 +379,7 @@ else
 				for zVect=pos.z-zLimit,pos.z+zLimit do
 					if xVect ~= pos.x or yVect ~= pos.y or zVect ~= pos.z then
 						local p = {x=xVect,y=yVect,z=zVect}
-						local node = minetest.env:get_node(p)
+						local node = minetest.get_node(p)
 						local destroy = minetest.registered_nodes[node.name]["on_blast"]
 						local immortal = minetest.registered_nodes[node.name]["groups"]["immortal"]
 						if node.name == "ignore" or node.name == "air" then
@@ -424,12 +424,12 @@ local nuclear_reactor = {
 		"Only electricity that reaches the bottom middle of the design will reach the outside\n"..
 		"Read up on the individual nuclear parts to better understand managing and optimizing your nuclear reactor."},
 	tube={insert_object=function(pos,node,stack,direction)
-			local meta=minetest.env:get_meta(pos)
+			local meta=minetest.get_meta(pos)
 			local inv=meta:get_inventory()
 			return inv:add_item("nuclear_fuel",stack)
 		end,
 		can_insert=function(pos,node,stack,direction)
-			local meta=minetest.env:get_meta(pos)
+			local meta=minetest.get_meta(pos)
 			local inv=meta:get_inventory()
 			return (voltbuild.allow_metadata_inventory_put(pos,"nuclear_fuel",
 				nil,stack,nil) and
@@ -440,8 +440,8 @@ local nuclear_reactor = {
 		end,
 		connect_sides={left=1, right=1, back=1, bottom=1, top=1, front=1}},
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
-		local node = minetest.env:get_node(pos)
+		local meta = minetest.get_meta(pos)
+		local node = minetest.get_node(pos)
 		meta:set_string("infotext",voltbuild_create_infotext(node.name))
 		meta:set_string("formspec",nuclear.get_formspec(pos))
 		meta:set_int("rads",0)
@@ -489,7 +489,7 @@ end
 minetest.register_node("voltbuild:nuclear_reactor",nuclear_reactor)
 
 local propagate_units = function (automata_name,pos,unit_max)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
 	for i=1,inv:get_size("nuclear") do
 		local unit = meta:get_int(automata_name..i)
@@ -514,7 +514,7 @@ components.register_abm({
 	interval = 1.0,
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		local i = nil
 		local inv = meta:get_inventory()
 		if meta:get_string("stime") == "" then

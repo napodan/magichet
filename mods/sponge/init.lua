@@ -43,7 +43,7 @@ minetest.register_abm({
     interval = 1.0,
     chance = 1,
     action = function(pos, node, active_object_count, active_object_count_wider)
-            minetest.env:add_node(pos, {name="sponge:fake_air"})
+            minetest.add_node(pos, {name="sponge:fake_air"})
     end
 })
 
@@ -56,10 +56,10 @@ action = function(pos, node, active_object_count, active_object_count_wider)
         for j=-1,1 do
             for k=-1,1 do
                 p = {x=pos.x+i, y=pos.y+j, z=pos.z+k}
-                n = minetest.env:get_node(p)
+                n = minetest.get_node(p)
                 if (n.name=="default:water_flowing") 
                 or (n.name == "default:water_source") then
-                    minetest.env:add_node(p, {name="sponge:fake_air"})
+                    minetest.add_node(p, {name="sponge:fake_air"})
                 end
             end
         end
@@ -76,12 +76,12 @@ action = function(pos, node, active_object_count, active_object_count_wider)
         for j=-2,2 do
             for k=-2,2 do
                 p = {x=pos.x+i, y=pos.y+j, z=pos.z+k}
-                n = minetest.env:get_node(p)
+                n = minetest.get_node(p)
                 if (n.name=="default:water_flowing") 
                 or (n.name == "default:water_source") 
                 or (n.name == "default:lava_source") 
                 or (n.name == "default:lava_flowing") then
-                    minetest.env:add_node(p, {name="sponge:fake_air"})
+                    minetest.add_node(p, {name="sponge:fake_air"})
                 end
             end
         end
@@ -99,7 +99,7 @@ action = function(pos, node, active_object_count, active_object_count_wider)
         for j=-2,2 do
             for k=-2,2 do
                 p = {x=pos.x+i, y=pos.y+j, z=pos.z+k}
-                n = minetest.env:get_node(p)
+                n = minetest.get_node(p)
                 if (n.name=="sponge:iron_sponge") or (n.name == "sponge:sponge") then
                 spongecount=spongecount+1
                 end
@@ -107,7 +107,7 @@ action = function(pos, node, active_object_count, active_object_count_wider)
         end
     end
     if (spongecount==0) then
-        minetest.env:add_node(pos, {name="air"})
+        minetest.add_node(pos, {name="air"})
     end
 end
 })
@@ -130,3 +130,4 @@ minetest.register_craft({
 	}
 })
 
+print('[OK] Sponge loaded')

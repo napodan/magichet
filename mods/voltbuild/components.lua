@@ -1,7 +1,7 @@
 components = {}
 
 voltbuild.metadata_check.components = function (pos,listname,stack,maxtier)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
 	if get_item_field(stack:get_name(),"component") == 1 then
 		if stack:peek_item()["on_placement"] then
@@ -13,7 +13,7 @@ voltbuild.metadata_check.components = function (pos,listname,stack,maxtier)
 end
 
 voltbuild.metadata_check_move.components = function (pos,to_list,stack,maxtier,from_list,from_index,to_index,count,player)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
 	if get_item_field(stack:get_name(),"component") == 1 then
 		if to_list ~= "components" then
@@ -42,7 +42,7 @@ end
 
 
 function components.abm_wrapper(pos,node,active_object_count,active_object_count_wider,abm)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
 	local run_abm = true
 	for i,comp in ipairs(components.each_with_method(inv,"can_run")) do
@@ -81,7 +81,7 @@ if voltbuild.upgrade then
 	function components.register_abm(table)
 		local register_action = table.action
 		table.action = function (pos,node,active_object_count,active_object_count_wider)
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			if meta:get_string("energy") ~= "" then
 				local max_energy
 				local current_max = meta:get_int("max_energy")
@@ -115,7 +115,7 @@ end
 function components.register_clockitem(name, properties)
 	properties.voltbuild.run_before_effects = function(pos)
 		local node = minetest.get_node(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		local active = string.find(node.name,"_active") or 
 			minetest.registered_nodes[node.name]["voltbuild"]["active"]
 		if active == nil then
@@ -195,7 +195,7 @@ function components.register_clockitem(name, properties)
 		end
 	end
 	properties.voltbuild.run_after_effects = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		local clock_optime_effect = properties.voltbuild.clock_optime_effect
 		if clock_optime_effect then
 			if meta:get_string("optime") ~= "" then
@@ -251,7 +251,7 @@ minetest.register_craftitem("voltbuild:fan",{
 	inventory_image = "voltbuild_fan.png",
 	voltbuild = {component=1,
 		after_effects = function(pos)
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			local stress = meta:get_int("stress")
 			meta:set_int("stress",math.max(stress-10,0))
 		end},
@@ -279,7 +279,7 @@ minetest.register_craftitem("voltbuild:air_compressor", {
 			end
 		end,
 		not_run_effects = function(pos)
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			local node = minetest.get_node(pos)
 			local optime
 			local speed = minetest.registered_nodes[node.name]["voltbuild"]["speed"]
@@ -329,7 +329,7 @@ minetest.register_craftitem("voltbuild:mobile_solar_panel", {
 	inventory_image = "voltbuild_mobile_solar_panel.png",
 	voltbuild = {component=1,
 	before_effects = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		local node = minetest.get_node(pos)
 		local node_def = minetest.registered_nodes["voltbuild:solar_panel"]
 		local psize = node_def.voltbuild.psize

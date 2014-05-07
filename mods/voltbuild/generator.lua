@@ -13,7 +13,7 @@ local generator_definition = {
 		"This will be the first type of generator you build"},
 	voltbuild = {max_energy=60,max_tier=1,max_stress=2000,psize=10,
 		speed = function (pos)
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			local inv = meta:get_inventory()
 			if not inv:is_empty("fuel") and is_fuel_no_lava(inv:get_stack("fuel",1)) then
 				return 1
@@ -22,7 +22,7 @@ local generator_definition = {
 			end
 		end,
 		fueltime = function (pos)
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			local inv = meta:get_inventory()
 			local stack = inv:get_stack("fuel",1)
 			if not inv:is_empty("fuel") and is_fuel_no_lava(stack) then
@@ -35,7 +35,7 @@ local generator_definition = {
 			end
 		end,
 		energy_type_image= function (pos)
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			local node = minetest.get_node(pos)
 			local fueltime = minetest.registered_nodes[node.name]["voltbuild"]["fueltime"](pos)
 			local percent
@@ -47,12 +47,12 @@ local generator_definition = {
 			return("default_furnace_fire_bg.png^[lowpart:"..(100-percent)..":default_furnace_fire_fg.png]")
 		end},
 	tube={insert_object=function(pos,node,stack,direction)
-			local meta=minetest.env:get_meta(pos)
+			local meta=minetest.get_meta(pos)
 			local inv=meta:get_inventory()
 			return inv:add_item("fuel",stack)
 		end,
 		can_insert=function(pos,node,stack,direction)
-			local meta=minetest.env:get_meta(pos)
+			local meta=minetest.get_meta(pos)
 			local inv=meta:get_inventory()
 			return (voltbuild.allow_metadata_inventory_put(pos,"fuel",
 				nil,stack,nil) and
@@ -63,7 +63,7 @@ local generator_definition = {
 		end,
 		connect_sides={left=1, right=1, back=1, bottom=1, top=1, front=1}},
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_int("energy",0)
 		local inv = meta:get_inventory()
 		inv:set_size("fuel", 1)

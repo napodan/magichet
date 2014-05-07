@@ -23,7 +23,7 @@ local extractor_properties = {
 		"Much more effective at making rubber than a furnace is."},
 	tube = consumers.tube,
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_int("energy",0)
 		local inv = meta:get_inventory()
 		inv:set_size("src", 1)
@@ -36,7 +36,7 @@ local extractor_properties = {
 		consumers.on_construct(pos)
 	end,
 	can_dig = function(pos,player)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		local inv = meta:get_inventory()
 		return inv:is_empty("src") and inv:is_empty("dst") and
 			consumers.can_dig(pos,player)

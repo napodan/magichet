@@ -71,7 +71,7 @@ voltbuild.solar_charge = function (player)
 				table.insert(solar_items,i)
 			end
 		end
-		local light = minetest.env:get_node_light(player:getpos())
+		local light = minetest.get_node_light(player:getpos())
 		if light and light >= 15 then
 			for _,i in pairs(solar_items) do
 				local stack = inv:get_stack("main",i)
@@ -217,7 +217,7 @@ minetest.register_tool("voltbuild:od_scanner",{
 			for x = -2, 2 do
 			for z = -2, 2 do
 				local npos = {x=pos.x+x, y=pos.y+y, z=pos.z+z}
-				local nnode = minetest.env:get_node(npos)
+				local nnode = minetest.get_node(npos)
 				if nnode.name == "ignore" then
 					shall_break = true
 				else
@@ -262,7 +262,7 @@ minetest.register_tool("voltbuild:ov_scanner",{
 			for x = -4, 4 do
 			for z = -4, 4 do
 				local npos = {x=pos.x+x, y=pos.y+y, z=pos.z+z}
-				local nnode = minetest.env:get_node(npos)
+				local nnode = minetest.get_node(npos)
 				if nnode.name == "ignore" then
 					shall_break = true
 				else

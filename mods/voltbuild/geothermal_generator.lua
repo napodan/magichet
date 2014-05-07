@@ -6,13 +6,13 @@ minetest.register_node("voltbuild:geothermal_generator",{description="Geothermal
 	voltbuild = {max_energy=15,max_tier=1,max_stress=2000,optime=5.0, 
 		energy_type_image = "default_lava.png", psize = 3,
 		speed = function (pos)
-		local meta=minetest.env:get_meta(pos)
+		local meta=minetest.get_meta(pos)
 		local prod = 0
 		for x = pos.x-1, pos.x+1 do
 		for y = pos.y-1+math.abs(pos.x-x), pos.y+1-math.abs(pos.x-x) do
 		for z = pos.z-1+math.min(math.abs(pos.x-x)+math.abs(pos.y-y),1), 
 			pos.z+1-math.min(math.abs(pos.x-x)+math.abs(pos.y-y),1) do
-			local n = minetest.env:get_node({x=x,y=y,z=z})
+			local n = minetest.get_node({x=x,y=y,z=z})
 			if n.name == "default:lava_source" or n.name == "default:lava_flowing" then
 				prod = prod+1
 			end
@@ -22,7 +22,7 @@ minetest.register_node("voltbuild:geothermal_generator",{description="Geothermal
 		return prod
 		end},
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_int("energy",0)
 		meta:set_int("energyf",0)
 		meta:set_string("formspec", generators.get_formspec(pos)..

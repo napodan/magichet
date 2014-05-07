@@ -8,7 +8,7 @@ function automata.__index (table,key)
 end
 
 function automata.print_all (self)
-	local meta = minetest.env:get_meta(self.pos)
+	local meta = minetest.get_meta(self.pos)
 	local inventory = meta:get_inventory()
 	local size = inventory:get_size(self.listname)
 	for i=1,size do
@@ -18,7 +18,7 @@ function automata.print_all (self)
 end
 
 function automata.clear(self)
-	local meta = minetest.env:get_meta(self.pos)
+	local meta = minetest.get_meta(self.pos)
 	local inventory = meta:get_inventory()
 	local size = inventory:get_size(self.listname)
 	for i=1,size do
@@ -27,7 +27,7 @@ function automata.clear(self)
 end
 
 function automata.step(self)
-	local meta = minetest.env:get_meta(self.pos)
+	local meta = minetest.get_meta(self.pos)
 	local inventory = meta:get_inventory()
 	local size = inventory:get_size(self.listname)
 	local width = inventory:get_width(self.listname)
@@ -45,7 +45,7 @@ function automata.new(self,pos,listname,automata_name)
 	setmetatable(auto,self)
 	auto.listname = listname
 	auto.name = automata_name
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	local inventory = meta:get_inventory()
 	auto.pos = pos
 	auto:clear()

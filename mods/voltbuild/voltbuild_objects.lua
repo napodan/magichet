@@ -22,8 +22,8 @@ end
 setmetatable(voltbuild.metadata_check_move,voltbuild.metadata_check_move)
 
 function voltbuild.get_percent(pos)
-	local meta = minetest.env:get_meta(pos)
-	local node = minetest.env:get_node(pos)
+	local meta = minetest.get_meta(pos)
+	local node = minetest.get_node(pos)
 	return(meta:get_int("energy")/get_node_field(node.name,meta,"max_energy")*100)
 end
 
@@ -41,8 +41,8 @@ function voltbuild.vertical_chargebar_spec (pos)
 end
 
 function voltbuild.stressbar_spec (pos)
-	local meta = minetest.env:get_meta(pos)
-	local node = minetest.env:get_node(pos)
+	local meta = minetest.get_meta(pos)
+	local node = minetest.get_node(pos)
 	local stress = meta:get_int("stress")
 	local max_stress = minetest.registered_nodes[node.name]["voltbuild"]["max_stress"]
 	local percent = math.min(((stress/max_stress)*100),100)
@@ -58,7 +58,7 @@ function voltbuild.stressbar_spec (pos)
 end
 
 function voltbuild.charge_item(pos,energy)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
 	local chr = inv:get_stack("charge",1)
 	if chr:is_empty() then return energy end
@@ -77,8 +77,8 @@ function voltbuild.charge_item(pos,energy)
 end
 
 function voltbuild.discharge_item(pos)
-	local meta = minetest.env:get_meta(pos)
-	local node = minetest.env:get_node(pos)
+	local meta = minetest.get_meta(pos)
+	local node = minetest.get_node(pos)
 	local energy = meta:get_int("energy")
 	local max_energy = get_node_field(node.name,meta,"max_energy")
 	local m = max_energy-energy
@@ -113,7 +113,7 @@ function voltbuild.discharge_item(pos)
 end
 
 function voltbuild.can_dig(pos,player)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
 	local inv_table = meta:to_table()["inventory"]
 	for listname in pairs(inv_table) do
@@ -152,7 +152,7 @@ voltbuild.metadata_check.src = function (pos,listname,stack,maxtier)
 end
 
 function voltbuild.on_construct(pos)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
 	local node = minetest.get_node(pos)
 	meta:set_string("infotext",voltbuild_create_infotext(node.name))
@@ -166,7 +166,7 @@ function voltbuild.allow_metadata_inventory_put(pos, listname, index, stack, pla
 	return(voltbuild.metadata_check[listname](pos,listname,stack,max_tier,player))
 end
 function voltbuild.allow_metadata_inventory_move (pos, from_list, from_index, to_list, to_index, count, player)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
 	local stack = inv:get_stack(from_list, from_index)
 	local node = minetest.get_node(pos)
@@ -197,7 +197,7 @@ function voltbuild.get_craft_result(c)
 end
 
 function voltbuild.use_stored_energy (pos, energy)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	local stored_energy = meta:get_int("energy")
 	local use = math.min(energy,stored_energy)
 	if use > 0 then
@@ -208,7 +208,7 @@ function voltbuild.use_stored_energy (pos, energy)
 end
 
 function voltbuild.production_abm (pos,node, active_object_count, active_object_count_wider)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
 	local cooking_method = minetest.registered_nodes[node.name]["cooking_method"]
 	local energy_cost = minetest.registered_nodes[node.name]["voltbuild"]["energy_cost"]
@@ -308,7 +308,7 @@ function voltbuild.production_abm (pos,node, active_object_count, active_object_
 end
 
 function voltbuild.generation_abm (pos, node, active_object_count, active_objects_wider)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
 	local speed = minetest.registered_nodes[node.name]["voltbuild"]["speed"]
 	local packet_size = minetest.registered_nodes[node.name]["voltbuild"]["psize"]

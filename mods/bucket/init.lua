@@ -147,6 +147,7 @@ minetest.register_node("bucket:CO2_flowing", {
     },
    -- alpha = 60,
     drawtype = "nodebox",
+   -- drawtype = "flowingliquid",
     sunlight_propagates = true,
     paramtype = "light",
     use_texture_alpha = true,
@@ -170,7 +171,7 @@ minetest.register_node("bucket:CO2_flowing", {
     liquidtype = "flowing",
     liquid_alternative_flowing = "bucket:CO2_flowing",
     liquid_alternative_source = "bucket:CO2_source",
-    liquid_viscosity = 0,
+    liquid_viscosity = 2,
     post_effect_color = {a=54, r=200, g=200, b=200},
     groups = {liquid=4, puts_out_fire=2, not_in_creative_inventory=1},
 })
@@ -192,6 +193,7 @@ minetest.register_node("bucket:CO2_source", {
     },
    -- alpha = 60,
     drawtype = "nodebox",
+    --drawtype = "liquid",
     sunlight_propagates = true,
     paramtype = "light",
     use_texture_alpha = true,
@@ -216,9 +218,9 @@ minetest.register_node("bucket:CO2_source", {
     liquidtype = "source",
     liquid_alternative_flowing = "bucket:CO2_flowing",
     liquid_alternative_source = "bucket:CO2_source",
-    liquid_viscosity = 0,
+    liquid_viscosity = 2,
     post_effect_color = {a=54, r=200, g=200, b=200},
-    groups = {liquid=4, puts_out_fire=2},
+    groups = {liquid=4, puts_out_fire=2},    
 })
 
 -- Ignis first, 'cause water will override all but bucket.

@@ -5,7 +5,7 @@ function minetest.node_dig(pos, node, digger)
       local pll=digger:get_player_name()
        if not isghost[pll] or check_for_ghost_tool(digger) then
         --  minetest.debug('not a ghost')
-          local ent = minetest.env:add_entity(pos, "ghosts:ghostly_block")
+          local ent = minetest.add_entity(pos, "ghosts:ghostly_block")
            if ent then
               ent2=ent:get_luaentity()
               ent2.destroyer = pll
@@ -61,7 +61,7 @@ function minetest.item_place_node(itemstack, placer, pointed_thing)
            else return
         end
         if not isghost[pll] or check_for_ghost_tool(digger) then
-           local meta = minetest.env:get_meta(pos)
+           local meta = minetest.get_meta(pos)
            meta:set_string("creator",placer_name)
            item_place_node(itemstack, placer, pointed_thing)
         end
@@ -216,7 +216,7 @@ minetest.register_craftitem("ghosts:ghostly_block", {
         --[[if pointed_thing.type ~= "node" then
             return
         end]]--
-        local ent = minetest.env:add_entity(pointed_thing.above, "ghosts:ghostly_block")
+        local ent = minetest.add_entity(pointed_thing.above, "ghosts:ghostly_block")
         --minetest.item_place_node(itemstack,placer,pointed_thing)
         local ent2 = ent:get_luaentity()
         if placer and placer:is_player() and ent2 then ent2.destroyer = placer:get_player_name() end

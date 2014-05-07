@@ -51,7 +51,11 @@ Game
 + add CO(2) liquid
 - add CO(2) generation
 - make furnaces break down after mass CO(2) production
-- meta:set_string("efficiency", "100")
++ add breakdown param for nodes
+- make use of that param while performing dangerous activities
++ add CO2 generation on machinery blast
++ get rid of minetest.env
++ quartz in nether
 
 Legend
 ------

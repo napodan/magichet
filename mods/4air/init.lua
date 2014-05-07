@@ -8,12 +8,12 @@ minetest.register_on_joinplayer(function(player)
      -- add hunger hud background
      air_hud[pll]=player:hud_add({
         hud_elem_type = "statbar",
-        position = {x=0.5,y=0.9},
+        position = {x=0.5,y=1},
         direction=1,
         text = "air_bubble.png",
         number = max_drumsticks,
         alignment = {x=-1,y=-1},
-        offset = {x=12, y=-20},
+        offset = {x=12, y=-80},
      })
      player:hud_set_flags({breathbar = false})
 

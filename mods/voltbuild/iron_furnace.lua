@@ -1,13 +1,13 @@
 iron_furnace = {}
 
 function iron_furnace.get_formspec(pos)
-	formspec = "size[9,10]"..
+	formspec = "size[9,9.5]"..
 	"list[current_name;fuel;2,3;1,1;]"..
 	"list[current_name;src;2,1;1,1;]"..
 	"list[current_name;dst;5,1;2,2;]"..
-	"list[current_player;main;0,5;9,3;9;]"..
-    "list[current_player;main;0,8.5;9,1;]"
-	local meta = minetest.env:get_meta(pos)
+	"list[current_player;main;0,5;9,3;9]"..
+        "list[current_player;main;0,8.5;9,1;]"
+	local meta = minetest.get_meta(pos)
 	local percent
 	if meta:get_float("fburntime") == 0 then
 		percent = 0
@@ -30,9 +30,9 @@ local furnace_properties = {
 	legacy_facedir_simple = true,
 	sounds = default.node_sound_stone_defaults(),
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		local inv = meta:get_inventory()
-		local node = minetest.env:get_node(pos)
+		local node = minetest.get_node(pos)
 		inv:set_size("src", 1)
 		inv:set_size("dst", 4)
 		inv:set_size("fuel", 1)
@@ -40,7 +40,7 @@ local furnace_properties = {
 		meta:set_string("formspec", iron_furnace.get_formspec(pos))
 	end,
 	can_dig = function(pos,player)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		local inv = meta:get_inventory()
 		return inv:is_empty("src") and inv:is_empty("dst") and
 			inv:is_empty("fuel")
@@ -59,7 +59,7 @@ local furnace_properties = {
 		end
 	end,
 	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		local inv = meta:get_inventory()
 		local stack = inv:get_stack(from_list, from_index)
 		if to_list == "dst" then
@@ -94,7 +94,7 @@ minetest.register_abm({
 	interval = 1.0,
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		local inv = meta:get_inventory()
 		
 		local speed = 0.8

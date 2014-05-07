@@ -15,7 +15,7 @@ minetest.register_node("voltbuild:hospital", {
 	voltbuild = {max_tier=2,energy_cost=80,max_stress=2000,max_energy=120,max_psize=128,optime=10.0},
 	documentation = {summary = "A building that heals nearby players when powered."},
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_int("energy",0)
 		local inv = meta:get_inventory()
 		meta:set_string("formspec", consumers.get_formspec(pos)..
@@ -34,7 +34,7 @@ components.register_abm({
 	interval = 3.0,
 	chance = 1,
 	action = function (pos,node,active_object_count,active_object_count_wider)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		local energy = meta:get_int("energy")
 		local energy_cost = minetest.registered_nodes[node.name]["voltbuild"]["energy_cost"]
 		local hp_max = 20

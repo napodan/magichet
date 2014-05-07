@@ -24,7 +24,7 @@ minetest.register_chatcommand("kill", {
         end
         if param == "/me" then
            table.insert(kill_list, name)
-        elseif minetest.env:get_player_by_name(param) then
+        elseif minetest.get_player_by_name(param) then
             table.insert(kill_list, param)
             minetest.chat_send_all(param .. " был убит. Это сделал " .. name .. ".")
            -- minetest.log("action", param .. " был убит. Это сделал " .. name .. ".")
@@ -61,7 +61,7 @@ minetest.register_chatcommand("hp", {
                                             "Нужно указать целое положительное число.")
            return
         end
-        if minetest.env:get_player_by_name(user) then
+        if minetest.get_player_by_name(user) then
             table.insert(hp_list, {user, hp})
             minetest.chat_send_player(name, user .. ": кол-во очков жизни теперь равно " .. hp .. ".")
          --   minetest.log("action", name .. " установил кол-во очков жизни юзеру " .. user .. " равным " .. hp ..".")
@@ -74,18 +74,19 @@ minetest.register_chatcommand("hp", {
 minetest.register_globalstep(
    function(dtime)
            for j,kill in ipairs(kill_list) do
-               minetest.env:get_player_by_name(kill):set_hp(0)
+               minetest.get_player_by_name(kill):set_hp(0)
                minetest.log("action", kill .. " was instantly killed.")                               
                table.remove(kill_list,j)
            end
 
            for j,hps in ipairs(hp_list) do
-               minetest.env:get_player_by_name(hps[1]):set_hp(hps[2])
+               minetest.get_player_by_name(hps[1]):set_hp(hps[2])
                minetest.log("action", hps[1] .. "'s HP have been changed to " .. hps[2] .. ".")                               
                table.remove(hp_list,j)
            end
    end
 )
 
+print('[OK] Kill/Set HP loaded')
 
 

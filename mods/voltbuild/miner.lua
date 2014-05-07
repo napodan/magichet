@@ -44,7 +44,7 @@ minetest.register_node("voltbuild:miner", {
 	voltbuild = {max_psize = 128,
 		max_energy = 240,max_tier=2,max_stress=2000,active=true,
 		optime = function (pos)
-			local meta = minetest.env:get_meta(pos)
+			local meta = minetest.get_meta(pos)
 			local drill = meta:get_inventory():get_stack("drill",1)
 			if drill:get_name() == "voltbuild:mining_drill" or 
 				drill:get_name() == "voltbuild:mining_drill_discharged" then
@@ -56,7 +56,7 @@ minetest.register_node("voltbuild:miner", {
 			return 0
 		end,},
 	on_construct = function(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_int("energy",0)
 		meta:set_int("stime",0)
 		local inv = meta:get_inventory()
@@ -77,9 +77,9 @@ minetest.register_node("voltbuild:miner", {
 function miner.eject_item(pos,item)
 	for _,d in ipairs(adjlist) do
 		local npos = addVect(d,pos)
-		local nname = minetest.env:get_node(npos).name
+		local nname = minetest.get_node(npos).name
 		if nname == "default:chest" then
-			local meta = minetest.env:get_meta(npos)
+			local meta = minetest.get_meta(npos)
 			local inv = meta:get_inventory()
 			if inv:room_for_item("main",item) then
 				inv:add_item("main",item)
@@ -88,7 +88,7 @@ function miner.eject_item(pos,item)
 		end
 	end
 	local droppos = {x=pos.x,y=pos.y+1,z=pos.z}
-	local obj = minetest.env:add_item(droppos,item)
+	local obj = minetest.add_item(droppos,item)
 	if obj ~= nil then
 		obj:setvelocity({x=(math.random()-0.5),y=math.random()+1,z=(math.random()-0.5)})
 	end
@@ -97,7 +97,7 @@ end
 function miner.current_pos(tpos,visited)
 	for _,dir in pairs(adjlist) do
 		local next_pos = addVect(tpos,dir)
-		if minetest.env:get_node(next_pos).name == "voltbuild:mining_pipe" and
+		if minetest.get_node(next_pos).name == "voltbuild:mining_pipe" and
 			not visited[next_pos.x..next_pos.y..next_pos.z] then
 			visited[next_pos.x..next_pos.y..next_pos.z] = true
 			return miner.current_pos(next_pos,visited)
@@ -114,7 +114,7 @@ function miner.dig_towards_ore(tpos,radius)
 	for z=-radius,radius do
 		if z~=0 or x~=0 then
 			lpos = {x=tpos.x+x,y=tpos.y,z=tpos.z+z}
-			lname = minetest.env:get_node(lpos).name
+			lname = minetest.get_node(lpos).name
 			if voltbuild.registered_ores[lname] then return lpos end
 		end
 	end
@@ -123,14 +123,14 @@ function miner.dig_towards_ore(tpos,radius)
 end
 
 function miner.pull_pipes (pos)
-	local pipe_inv = minetest.env:get_meta(pos):get_inventory()
+	local pipe_inv = minetest.get_meta(pos):get_inventory()
 	local pipes = pipe_inv:get_stack("pipe",1)
 	pipes = miner.pull_pipes_accumulator(pos,pos,pipes)
 	pipe_inv:set_stack("pipe",1,pipes)
 end
 
 function miner.pull_pipes_accumulator (pos,current_pos,pipes)
-	local pipe_inv = minetest.env:get_meta(pos):get_inventory()
+	local pipe_inv = minetest.get_meta(pos):get_inventory()
 	for _,dir in pairs(adjlist) do
 		local pipe_pos = addVect(current_pos,dir) 
 		local node = minetest.get_node(pipe_pos)
@@ -154,7 +154,7 @@ components.register_abm({
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)
 		consumers.discharge(pos)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_string("formspec",consumers.get_formspec(pos)..
 				"list[current_name;pipe;2,1;1,1;]"..
 				"list[current_name;drill;4,1;1,1;]"..
@@ -197,7 +197,7 @@ components.register_abm({
 			end
 
 			local tpos = miner.current_pos(pos,{})
-			local name = minetest.env:get_node(tpos).name
+			local name = minetest.get_node(tpos).name
 			if name == "voltbuild:mining_pipe" then
 				if name == "ignore" then
 					meta:set_int("stime",stime)
@@ -227,12 +227,12 @@ components.register_abm({
 							tpos.z = tpos.z+1
 						end
 					end
-					local tname = minetest.env:get_node(tpos).name
+					local tname = minetest.get_node(tpos).name
 					local itemstacks = minetest.get_node_drops(tname,"default:pick_mese")
 					for _, item in ipairs(itemstacks) do
 						miner.eject_item(pos,item)
 					end
-					minetest.env:set_node(tpos,{name = "voltbuild:mining_pipe"})
+					minetest.set_node(tpos,{name = "voltbuild:mining_pipe"})
 					pipe:take_item()
 					inv:set_stack("pipe",1,pipe)
 					if tpos.x == todig.x and tpos.y == todig.y and tpos.z == todig.z then
@@ -240,23 +240,23 @@ components.register_abm({
 					end
 				else
 					tpos.y = tpos.y-1
-					local tname = minetest.env:get_node(tpos).name
+					local tname = minetest.get_node(tpos).name
 					local itemstacks = minetest.get_node_drops(tname,"default:pick_mese")
 					for _, item in ipairs(itemstacks) do
 						miner.eject_item(pos,item)
 					end
-					minetest.env:set_node(tpos,{name = "voltbuild:mining_pipe"})
+					minetest.set_node(tpos,{name = "voltbuild:mining_pipe"})
 					pipe:take_item()
 					inv:set_stack("pipe",1,pipe)
 				end
 			else
 				tpos.y = tpos.y-1
-				local tname = minetest.env:get_node(tpos).name
+				local tname = minetest.get_node(tpos).name
 				local itemstacks = minetest.get_node_drops(tname,"default:pick_mese")
 				for _, item in ipairs(itemstacks) do
 					miner.eject_item(pos,item)
 				end
-				minetest.env:set_node(tpos,{name = "voltbuild:mining_pipe"})
+				minetest.set_node(tpos,{name = "voltbuild:mining_pipe"})
 				pipe:take_item()
 				inv:set_stack("pipe",1,pipe)
 			end

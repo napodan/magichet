@@ -22,11 +22,11 @@ minetest.register_abm({
         local pos0 = {x=pos.x-1,y=pos.y-1,z=pos.z-1}
         local pos1 = {x=pos.x+1,y=pos.y+1,z=pos.z+1}
 
-        local water = minetest.env:find_nodes_in_area(pos0, pos1, "default:water_source")
+        local water = minetest.find_nodes_in_area(pos0, pos1, "default:water_source")
         if water then
             -- freeze only if it's  really cold
             if minetest.get_heat(pos)<=0 then
-               minetest.env:set_node(water[1], {name="default:ice"})
+               minetest.set_node(water[1], {name="default:ice"})
             end
         end
     end,
@@ -54,3 +54,5 @@ minetest.register_abm({
         minetest.add_node(pos,{name="default:dirt"})
     end,
 })
+
+print("[OK] Ethereal mapgen loaded")
