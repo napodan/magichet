@@ -170,3 +170,5 @@ minetest.register_abm({
 		end
 	end,
 })
+
+print('[OK] Flowers loaded')

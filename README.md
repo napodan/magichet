@@ -369,30 +369,13 @@ within mods itself and within this readme)
 VI - License
 ------------
 
-Until BETA (will be announced) **any** part that was licensed as WTFPL, CC0
-(w/o SA and/or ND attributes) or any other license that doesn't forbid to forbid
-derivatives is now licensed as CC BY-NC-ND  (3.0).
-
-When this will be in BETA stage all mods would be switched to GPLv3 if possible.
-
-The repos with the mods included here will be updated, but not so often.
-My main target is now this game as one whole thing. Edges will blur.
-**Every** change made here (if applicable) is licensed as mentioned above.
-But all standalone repos will become GPLv3.
-
-    So, basically I'm trying to prevent spread of highly unstable indev versions while
-    giving anyone the freedom to use, edit, redistribute and even sell the versions
-    that are in their standalone repos.
-
-Parts that are already GPL-ed will stay GPL-ed all the way.
+**Beta** is here!
+All stuff in /mods has become GPLv3 if that's possible.
+Those parts which isn't are the subject to be replaced.
 
 That means that:
- * derivatives without telling me a word **are prohibited** until BETA 
- * I will gladly let anyone fork this if asked by that particular anyone
- * I want to properly credit anyone who made this possible w/o feeling any pressure
+ * You can fork it and make pull requests
+ * I want to properly credit anyone who made this possible
  * I would appreciate any help
- * If anyone would help me in any way with this game - I'll grant the rights to copy, change and redistribute as long as license will stay CC BY-NC-ND  (3.0)
- * I want to fix things myself
- * I don't want to digress
  * I want to add some things w/o being forced to support forks
  * I need time to create some basic features that are still not listed here

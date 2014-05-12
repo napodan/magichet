@@ -198,3 +198,5 @@ minetest.register_craft({
 		{'default:stone', 'default:stone', 'default:stone'},
 	}
 })
+
+print('[OK] Itemframes loaded')

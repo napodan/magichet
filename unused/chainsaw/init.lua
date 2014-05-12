@@ -165,4 +165,4 @@ minetest.register_craft({
 	}
 })
 
-
+print('[OK] Chainsaw loaded')

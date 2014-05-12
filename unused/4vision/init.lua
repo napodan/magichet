@@ -197,3 +197,5 @@ minetest.register_craftitem('4vision:engineer_goggles', {
 
     end,
 })
+
+print('[OK] 4vision loaded')

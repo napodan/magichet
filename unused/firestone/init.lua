@@ -192,3 +192,5 @@ minetest.register_node("firestone:smoke", {
         old:set_int("age", 0)
     end
 })
+
+print('[OK] Firestone loaded')

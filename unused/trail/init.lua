@@ -298,3 +298,5 @@ if REGROW then
 		end
 	})
 end
+
+print('[OK] Trail loaded')

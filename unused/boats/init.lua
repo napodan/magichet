@@ -167,3 +167,5 @@ minetest.register_craft({
 		{"group:wood", "group:wood", "group:wood"},
 	},
 })
+
+print('[OK] Boats loaded')

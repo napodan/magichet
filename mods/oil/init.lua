@@ -831,4 +831,4 @@ minetest.register_abm({
 	end})
 
 
-print('[OK] Oil loaded!')
+print('[OK] Oil loaded')

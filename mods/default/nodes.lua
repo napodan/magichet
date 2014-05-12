@@ -706,7 +706,8 @@ minetest.register_node("default:torch", {
     paramtype2 = "wallmounted",
     sunlight_propagates = true,
     walkable = false,
-    light_source = 14,
+    wield_light = 12,
+    light_source = 12,
     selection_box = {
         type = "wallmounted",
         wall_bottom = {-0.1, -0.5, -0.1, 0.1, -0.5+0.6, 0.1},
@@ -822,46 +823,89 @@ minetest.register_node("default:chest", {
             minetest.set_node(pos, {name="default:chest_right",param2=param2})
             local p = get_chest_neighborpos(pos, param2, "right")
             meta:set_string("formspec",
-                    "size[9,11.5]"..
-                    "list[nodemeta:"..p.x..","..p.y..","..p.z..";main;0,0;9,3;]"..
-                    "list[context;main;0,3;9,3;]"..
-                    "list[current_player;main;0,7;9,3;9]"..
-                    "list[current_player;main;0,10.5;9,1;]")
-            meta:set_string("infotext", "Large Chest")
+            "size[9,10.2]"..
+            "bgcolor[#bbbbbb;false]"..
+            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
+
+            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
+            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
+            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
+            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;z;true;true]"..
+
+            "list[nodemeta:"..p.x..","..p.y..","..p.z..";main;0,0;9,3;]"..
+            "list[context;main;0,3;9,3;]"..
+
+            "list[current_player;main;0,6.2;9,3;9]"..
+            "list[current_player;main;0,9.4;9,1;]")            meta:set_string("infotext", "Large Chest")
             hacky_swap_node(p, "default:chest_left", param2)
             local m = minetest.get_meta(p)
             m:set_string("formspec",
-                    "size[9,11.5]"..
-                    "list[context;main;0,0;9,3;]"..
-                    "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";main;0,3;9,3;]"..
-                    "list[current_player;main;0,7;9,3;9]"..
-                    "list[current_player;main;0,10.5;9,1;]")
+            "size[9,10.2]"..
+            "bgcolor[#bbbbbb;false]"..
+            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
+
+            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
+            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
+            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
+            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
+
+            "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";main;0,0;9,3;]"..
+            "list[context;main;0,3;9,3;]"..
+
+            "list[current_player;main;0,6.2;9,3;9]"..
+            "list[current_player;main;0,9.4;9,1;]")
             m:set_string("infotext", "Large Chest")
         elseif minetest.get_node(get_chest_neighborpos(pos, param2, "left")).name == "default:chest" then
             minetest.set_node(pos, {name="default:chest_left",param2=param2})
             local p = get_chest_neighborpos(pos, param2, "left")
             meta:set_string("formspec",
-                    "size[9,11.5]"..
-                    "list[context;main;0,0;9,3;]"..
-                    "list[nodemeta:"..p.x..","..p.y..","..p.z..";main;0,3;9,3;]"..
-                    "list[current_player;main;0,7;9,3;9]"..
-                    "list[current_player;main;0,10.5;9,1;]")
+            "size[9,10.2]"..
+            "bgcolor[#bbbbbb;false]"..
+            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
+
+            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
+            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
+            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
+            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
+
+            "list[nodemeta:"..p.x..","..p.y..","..p.z..";main;0,0;9,3;]"..
+            "list[context;main;0,3;9,3;]"..
+
+            "list[current_player;main;0,6.2;9,3;9]"..
+            "list[current_player;main;0,9.4;9,1;]")
             meta:set_string("infotext", "Large Chest")
             hacky_swap_node(p, "default:chest_right", param2)
             local m = minetest.get_meta(p)
             m:set_string("formspec",
-                    "size[9,11.5]"..
-                    "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";main;0,0;9,3;]"..
-                    "list[context;main;0,3;9,3;]"..
-                    "list[current_player;main;0,7;9,3;9]"..
-                    "list[current_player;main;0,10.5;9,1;]")
+            "size[9,10.2]"..
+            "bgcolor[#bbbbbb;false]"..
+            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
+
+            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
+            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
+            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
+            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
+
+            "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";main;0,0;9,3;]"..
+            "list[context;main;0,3;9,3;]"..
+
+            "list[current_player;main;0,6.2;9,3;9]"..
+            "list[current_player;main;0,9.4;9,1;]")
             m:set_string("infotext", "Large Chest")
         else
             meta:set_string("formspec",
-                    "size[9,8.5]"..
-                    "list[context;main;0,0;9,3;]"..
-                    "list[current_player;main;0,4;9,3;9]"..
-                    "list[current_player;main;0,7.5.5;9,1;]")
+            "size[9,7.2]"..
+            "bgcolor[#bbbbbb;false]"..
+            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
+
+            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
+            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
+            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
+            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
+
+            "list[context;main;0,0;9,3;]"..
+            "list[current_player;main;0,3.2;9,3;9]"..
+            "list[current_player;main;0,6.4;9,1;]")
             meta:set_string("infotext", "Chest")
         end
         local inv = meta:get_inventory()
@@ -893,6 +937,11 @@ minetest.register_node("default:chest", {
         minetest.log("action", player:get_player_name()..
                 " takes stuff from chest at "..minetest.pos_to_string(pos))
     end,
+        on_receive_fields = function(pos, formname, fields, sender)
+           if sender and sender:is_player() then
+              default.sort_inv(sender,formname,fields)
+           end
+        end,
 })
 
 minetest.register_node("default:chest_left", {
@@ -914,10 +963,18 @@ minetest.register_node("default:chest_left", {
         end
         local meta = minetest.get_meta(p)
         meta:set_string("formspec",
-                "size[9,8.5]"..
-                "list[context;main;0,0;9,3;]"..
-                "list[current_player;main;0,4;9,3;9]"..
-                "list[current_player;main;0,7.5.5;9,1;]")
+            "size[9,7.2]"..
+            "bgcolor[#bbbbbb;false]"..
+            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
+
+            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
+            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
+            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
+            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
+
+            "list[context;main;0,0;9,3;]"..
+            "list[current_player;main;0,3.2;9,3;9]"..
+            "list[current_player;main;0,6.4;9,1;]")
         meta:set_string("infotext", "Chest")
         hacky_swap_node(p, "default:chest")
     end,
@@ -947,6 +1004,12 @@ minetest.register_node("default:chest_left", {
         minetest.log("action", player:get_player_name()..
                 " takes stuff from chest at "..minetest.pos_to_string(pos))
     end,
+        on_receive_fields = function(pos, formname, fields, sender)
+           if sender and sender:is_player() then
+              default.sort_inv(sender,formname,fields)
+           end
+        end,
+
 })
 
 minetest.register_node("default:chest_right", {
@@ -968,10 +1031,18 @@ minetest.register_node("default:chest_right", {
         end
         local meta = minetest.get_meta(p)
         meta:set_string("formspec",
-                "size[9,8.5]"..
-                "list[context;main;0,0;9,3;]"..
-                "list[current_player;main;0,4;9,3;9]"..
-                "list[current_player;main;0,7.5.5;9,1;]")
+            "size[9,7.2]"..
+            "bgcolor[#bbbbbb;false]"..
+            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
+
+            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
+            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
+            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
+            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
+
+            "list[context;main;0,0;9,3;]"..
+            "list[current_player;main;0,3.2;9,3;9]"..
+            "list[current_player;main;0,6.4;9,1;]")
         meta:set_string("infotext", "Chest")
         hacky_swap_node(p, "default:chest")
     end,
@@ -1001,6 +1072,13 @@ minetest.register_node("default:chest_right", {
         minetest.log("action", player:get_player_name()..
                 " takes stuff from chest at "..minetest.pos_to_string(pos))
     end,
+        on_receive_fields = function(pos, formname, fields, sender)
+           if sender and sender:is_player() then
+              default.sort_inv(sender,formname,fields)
+           end
+        end,
+
+
 })
 
 local function has_locked_chest_privilege(meta, player)
@@ -1013,10 +1091,18 @@ end
 function default.get_locked_chest_formspec(pos)
     local spos = pos.x .. "," .. pos.y .. "," ..pos.z
     local formspec =
-        "size[9,9]"..
-        "list[nodemeta:".. spos .. ";main;0,0;9,3;]"..
-        "list[current_player;main;0,5;9,3;9]"..
-        "list[current_player;main;0,8.5;9,1;]"
+            "size[9,7.2]"..
+            "bgcolor[#bbbbbb;false]"..
+            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
+
+            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
+            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
+            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
+            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
+
+            "list[nodemeta:".. spos .. ";main;0,0;9,3;]"..
+            "list[current_player;main;0,3.2;9,3;9]"..
+            "list[current_player;main;0,6.4;9,1;]"
     return formspec
 end
 
@@ -1032,17 +1118,25 @@ minetest.register_node("default:chest_locked", {
     after_place_node = function(pos, placer)
         local meta = minetest.get_meta(pos)
         meta:set_string("owner", placer:get_player_name() or "")
-        meta:set_string("infotext", "Сундук на замке (владелец - "..
+        meta:set_string("infotext", "Locked chest (owned by "..
                 meta:get_string("owner")..")")
             meta:set_string("formspec",
-                    "size[9,9]"..
-                    "list[context;main;0,0;9,3;]"..
-                    "list[current_player;main;0,4;9,3;9]"..
-                    "list[current_player;main;0,7.5;9,1;]")
+            "size[9,7.2]"..
+            "bgcolor[#bbbbbb;false]"..
+            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
+
+            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
+            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
+            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
+            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
+
+            "list[context;main;0,0;9,3;]"..
+            "list[current_player;main;0,3.2;9,3;9]"..
+            "list[current_player;main;0,6.4;9,1;]")
     end,
     on_construct = function(pos)
         local meta = minetest.get_meta(pos)
-        meta:set_string("infotext", "Сундук на замкке")
+        meta:set_string("infotext", "Locked chest")
         meta:set_string("owner", "")
         local inv = meta:get_inventory()
         inv:set_size("main", 9*3)
@@ -1055,10 +1149,6 @@ minetest.register_node("default:chest_locked", {
     allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
         local meta = minetest.get_meta(pos)
         if not has_locked_chest_privilege(meta, player) then
-            minetest.log("action", player:get_player_name()..
-                    " пытался переложить что-то в запертом сундуке, владельцем которого является "..
-                    meta:get_string("owner").." в точке "..
-                    minetest.pos_to_string(pos))
             return 0
         end
         return count
@@ -1066,10 +1156,6 @@ minetest.register_node("default:chest_locked", {
     allow_metadata_inventory_put = function(pos, listname, index, stack, player)
         local meta = minetest.get_meta(pos)
         if not has_locked_chest_privilege(meta, player) then
-            minetest.log("action", player:get_player_name()..
-                    " пытался положить что-то в запертый сундук, владельцем которого является "..
-                    meta:get_string("owner").." в точке "..
-                    minetest.pos_to_string(pos))
             return 0
         end
         return stack:get_count()
@@ -1077,25 +1163,21 @@ minetest.register_node("default:chest_locked", {
     allow_metadata_inventory_take = function(pos, listname, index, stack, player)
         local meta = minetest.get_meta(pos)
         if not has_locked_chest_privilege(meta, player) then
-            minetest.log("action", player:get_player_name()..
-                    " пытался забрать что-то из запертого сундука, владельцем которого является "..
-                    meta:get_string("owner").." в точке "..
-                    minetest.pos_to_string(pos))
             return 0
         end
         return stack:get_count()
     end,
     on_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
         minetest.log("action", player:get_player_name()..
-                " переложил что-то в сундуке с замком в точке "..minetest.pos_to_string(pos))
+                " rearranged stuff in a chest at "..minetest.pos_to_string(pos))
     end,
     on_metadata_inventory_put = function(pos, listname, index, stack, player)
-        minetest.log("action", player:get_player_name()..
-                " положил что-то в сундук с замком в точке "..minetest.pos_to_string(pos))
+        local inam = stack:get_name()
+        minetest.log("action", player:get_player_name().. " put " .. inam .. " in a chest at "..minetest.pos_to_string(pos))
     end,
     on_metadata_inventory_take = function(pos, listname, index, stack, player)
-        minetest.log("action", player:get_player_name()..
-                " забрал что-то из сундука с замком в точке "..minetest.pos_to_string(pos))
+        local inam = stack:get_name()
+        minetest.log("action", player:get_player_name().. " took " .. inam .. " from a chest at "..minetest.pos_to_string(pos))
     end,
     on_rightclick = function(pos, node, clicker)
         local meta = minetest.get_meta(pos)
@@ -1107,17 +1189,42 @@ minetest.register_node("default:chest_locked", {
             )
         end
     end,
+        on_receive_fields = function(pos, formname, fields, sender)
+           if sender and sender:is_player() then
+              default.sort_inv(sender,formname,fields)
+           end
+        end,
+
+
 })
 
 
 default.furnace_inactive_formspec =
-    "size[9,9.5]"..
-    "image[2,2;1,1;default_furnace_fire_bg.png]"..
-    "list[context;fuel;2,3;1,1;]"..
-    "list[context;src;2,1;1,1;]"..
-    "list[context;dst;5,1;2,2;]"..
-    "list[current_player;main;0,5;9,3;9]"..
-    "list[current_player;main;0,8.5.5;9,1;]"
+            "size[9,8.2]"..
+            "bgcolor[#bbbbbb;false]"..
+            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
+
+            "list[current_player;helm;0,0;1,1;]"..
+            "list[current_player;torso;0,1;1,1;]"..
+            "list[current_player;pants;0,2;1,1;]"..
+            "list[current_player;boots;0,3;1,1;]"..
+
+            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
+            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
+            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
+            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
+
+            "list[context;main;0,0;9,3;]"..
+            "image[2,1.5;1,1;default_furnace_fire_bg.png]"..
+            "image[3,1.5;2,1;default_arrow_bg.png^[transformR270]"..
+            --"image[3,1.5;2,1;default_arrow_bg.png^[transformR270^[lowpart:40:default_arrow_fg.png^[transformR270]"..
+
+            "list[context;fuel;2,2.5;1,1;]"..
+            "list[context;src;2,0.5;1,1;]"..
+            "list[context;dst;5,1;2,2;]"..
+
+            "list[current_player;main;0,4.2;9,3;9]"..
+            "list[current_player;main;0,7.4;9,1;]"
 
 minetest.register_node("default:furnace", {
     description = "Furnace",
@@ -1131,7 +1238,7 @@ minetest.register_node("default:furnace", {
     on_construct = function(pos)
         local meta = minetest.get_meta(pos)
         meta:set_string("formspec", default.furnace_inactive_formspec)
-        meta:set_string("infotext", "Furnace")        
+        meta:set_string("infotext", "Furnace")
                 meta:set_string("percent", "0")
         local inv = meta:get_inventory()
         inv:set_size("fuel", 1)
@@ -1191,6 +1298,13 @@ minetest.register_node("default:furnace", {
             return 0
         end
     end,
+        on_receive_fields = function(pos, formname, fields, sender)
+           if sender and sender:is_player() then
+              default.sort_inv(sender,formname,fields)
+           end
+        end,
+
+
 })
 
 minetest.register_node("default:furnace_active", {
@@ -1260,11 +1374,18 @@ minetest.register_node("default:furnace_active", {
             return 0
         end
     end,
+        on_receive_fields = function(pos, formname, fields, sender)
+           if sender and sender:is_player() then
+              default.sort_inv(sender,formname,fields)
+           end
+        end,
+
+
 })
 
 minetest.register_abm({
     nodenames = {"default:furnace","default:furnace_active"},
-    interval = 1.0,
+    interval = 1,
     chance = 1,
     action = function(pos, node, active_object_count, active_object_count_wider)
         local meta = minetest.get_meta(pos)
@@ -1295,6 +1416,8 @@ minetest.register_abm({
             was_active = true
             meta:set_float("fuel_time", meta:get_float("fuel_time") + 1)
             meta:set_float("src_time", meta:get_float("src_time") + 1)
+            meta:set_float("src_totaltime", cooked.time)
+
             if cooked and cooked.item and meta:get_float("src_time") >= cooked.time then
                 -- check if there's room for output in "dst" list
                 if inv:room_for_item("dst",cooked.item) then
@@ -1312,18 +1435,37 @@ minetest.register_abm({
         if meta:get_float("fuel_time") < meta:get_float("fuel_totaltime") then
             local percent = math.floor(meta:get_float("fuel_time") /
                     meta:get_float("fuel_totaltime") * 100)
-            meta:set_string("infotext","Furnace active: "..percent.."%")
+            local percent2 = math.floor(meta:get_float("src_time") /
+                    meta:get_float("src_totaltime") * 100)
+            meta:set_string("infotext","Furnace active: "..percent2.."%")
                         meta:set_string("percent", percent)
             hacky_swap_node(pos,"default:furnace_active")
             meta:set_string("formspec",
-                "size[9,9.5]"..
-                "image[2,2;1,1;default_furnace_fire_bg.png^[lowpart:"..
-                        (100-percent)..":default_furnace_fire_fg.png]"..
-                "list[context;fuel;2,3;1,1;]"..
-                "list[context;src;2,1;1,1;]"..
-                "list[context;dst;5,1;2,2;]"..
-                "list[current_player;main;0,5;9,3;9]"..
-                "list[current_player;main;0,8.5.5;9,1;]")
+            "size[9,8.2]"..
+            "bgcolor[#bbbbbb;false]"..
+            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
+
+            "list[current_player;helm;0,0;1,1;]"..
+            "list[current_player;torso;0,1;1,1;]"..
+            "list[current_player;pants;0,2;1,1;]"..
+            "list[current_player;boots;0,3;1,1;]"..
+
+            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
+            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
+            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
+            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
+
+            "list[context;main;0,0;9,3;]"..
+            "image[2,1.5;1,1;default_furnace_fire_bg.png^[lowpart:"..(100-percent)..":default_furnace_fire_fg.png]"..
+            "image[3.2,1.5;1.8,1;default_arrow_bg.png^[lowpart:"..(percent2)..":default_arrow_fg.png^[transformR270]"..
+
+
+            "list[context;fuel;2,2.5;1,1;]"..
+            "list[context;src;2,0.5;1,1;]"..
+            "list[context;dst;5,1;2,2;]"..
+
+            "list[current_player;main;0,4.2;9,3;9]"..
+            "list[current_player;main;0,7.4;9,1;]")
             return
         end
 
@@ -1510,7 +1652,11 @@ minetest.register_node("default:ice", {
     tiles = {"default_ice.png"},
     is_ground_content = true,
     paramtype = "light",
-
+    drop='',
+    use_texture_alpha=true,
+    on_dig = function(pos, oldnode, oldmetadata, digger)
+       minetest.set_node(pos, {name="default:water_source", param1=0,param2=0}, true)
+    end,
     groups = {cracky=default.dig.ice},
     sounds = default.node_sound_glass_defaults(),
 })
@@ -1569,6 +1715,53 @@ minetest.register_node("default:bedrock", {
 
     sounds = default.node_sound_stone_defaults(),
 })
+
+
+minetest.register_node("default:workbench", {
+    description = "Workbench",
+    tiles = {"workbench_top.png", "workbench_side.png"},
+    groups = {choppy=default.dig.wood,flammable=3},
+    sounds = default.node_sound_wood_defaults(),
+    on_construct = function(pos)
+       local meta = minetest.get_meta(pos)
+       meta:set_string("formspec",
+
+            "size[9,8.2]"..
+            "bgcolor[#bbbbbb;false]"..
+            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
+
+            "list[current_player;helm;0,0;1,1;]"..
+            "list[current_player;torso;0,1;1,1;]"..
+            "list[current_player;pants;0,2;1,1;]"..
+            "list[current_player;boots;0,3;1,1;]"..
+
+            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
+            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
+            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
+            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
+
+            "list[context;main;0,0;9,3;]"..
+
+            "list[current_player;craft;3,0.5;3,3;]"..
+            "list[current_player;craftpreview;7,1.5;1,1;]"..
+
+            "list[current_player;main;0,4.2;9,3;9]"..
+            "list[current_player;main;0,7.4;9,1;]")
+    end,
+        on_receive_fields = function(pos, formname, fields, sender)
+             default.sort_inv(sender,formname,fields, pos)
+        end,
+
+})
+
+minetest.register_craft({
+    output = "default:workbench",
+    recipe = {
+        {"group:wood", "group:wood"},
+        {"group:wood", "group:wood"},
+    },
+})
+
 
 minetest.register_alias("default:axe_steel","default:iron")
 minetest.register_alias("default:axe_steel", "default:axe_iron")

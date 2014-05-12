@@ -167,3 +167,5 @@ minetest.register_on_generated(function(minp, maxp, seed)
 		minetest.after(0.8,make,p2)
 	end
 end)
+
+print('[OK] Pyramids loaded')

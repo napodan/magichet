@@ -329,7 +329,7 @@ minetest.register_node("ghosts:reincarnator", {
     wield_image = "default_furnace_front.png",
     tiles = {'default_furnace_top.png','default_furnace_bottom.png','default_furnace_side.png','default_furnace_side.png','default_furnace_front.png','default_furnace_front.png'},
     wield_scale = {x=1, y=1, z=1},
-
+    groups = {cracky=default.dig.cobble},
    -- on_punch = function(pos, node, puncher)
    --     check_for_revival_struct(pos)
    -- end,
@@ -342,22 +342,34 @@ minetest.register_node("ghosts:reincarnator", {
        local txt2= 'Efficienty: '..tostring(cmplt) ..'%'
        local txt3= 'Ghost blocks'
        local txt4= 'Reincarnate'
+       local txt5= 'Charge'
        meta:set_string("txt",txt)
        meta:set_string("txt2",txt2)
        meta:set_string("txt3",txt3)
        meta:set_string("txt4",txt4)
-       local formspec = "size[9,9]" ..
-                        "label[0,0;Reincarnator]"..
-                        "label[0,1;".. txt .."]"..
-                        "label[0,1.5;".. txt2 .."]"..
-                        "label[0,2;".. txt3 .."]"..
-                        "list[context;gb_place;6,1;1,1;]"..
-                        "label[7,1; +".. meta:get_string("stored") .."]"..
-                        "button[5,2;3,1;g_chk;Activate]"..
-                        "button_exit[6,8;2,1;g_ok;Ok]"..
-                        "list[current_player;main;0,3.5;9,3;9]"..
-                        "list[current_player;main;0,7;9,1;]"..
-                        "button_exit[1,8;4,1;g_rei;".. txt4 .."]"
+       meta:set_string("txt4",txt5)
+       local formspec = "size[9,8.2]" ..
+            "bgcolor[#bbbbbb;false]"..
+            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
+
+            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
+            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
+            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
+            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
+            "label[1.2,1;".. txt .."]"..
+            "label[1.2,1.5;".. txt2 .."]"..
+            "label[1.2,2;".. txt3 .."]"..
+            "list[context;gb_place;6,1;1,1;]"..
+            "label[7,1; +".. meta:get_string("stored") .."]"..
+            "button[5,2;3,1;g_chk;"..txt5.."]"..
+            "button_exit[5,3;3,1;g_rei;".. txt4 .."]"..
+            "list[current_player;helm;0,0;1,1;]"..
+            "list[current_player;torso;0,1;1,1;]"..
+            "list[current_player;pants;0,2;1,1;]"..
+            "list[current_player;boots;0,3;1,1;]"..
+
+            "list[current_player;main;0,4.2;9,3;9]"..
+            "list[current_player;main;0,7.4;9,1;]"
 
         meta:set_string("formspec", formspec)
         meta:set_string("stored","0")
@@ -373,31 +385,46 @@ minetest.register_node("ghosts:reincarnator", {
        local txt2= 'Efficienty: '..tostring(cmplt) ..'%'
        local txt3= 'Ghost blocks'
        local txt4= 'Reincarnate'
+       local txt5= 'Charge'
        meta:set_string("txt",txt)
        meta:set_string("txt2",txt2)
        meta:set_string("txt3",txt3)
        meta:set_string("txt4",txt4)
+       meta:set_string("txt4",txt5)
+       local formspec = "size[9,8.2]" ..
+            "bgcolor[#bbbbbb;false]"..
+            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
 
-       local formspec = "size[9,9]" ..
-                        "label[0,0;Reincarnator]"..
-                        "label[0,1;".. txt .."]"..
-                        "label[0,1.5;".. txt2 .."]"..
-                        "label[0,2;".. txt3 .."]"..
-                        "list[context;gb_place;6,1;1,1;]"..
-                        "label[7,1; +".. meta:get_string("stored") .."]"..
-                        "button[5,2;3,1;g_chk;Charge]"..
-                        "button_exit[6,8;2,1;g_ok;Ok]"..
-                        "list[current_player;main;0,3.5;9,3;9]"..
-                        "list[current_player;main;0,7;9,1;]"..
-                        "button_exit[1,8;4,1;g_rei;".. txt4 .."]"
+            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
+            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
+            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
+            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
+            "label[1.2,1;".. txt .."]"..
+            "label[1.2,1.5;".. txt2 .."]"..
+            "label[1.2,2;".. txt3 .."]"..
+            "list[context;gb_place;6,1;1,1;]"..
+            "label[7,1; +".. meta:get_string("stored") .."]"..
+            "button[5,2;3,1;g_chk;"..txt5.."]"..
+            "button_exit[5,3;3,1;g_rei;".. txt4 .."]"..
+            "list[current_player;helm;0,0;1,1;]"..
+            "list[current_player;torso;0,1;1,1;]"..
+            "list[current_player;pants;0,2;1,1;]"..
+            "list[current_player;boots;0,3;1,1;]"..
+
+            "list[current_player;main;0,4.2;9,3;9]"..
+            "list[current_player;main;0,7.4;9,1;]"
+
+
+
         meta:set_string("formspec", formspec)
        return true
     end,
 
     on_receive_fields = function(pos, formname, fields, sender)
+      print(dump(fields))
         --print("Sign at "..minetest.pos_to_string(pos).." got "..dump(fields))
        local meta = minetest.get_meta(pos)
-       if fields.g_chk then
+       if fields.g_chk then --charge it!          
           local player=sender
           if player and sender:is_player() then
                local pll = player:get_player_name()
@@ -417,8 +444,11 @@ minetest.register_node("ghosts:reincarnator", {
           end
         end
        if fields.g_rei then
+          print('GREI!!')
+          -- reincarnate!
           local player=sender
-          if player and sender:is_player() then
+          if player and player:is_player() then
+             print('player is a player')
                local pll = player:get_player_name()
                if not isghost[pll] then return end
                local inv = meta:get_inventory()
@@ -481,6 +511,10 @@ minetest.register_node("ghosts:reincarnator", {
           end
 
         end
+        -- quit fields
+           if sender and sender:is_player() then
+              default.sort_inv(sender,formname,fields,pos)
+           end        
     end,
 
 
@@ -575,34 +609,36 @@ end)
            local pll=player:get_player_name()
            local pos = player:getpos()
            bdeathpos[pll]=pos
-           --minetest.debug(pll .. ' has died!')
+           minetest.debug(pll .. ' has died!')
            ghosts[pll]=1
         end
     end)
 
     minetest.register_on_respawnplayer(function(player)
         local pll=player:get_player_name()
-        --minetest.debug(pll .. ' has respawned...')
+        minetest.debug(pll .. ' has respawned...')
         if (ghosts2[pll]) then
            if rus == 1 then       -- russian
-             -- minetest.debug('ghosts - use of russian announce')
+              minetest.debug('ghosts - use of russian announce')
               localized_announce = announce_rus
               localized_close = close_rus
               localized_reinc = reinc_rus
               localized_welcome = welcome_rus
               localized_remin = remin_rus
            else                      -- english
-             -- minetest.debug('ghosts announce in english')
+              minetest.debug('ghosts announce in english')
               localized_announce = announce_not_rus
               localized_close = close_not_rus
               localized_reinc = reinc_not_rus
               localized_welcome =welcome_not_rus
               localized_remin = remin_not_rus
            end
-           --minetest.debug('show formspec')
+           minetest.debug('show formspec')
               local formspec = ''
               if (not ghosts4[pll]) then
               formspec = "size[9,9]"..
+            "bgcolor[#bbbbbb;false]"..
+            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
                     "label[0.25,0.2;" .. localized_welcome .."]"..
                     "textarea[0.25,0.5;9,7.8;yng; ;"..localized_announce.."]"..
                     "checkbox[0.25,7.2;g_rem;" .. localized_remin .. ";false]"..
@@ -610,6 +646,8 @@ end)
                     "button_exit[5,8.0;2.5,1;g_reinc;" .. localized_reinc .."]"
               else
               formspec = "size[9,2]"..
+            "bgcolor[#bbbbbb;false]"..
+            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
                     "label[0.25,0.2;" .. localized_welcome .."]"..
                     "button_exit[1.5,1.0;2.5,1;g_close;" .. localized_close .."]"..
                     "button_exit[5,1;2.5,1;g_reinc;" .. localized_reinc .."]"
@@ -618,12 +656,14 @@ end)
               if pll and formspec then
                  minetest.show_formspec(pll,"ghosts:unlocked",formspec)
               end
-        --minetest.debug('formspec shown!')
+        minetest.debug('formspec shown!')
         else
         end
     end)
 
     minetest.register_on_player_receive_fields(function(player, formname, fields)
+
+
         if not player then return end
         local pll=player:get_player_name()
         if fields.g_rem then
@@ -631,7 +671,7 @@ end)
                return
            end
 
-        if fields.g_close then
+        if fields.g_close or (fields.quit and not fields.g_reinc) then
          -- you're allready a ghost, so nothing to do :)
 
                if not isghost[pll] then
@@ -739,6 +779,9 @@ end)
                return
            end
 
+           if sender and sender:is_player() then
+              default.sort_inv(sender,formname,fields)
+           end
     end)
 
 
@@ -776,39 +819,39 @@ minetest.register_on_joinplayer(function(player)
          --[[if inv then minetest.debug(pll .. ' has ginv now!')
          else minetest.debug(pll .. ' is without ginv :(!')
          end]]--
-
+         local NOT=""
+         
+         if not isghost[pll] then NOT=" not" end
+               print(pll..' is'..NOT..' a ghost!\n'..minetest.serialize(isghost))         
                if isghost[pll] then
-               --   minetest.debug(pll .. ' has ghosts physics')
+                  minetest.debug(pll .. ' has ghosts physics')
                   player:set_physics_override({ speed = ghost_speed_modifier, -- multiplier to default value
                                                 jump = ghost_jump_modifier, -- multiplier to default value
                                                 gravity = ghost_gravity_modifier, -- multiplier to default value
                                                 sneak = ghost_sneak_value, -- whether player can sneak
                                                 sneak_glitch = false, -- whether player can use the sneak glitch
-                                               })
-        if skins then
-        skins.skins[pll]="player_13"
-        skins.update_player_skin(player)
-        end
-
-        g_changed = true
-
+                                              })
+  				 if skins then 
+				    skins.skins[pll]="player_13"
+				    skins.update_player_skin(player)
+				 end
+				 g_changed = true
                else
-               --   minetest.debug(pll .. ' has normal physics')
+                  minetest.debug(pll .. ' has normal physics')
                   player:set_physics_override({ speed = 1, -- multiplier to default value
                                                 jump = 1, -- multiplier to default value
                                                 gravity = 1, -- multiplier to default value
                                                 sneak = true, -- whether player can sneak
                                                 sneak_glitch = false, -- whether player can use the sneak glitch
                                                })
-        if skins then
-        skins.update_player_skin(player)
-        end
-        minetest.after(0,function()
-        if armor then
-        armor:update_player_visuals(player)
-        end
-        end
-        )
+				  if skins then
+				     skins.update_player_skin(player)
+				  end
+				  minetest.after(0,function()
+					  if armor then
+						 armor:update_player_visuals(player)
+					  end
+                  end)
                end
               -- minetest.debug(pll .. ' physics wasn\'t set!')
      end
@@ -858,12 +901,14 @@ minetest.register_chatcommand("ghost", {
     end
 })
 
+
+--[[
 minetest.register_chatcommand("isghost", {
     func = function(name, param)
            isghost[name]=not isghost[name]
            return
     end
-})
+})]]--
 
 
 minetest.register_craft({
@@ -875,4 +920,4 @@ minetest.register_craft({
     }
 })
 
-print("[OK] Ghosts loaded")
+print("[OK] Ghosts (beta) loaded")

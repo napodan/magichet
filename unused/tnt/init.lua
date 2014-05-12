@@ -356,3 +356,5 @@ end
 
 minetest.register_entity("tnt:tnt", TNT)
 minetest.register_alias("TNT", "tnt:tnt")
+
+print('[OK] TNT (by 4aiman) loaded')

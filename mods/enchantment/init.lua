@@ -148,12 +148,25 @@ end
 
 -- Enchantment table formspec
 local  tform = "size[9,9.5]"..   -- funny, considering I'm a Pascal programmer ))
+            "bgcolor[#bbbbbb;false]"..
+            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
+
+            "button[6.6,-0.0;0.8,0.5;sort_horz;=]"..
+            "button[7.4,-0.0;0.8,0.5;sort_vert;||]"..
+            "button[8.2,-0.0;0.8,0.5;sort_norm;Z]" ..
+
                "image_button[1,2;1,1;enchantment_reload.png;refresh;;false;false;enchantment_reload2.png]"..
                "label[0.25,0;Item to enchant]"..
                "label[3.25,0;List of available enchantements:]"..
                "list[context;itm;1,1;1,1;]"..
-               "list[current_player;main;0,5;9,3;9]"..
-               "list[current_player;main;0,8.5;9,1;]"
+            "list[current_player;helm;0,0;1,1;]"..
+            "list[current_player;torso;0,1;1,1;]"..
+            "list[current_player;pants;0,2;1,1;]"..
+            "list[current_player;boots;0,3;1,1;]"..
+
+            "list[current_player;main;0,4.5;9,3;9]"..
+            "list[current_player;main;0,7.7;9,1;]"
+
 
 -- Func to draw empty list
 local function empty_formspec()
@@ -654,7 +667,7 @@ for j,def in ipairs(chanted_items) do
        ddd.groups = {not_in_creative_inventory=1,not_in_craft_guide=1}
        ddd.tool_capabilities["enchantability"] = -1
        minetest.register_tool('enchantment:'..string.split(ddd.name,':')[2],ddd)
-      -- print('not in CI:   enchantment:'..string.split(ddd.name,':')[2])       
+      -- print('not in CI:   enchantment:'..string.split(ddd.name,':')[2])
     end
 end
 
@@ -768,6 +781,7 @@ minetest.register_node("enchantment:table", {
     end,
 
     on_receive_fields = function(pos, formname, fields, sender)
+       default.sort_inv(sender,formname,fields)
        local meta=minetest.get_meta(pos)
        local inv = meta:get_inventory()
        local stack = inv:get_stack('itm', 1)
@@ -833,6 +847,11 @@ minetest.register_node("enchantment:table", {
        local item = inv:get_stack('itm', 1):get_name()
        meta:set_string("formspec", make_ench_list(sender,pos,item))
     end,
+        on_receive_fields = function(pos, formname, fields, sender)
+           if sender and sender:is_player() then
+              default.sort_inv(sender,formname,fields)
+           end
+        end,
 })
 -- Enchantment table's craft
 if ghosts then
@@ -968,7 +987,7 @@ minetest.register_on_joinplayer(function(player)
     pll = player:get_player_name()
     enplhuds[pll] = {}
         for i,chant in pairs(pchants) do
-           pchants[i][pll] = false                      
+           pchants[i][pll] = false
         end -- to turn on/off effects
 end)
 
@@ -980,7 +999,7 @@ end)
 -- are able to check pchants[pll] and act accordinggly
 minetest.register_globalstep(function(dtime)
     local players = minetest.get_connected_players()
-    for j,player in ipairs(players) do       
+    for j,player in ipairs(players) do
         local pll = player:get_player_name()
         local wstack = player:get_wielded_item()
         local itemname = wstack:get_name()
@@ -994,7 +1013,7 @@ minetest.register_globalstep(function(dtime)
             for i,chant in pairs(pchants) do
                 pchants[i][pll] = false
             end -- to turn on/off effects
-            -- set this to nill when need to update chants!            
+            -- set this to nill when need to update chants!
         end
 --[[
         if not minetest.get_item_group(itemname, 'armor_use')
@@ -1013,18 +1032,18 @@ minetest.register_globalstep(function(dtime)
         and not pchants["Antigravity 5"][pll]
         and not itemname=='jetpack:jet'
         then
-            -- if it's not antigravity then set gravity modifier to 1            
+            -- if it's not antigravity then set gravity modifier to 1
             if isghost and isghost[pll] then
                 player:set_physics_override({ gravity = 1*ggm,})
             else
                 player:set_physics_override({ gravity = 1,})
             end
         end
-                
-        local real_leechers = 0        
+
+        local real_leechers = 0
         for j,boon in ipairs(boons) do
-            -- update boons only if there was a change!            
-            if pchants[boon] and not pchants[boon][pll] then              
+            -- update boons only if there was a change!
+            if pchants[boon] and not pchants[boon][pll] then
                if boon:find('Antigravity') then
                    print(player.grav)
           --        grav = true
@@ -1036,7 +1055,7 @@ minetest.register_globalstep(function(dtime)
                      player:set_physics_override({ gravity = 1-math.max((0.1*tonumber(lv)),0.9),})
                   end
                   end
-                  
+
                elseif boon:find('Aqualung') then
                   local air = player:get_breath()
                   if air <10 then
@@ -1051,7 +1070,7 @@ minetest.register_globalstep(function(dtime)
                   or minetest.find_node_near(pos, 2, 'default:lava_flowing')
                   or minetest.find_node_near(pos, 2, 'group:fire')
                   or minetest.find_node_near(pos, 2, 'group:hot')
-                  then                  
+                  then
                      node = true
                   else
                      node = false
@@ -1073,55 +1092,55 @@ minetest.register_globalstep(function(dtime)
                -- leeching on statuses!
                local boontp = string.sub(boon,1,-3)
                local boonlv = tonumber(string.sub(boon,-1))
-                               
+
                if boonlv>2 then
                   --boonlv = boonlv-2
 
                local pos = player:getpos()
                local controls = player:get_player_control()
-               
+
                -- if player holds down right mouse button and aux1 then distribute the effect
                if pos and controls.RMB and controls.aux1 then
                   local leechers = minetest.get_objects_inside_radius(pos, boonlv+2)
-                  
+
                   -- track seeding time!
-                  if not leech_timers[pll] 
+                  if not leech_timers[pll]
                   then leech_timers[pll] = dtime
-                  else leech_timers[pll] = leech_timers[pll] + dtime 
+                  else leech_timers[pll] = leech_timers[pll] + dtime
                   end
-                                    
+
                 -- update leechers count once per second
                   if leech_timers[pll]>1 then
-                      leech_timers[pll] = 0                        
+                      leech_timers[pll] = 0
                       for num,leecher in pairs(leechers) do
-                        if leecher:is_player() then                                            
+                        if leecher:is_player() then
                          local lname = leecher:get_player_name()
                            if lname ~= pll then
                               real_leechers = real_leechers +1
                               -- minetest.chat_send_all(lname..' leeches '..pll .. ' on ' .. boon)
-                           
+
                               -- grant leecher the very same effect but 2 levels lower
                               pchants[boontp..' '..tostring(boonlv-2)][lname] = true
-                           end    
-                        end							  
-                       -- add wear                          
+                           end
+                        end
+                       -- add wear
                       end
                       minetest.chat_send_all(real_leechers)
                       -- regardless of material wear the tool
                       wstack:add_wear(400*real_leechers)
-                      
+
                       player:set_wielded_item(wstack)--player:inv:set_stack("itm", 1, stack)
                   end
                end
         end
-            
+
 
         end
 
 
 -- remove boons
         for j,boon in pairs(pchants) do
-            
+
             local boontp = string.sub(j,1,-3)
             local boonlv = tonumber(string.sub(j,-1))
            -- print(enplhuds[pll][boontp])
@@ -1132,7 +1151,7 @@ minetest.register_globalstep(function(dtime)
         end
 
 
--- add them        
+-- add them
       --  hudtime = hudtime+dtime
       --  if hudtime>hudtimemax then
       --  hudtime = 0
@@ -1141,12 +1160,12 @@ minetest.register_globalstep(function(dtime)
               local boontp = string.sub(boon,1,-3)
               local boonlv = tonumber(string.sub(boon,-1))
               if pchants[boon] and pchants[boon][pll] and not enplhuds[pll][boontp] then
-                 numhud = numhud +1              
-                  -- if not enplhuds[pll] then enplhuds[pll]={} end                  
+                 numhud = numhud +1
+                  -- if not enplhuds[pll] then enplhuds[pll]={} end
                   yy = numhud
                   if yy>7 then yy = yy-7 end
                   if yy>7 then yy = yy-7 end
-                  if yy>7 then yy = yy-7 end                                    
+                  if yy>7 then yy = yy-7 end
                   enplhuds[pll][boontp] = player:hud_add({
                                                           hud_elem_type = "image",
                                                           position = {x=0, y=0.20},
@@ -1158,7 +1177,7 @@ minetest.register_globalstep(function(dtime)
                                                         })
               end
         end
-------------------------------------------------------------------------------------                               
+------------------------------------------------------------------------------------
         wielded_chant[pll] = itemname
     end
 end)
@@ -1253,7 +1272,7 @@ local ndig = minetest.node_dig
 -- I couldn't override node drops anywhere else
 function minetest.node_dig(pos, oldnode, digger)
   -- ndig(pos, oldnode, digger)
-   
+
    if not digger then return pos, oldnode, digger end
    -- because of the previous register.globalstep we do NOT need to check
    -- what tool is being used - #pchants[CHANT_NAME][pll] is what's important
@@ -1337,23 +1356,25 @@ function minetest.node_dig(pos, oldnode, digger)
    -- if not enchanted then dig normally
    if call_original then
         ndig(pos,oldnode,digger)
-   else  
+   else
         minetest.remove_node(pos,true)
-        drop_items(pos,count,drops)		
-		
-		if (toolname:find("shovel") ~= nil) or (toolname:find("spade") ~= nil) then
-			specialties.changeXP(pll, "digger", 1)
-		end
-		if oldnode.name:find("farming") ~= nil then
-			specialties.changeXP(pll, "farmer", 5)
-		end		    
-		if toolname:find("pick") ~= nil then
-			specialties.changeXP(pll, "miner", 1)
-		end
-		if toolname:find("axe") ~= nil then
-			specialties.changeXP(pll, "lumberjack", 1)
-		end		
+        drop_items(pos,count,drops)
+
+    if (toolname:find("shovel") ~= nil) or (toolname:find("spade") ~= nil) then
+      specialties.changeXP(pll, "digger", 1)
+    end
+    if oldnode.name:find("farming") ~= nil then
+      specialties.changeXP(pll, "farmer", 5)
+    end
+    if toolname:find("pick") ~= nil then
+      specialties.changeXP(pll, "miner", 1)
+    end
+    if toolname:find("axe") ~= nil then
+      specialties.changeXP(pll, "lumberjack", 1)
+    end
    end
-   
+
    return pos, oldnode, digger
 end
+
+print('[OK] Enchantment (beta) loaded')

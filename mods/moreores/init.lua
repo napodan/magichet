@@ -453,3 +453,4 @@ if minetest.get_modpath("mg") then
     dofile(moreores_modpath.."/mg.lua")
 end
 
+print('[OK] Moreores (4aiman\'s version) loaded')

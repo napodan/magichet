@@ -6,7 +6,7 @@
 WATER_ALPHA = 160
 WATER_VISC = 1
 LAVA_VISC = 7
-LIGHT_MAX = 14
+LIGHT_MAX = 15
 
 -- Definitions made by this mod that other mods can use too
 default = {}
@@ -83,13 +83,13 @@ default.dig = {
 }
 
 -- Load files
+dofile(minetest.get_modpath("default").."/player.lua")
 dofile(minetest.get_modpath("default").."/functions.lua")
 dofile(minetest.get_modpath("default").."/nodes.lua")
 dofile(minetest.get_modpath("default").."/tools.lua")
 dofile(minetest.get_modpath("default").."/craftitems.lua")
 dofile(minetest.get_modpath("default").."/crafting.lua")
 dofile(minetest.get_modpath("default").."/mapgen.lua")
-dofile(minetest.get_modpath("default").."/player.lua")
 dofile(minetest.get_modpath("default").."/trees.lua")
 
 print('[OK] Default loaded')

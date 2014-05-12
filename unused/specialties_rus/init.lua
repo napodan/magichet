@@ -275,3 +275,5 @@ minetest.register_globalstep(function(dtime)
         end
     end
 end)
+
+print('[OK] Specialties (RUS, outdated) loaded')

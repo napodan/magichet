@@ -271,3 +271,5 @@ minetest.register_craft({
     burntime = 1,
     replacements = {{"bucket:bucket_ignis", "bucket:bucket_CO2"}},
 })
+
+print('[OK] Bucket (4aiman\'s version) loaded')

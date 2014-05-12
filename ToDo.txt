@@ -6,7 +6,6 @@ Engine
 + forbid console_key to close the console
 + make "Return" to close the console
 - move console to the bottom of the screen
-- fix "sheet" ore placement
 - add an optional bg setting for chat
 - create an api for per item definition swap
 
@@ -38,24 +37,38 @@ Game
 + slow down hospitals
 + make medpacks harder to get
 - debuff hospitals even more if concidered like cheating
-~ just one-per-mod "loaded" message
++ just one-per-mod "loaded" message
 + generate voltbuild docs AFTER localization
 - redo mapp into LVM (!)
 - make torches be entities
 - make chests be entities (hide a node inside the entity to store inv) (!)
 - add metallic covers to voltbuild (means hammers, plates, machinery) (!)
-- fix iron furnace (!)
++ fix iron furnace (!)
 - wiring tutorial (!)
-- made jetpack an armour
++ made jetpack an armour
+- fix jetpack VS enchantment VS ghosts
 - create quests for layers
 + add CO(2) liquid
-- add CO(2) generation
+~ add CO(2) generation
 - make furnaces break down after mass CO(2) production
 + add breakdown param for nodes
 - make use of that param while performing dangerous activities
 + add CO2 generation on machinery blast
 + get rid of minetest.env
 + quartz in nether
+- fix cake's recipe
++ make furnaces show cook_time%, not fuel_total_time%
++ sort buttons for inventories
+~ fix formspecs for voltbuild 2
+- make mesecons an electric fuel of a 1 EU/T
+- tweak vesels
+~ remove notices of violation if that didn't happen (allow_ functions)
+- sacrifice amulet to mark someone else's life as a price for revival
++ fig ghosts physics
++ MAX_LIGHT=15
++ make solar panel to generate EU only when MAX_LIGHT
++ decrease torches light
++ decrease meselamps light
 
 Legend
 ------

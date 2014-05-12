@@ -5,8 +5,13 @@
 --licensed as CC0. Say a good word about them to everyone you met ;)
 
 function explorertools_place(item, player, pointed)
-  local control = player:get_player_control()
-  if not control.sneak then return end
+  if placer and not placer:get_player_control().sneak then
+        local n = minetest.get_node(pointed_thing.under)
+        local nn = n.name
+        if minetest.registered_nodes[nn] and minetest.registered_nodes[nn].on_rightclick then
+          return minetest.registered_nodes[nn].on_rightclick(pointed_thing.under, n, placer, itemstack) or itemstack
+        end
+  end
   local idx = player:get_wield_index() + 1
   if idx < 9 then
     local inv = player:get_inventory()
@@ -31,3 +36,5 @@ for cou,def in pairs(minetest.registered_tools) do
       minetest.override_item(def.name, {on_place = explorertools_place,})
     end
 end
+
+print('[OK] Explorer tools (4aiman\'s version) loaded')

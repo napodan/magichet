@@ -179,3 +179,5 @@ minetest.register_node("torches:wand", {
 
 
 })
+
+print('[OK] Torches loaded')

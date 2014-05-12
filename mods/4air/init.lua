@@ -32,3 +32,5 @@ minetest.after(2.5, function()
         end
       end)
 end)
+
+print('[OK] 4air loaded')

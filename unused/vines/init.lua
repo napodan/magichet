@@ -358,4 +358,4 @@ minetest.register_craft({
 	}
 })
 
-print("[Vines] Loaded!")
+print("[OK] Vines loaded")

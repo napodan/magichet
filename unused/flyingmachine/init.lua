@@ -274,3 +274,5 @@ minetest.register_craftitem("flyingmachine:controller", {
 		return itemstack
 	end,
 })
+
+print('[OK] Flying machine loaded')

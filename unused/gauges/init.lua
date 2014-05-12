@@ -84,16 +84,4 @@ end
 minetest.register_on_joinplayer(add_HP_gauge)
 minetest.register_on_placenode(add_furnace_gauge)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+print('[OK] Gauges loaded')

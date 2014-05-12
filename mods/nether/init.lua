@@ -398,4 +398,4 @@ replace("default:cobble", "nether:brick")
 replace("default:mossycobble", "nether:brick")
 replace("stairs:stair_cobble", "nether:brick")
 
-print('[OK] Nether loaded')
+print('[OK] Nether (4aiman\'s version) loaded')

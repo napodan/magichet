@@ -318,3 +318,4 @@ awards.register_onDeath(function(player,data)
     return nil
 end)
 
+print('[OK] Awards (4aiman\'s version) loaded')

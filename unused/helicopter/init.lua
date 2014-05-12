@@ -315,3 +315,5 @@ minetest.register_craft({
 	}
 })	
 
+
+print('[OK] Helicopter loaded')

@@ -97,5 +97,4 @@ minetest.register_craft({
      cooktime = 5
 })
 
-
-
+print('[OK] Mobfcooking loaded')

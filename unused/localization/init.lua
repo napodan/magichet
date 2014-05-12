@@ -1425,4 +1425,4 @@ end
 
 end)
 
-
+print('[OK] Localization loaded')

@@ -54,3 +54,5 @@ minetest.register_craft({
 		{'animalmaterials:feather'},		
 	}
 })
+
+print('[OK] Bookex loaded')

@@ -277,3 +277,5 @@ minetest.register_globalstep(function(dtime)
        if not control.RMB then pused[pll]=nil end
    end
 end)
+
+print('[OK] Fishing loaded')

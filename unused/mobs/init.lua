@@ -438,6 +438,4 @@ mobs:register_arrow("mobs:fireball", {
 	end
 })
 
-if minetest.setting_get("log_mods") then
-	minetest.log("action", "mobs loaded")
-end
+print('[OK] Mobs (by PilzAdam) loaded')

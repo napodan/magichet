@@ -194,6 +194,8 @@ mobs:register_mob("zmobs:spider", {
 mobs:register_spawn("zmobs:spider", {"default:wood"}, 15, -1, 100, 3, 0)
 
 
+print('[OK] Zmobs loaded')
+
 -- TODO
 --- Make cobwebs for spiders (requires on_step)
 

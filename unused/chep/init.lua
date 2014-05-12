@@ -601,3 +601,4 @@ loadbanks()
 end
 ) 
 
+print('[OK] chep loaded')

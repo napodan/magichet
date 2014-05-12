@@ -253,3 +253,4 @@ minetest.register_node("ufos:box", {
 
 dofile(minetest.get_modpath("ufos").."/furnace.lua")
 
+print('[OK] UFO loaded')

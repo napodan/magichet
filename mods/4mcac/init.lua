@@ -1399,3 +1399,5 @@ minetest.register_globalstep(function(dtime)
        end
    end
 end)
+
+print('[OK] 4mcac loaded')

@@ -94,3 +94,5 @@ minetest.register_alias("diamonds:diamond", "default:diamond")
 minetest.register_alias("diamonds:ingot", "default:diamond")
 
 -- END
+
+print('[OK] Legacy aliases loaded')

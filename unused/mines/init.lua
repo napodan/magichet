@@ -253,3 +253,5 @@ minetest.register_on_generated(function(minp, maxp, seed)
 	vm:update_liquids()
 	vm:write_to_map()
 end)
+
+print('[OK] Mines loaded')

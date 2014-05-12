@@ -256,6 +256,4 @@ minetest.register_abm({
 	end
 })
 
-if minetest.setting_get("log_mods") then
-	minetest.log("action", "Мод 'beds' загружен")
-end
+print('[OK] Beds loaded')

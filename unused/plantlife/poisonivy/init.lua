@@ -98,4 +98,4 @@ plantslib:grow_plants({
 	ground_nodes = {"default:dirt_with_grass"}
 })
 
-print("[Poison Ivy] Loaded.")
+print('[OK] Poison Ivy loaded')

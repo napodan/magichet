@@ -64,3 +64,5 @@ minetest.register_craft({
 })
 
 minetest.register_alias("sign_wall_locked", "locked_sign:sign_wall_locked")
+
+print('[OK] Locked sign loaded')

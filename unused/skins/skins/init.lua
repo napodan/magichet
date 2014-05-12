@@ -66,7 +66,14 @@ skins.formspec = {}
 skins.formspec.main = function(name)
     page = skins.pages[name]
     if page == nil then page = 0 end
-    local formspec = "size[8,7.5]"
+    local formspec = "size[8,7.5]"..
+                "bgcolor[#bbbbbb;false]"..
+            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
+
+            "button[6.6,-0.0;0.8,0.5;sort_horz;=]"..
+            "button[7.4,-0.0;0.8,0.5;sort_vert;||]"..
+            "button[8.2,-0.0;0.8,0.5;sort_norm;Z]"
+
         .. "button[0,0;2,.5;main;Back]"
     if skins.get_type(skins.skins[name]) == skins.type.MODEL then
         local pre = file_exists(skins.skins[name].."_preview.png")
@@ -166,3 +173,4 @@ if player --[[and not isghost[player:get_player_name()] ]]then
 end
 end)
 
+print('[OK] Skins loaded')

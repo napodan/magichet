@@ -93,3 +93,5 @@ function gs_tools.get_3x3s(pos, digger)
 
 	return r
 end
+
+print('[OK] GS tools loaded')

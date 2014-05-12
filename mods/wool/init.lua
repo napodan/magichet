@@ -47,3 +47,4 @@ for _, row in ipairs(wool.dyes) do
 	end
 end
 
+print('[OK] Wool loaded')

@@ -61,3 +61,6 @@ minetest.register_on_joinplayer(function(player)
         end
     end
 end)
+
+
+print('[OK] Future ban loaded')

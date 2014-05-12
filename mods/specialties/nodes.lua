@@ -6,8 +6,21 @@ local function updateCondenser(meta)
     local barX = energy/needed
     if barX > 1 then barX = 1 end
     local formspec = "size[9,9.5]"..
-        "list[current_player;main;0,5;9,3;9]"..
-        "list[current_player;main;0,8.5;9,1]"..
+                "bgcolor[#bbbbbb;false]"..
+            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
+
+            "button[6.6,-0.0;0.8,0.5;sort_horz;=]"..
+            "button[7.4,-0.0;0.8,0.5;sort_vert;||]"..
+            "button[8.2,-0.0;0.8,0.5;sort_norm;Z]" ..
+
+            "list[current_player;helm;0,0;1,1;]"..
+            "list[current_player;torso;0,1;1,1;]"..
+            "list[current_player;pants;0,2;1,1;]"..
+            "list[current_player;boots;0,3;1,1;]"..
+
+            "list[current_player;main;0,4.5;9,3;9]"..
+            "list[current_player;main;0,7.7;9,1;]"..
+
         "list[context;main;0,1;9,3]"..
         "list[context;slot;0,0;1,1]"..
         "label[7.5,0;"..needed.."]"..
@@ -114,4 +127,10 @@ minetest.register_node("specialties:condenser", {
             meta:set_string("formspec", updateCondenser(meta))
         end
     end,
+        on_receive_fields = function(pos, formname, fields, sender)
+           if sender and sender:is_player() then
+              default.sort_inv(sender,formname,fields)
+           end
+        end,
+
 })

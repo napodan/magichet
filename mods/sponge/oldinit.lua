@@ -101,3 +101,4 @@ minetest.register_craft({
 	}
 })
 
+print('[OK] Sponge loaded')

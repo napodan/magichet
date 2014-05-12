@@ -291,3 +291,5 @@ if ONGEN then
 		end			
 	end)				
 end
+
+print('[OK] Paragen v7 loaded')

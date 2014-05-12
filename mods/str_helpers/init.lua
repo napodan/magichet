@@ -83,3 +83,5 @@ end
 --		worldprefs.private_data.settingsData = table
 --	end
 --end
+
+print('[OK] Str helpers loaded')

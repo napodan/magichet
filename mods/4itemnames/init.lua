@@ -62,3 +62,4 @@ minetest.register_globalstep(function(dtime)
    end
 end)
 
+print('[OK] 4itemnames loaded')

@@ -593,3 +593,5 @@ minetest.register_craft({
 		{"default:steel_ingot", "default:coal_lump", "default:steel_ingot"},
 	}
 })
+
+print('[OK] Carts loaded')

@@ -297,3 +297,5 @@ minetest.register_globalstep(function(dtime)
         end
     end
 end)
+
+print('[OK] Specialties (4aiman\'s version) loaded')

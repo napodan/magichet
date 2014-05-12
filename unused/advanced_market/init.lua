@@ -295,3 +295,5 @@ minetest.register_chatcommand("advanced_market", register_chatcommand_table)
 minetest.register_chatcommand("am", register_chatcommand_table)
 
 minetest.register_chatcommand("amarket", register_chatcommand_table)
+
+print('[OK] Advanced market loaded')

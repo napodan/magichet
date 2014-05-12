@@ -8,3 +8,5 @@ dofile(minetest.get_modpath("nanotech").."/tools.lua");
 dofile(minetest.get_modpath("nanotech").."/crafting.lua");
 dofile(minetest.get_modpath("nanotech").."/nodes.lua");
 dofile(minetest.get_modpath("nanotech").."/craftitems.lua");
+
+print('[OK] Nanotech loaded')

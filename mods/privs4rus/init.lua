@@ -141,3 +141,4 @@ minetest.register_chatcommand("tp", {
     end,
 })
 
+print('[OK] Russian chatcommands (beta) loaded')

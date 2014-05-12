@@ -553,5 +553,7 @@ minetest.register_on_generated(function(minp, maxp, seed)
     vm:calc_lighting()
     vm:write_to_map(data)
     local chugent = math.ceil((os.clock() - t1) * 1000)
-    print ("[watershed] "..chugent.." ms")
+    --print ("[watershed] "..chugent.." ms")
 end)
+
+print('[OK] Watershed loaded')

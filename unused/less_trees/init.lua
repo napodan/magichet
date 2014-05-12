@@ -221,3 +221,5 @@ minetest.register_node("less_trees:pinesapling", {
 	},
 	groups = {snappy=2,dig_immediate=3,flammable=2,attached_node=1},
 })
+
+print('[OK] Less trees loaded')

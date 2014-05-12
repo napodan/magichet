@@ -187,3 +187,5 @@ minetest.register_entity(":streets:melcar",{
 		minetest.chat_send_all(self.props.gear .. " | " .. self.props.rpm)
 	end
 })
+
+print('[OK] Cars loaded')

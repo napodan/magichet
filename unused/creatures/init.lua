@@ -10,3 +10,5 @@ end
 
 dofile(minetest.get_modpath("creatures").."/ghost.lua")
 dofile(minetest.get_modpath("creatures").."/zombie.lua")
+
+print('[OK] Creatures (by Blockman) loaded')

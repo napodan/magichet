@@ -300,6 +300,5 @@ generate_line = function(s, ypos)
     return texture
 end
 
-if minetest.setting_get("log_mods") then
-    minetest.log("action", "Мод 'signs' загружен")
-end
+print('[OK] Signs (4aiman\'s version) loaded')
+

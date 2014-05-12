@@ -897,3 +897,5 @@ minetest.register_craft({
     output = "farming:bread",
     recipe = "farming:dough"
 })
+
+print('[OK] Farming (4aiman\'s version) loaded')

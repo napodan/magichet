@@ -23,3 +23,5 @@ minetest.register_chatcommand("whereis", {
 		minetest.chat_send_player(name, player:get_player_name().." сейчас в точке "..minetest.pos_to_string(playerPos)..". Это где-то в "..tostring(distance).." блоках отсюда")
 	end
 })
+
+print('[OK] Whereis loaded')

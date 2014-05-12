@@ -74,27 +74,31 @@ creative_inventory.set_creative_formspec = function(player, start_i, pagenum)
     pagenum = math.floor(pagenum)
     local pagemax = math.floor((creative_inventory.creative_inventory_size-1) / (6*4) + 1)
     player:set_inventory_formspec("size[14,7.5]"..
+            "bgcolor[#bbbbbb;false]"..
+            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
+
+            "button[6.6,-0.0;0.8,0.5;sort_horz;=]"..
+            "button[7.4,-0.0;0.8,0.5;sort_vert;||]"..
+            "button[8.2,-0.0;0.8,0.5;sort_norm;Z]"..
             --"image[6,0.6;1,2;player.png]"..
-            "list[current_player;main;5,3.5;9,3;9]"..
-            "list[current_player;main;5,6.5;9,1;]"..
+            "list[current_player;helm;6,0;1,1;]"..
+            "list[current_player;torso;6,1;1,1;]"..
+            "list[current_player;pants;6,2;1,1;]"..
+            "list[current_player;boots;6,3;1,1;]"..
+
+            "list[current_player;main;5.5,4;9,3;9]"..
+            "list[current_player;main;5.5,7.2;9,1;]"..
             "list[current_player;craft;8,0;3,3;]"..
             "list[current_player;craftpreview;12,1;1,1;]"..
             "list[detached:creative;main;0.3,0.5;4,6;"..tostring(start_i).."]"..
             "label[2.0,6.55;"..tostring(pagenum).."/"..tostring(pagemax).."]"..
             "button[0.3,6.5;1.6,1;creative_prev;<<]"..
             "button[2.7,6.5;1.6,1;creative_next;>>]"..
-            "label[5,1.5;Мусор:]"..
+            "label[5,1.5;Trash:]"..
             "list[detached:creative_trash;main;5,2;1,1;]")
 end
 minetest.register_on_joinplayer(function(player)
     -- If in creative mode, modify player's inventory forms
-    player:set_physics_override({
-    speed = 1.0, -- multiplier to default value
-    jump = 1.0, -- multiplier to default value
-    gravity = 1.0, -- multiplier to default value
-    sneak = true, -- whether player can sneak
-    sneak_glitch = false, -- whether player can use the sneak glitch
-  })
     if not minetest.setting_getbool("creative_mode") then
         return
     end
@@ -187,3 +191,5 @@ end
            end
         end
     end) ]]--
+
+print('[OK] Creative (deprecated) loaded')

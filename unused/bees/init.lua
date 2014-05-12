@@ -356,3 +356,5 @@ minetest.register_craft({
     {'', '', ''},
   }
 })
+
+print('[OK] Bees loaded')

@@ -138,3 +138,4 @@ minetest.register_craftitem('4items:leather', {
 })
 ]]--
 
+print('[OK] 4items loaded')

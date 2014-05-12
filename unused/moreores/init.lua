@@ -365,4 +365,4 @@ if minetest.get_modpath("mg") then
 	dofile(moreores_modpath.."/mg.lua")
 end
 
-print(S("[moreores] loaded."))
+print('[OK] Moreores loaded')

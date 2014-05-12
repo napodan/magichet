@@ -1585,3 +1585,4 @@ register_mob("4aimobs:chick", {
     child = 400,
 })
 
+print('[OK] Pieceful mobs loaded')

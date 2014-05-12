@@ -68,3 +68,5 @@ minetest.register_tool("flint:lighter", {
     end,
 
 })
+
+print('[OK] Flint (THIS SHOULDN\'T BE HERE) loaded')

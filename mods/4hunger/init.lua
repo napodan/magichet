@@ -606,3 +606,5 @@ minetest.after(1,function(dtime)
         end
     end
 end )
+
+print('[OK] 4hunger loaded')

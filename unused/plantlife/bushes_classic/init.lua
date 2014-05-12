@@ -53,4 +53,4 @@ plantslib:spawn_on_surfaces({
 
 minetest.register_alias("bushes:basket_pies", "bushes:basket_strawberry")
 
-print("[Bushes] Loaded.")
+print('[OK] Bushes (classic) loaded')

@@ -83,3 +83,4 @@ minetest.register_chatcommand("spawn", {
     end
 })
 
+print('[OK] Admin doughnuts loaded')

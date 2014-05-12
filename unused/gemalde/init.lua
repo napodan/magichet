@@ -238,3 +238,5 @@ minetest.register_abm({
 		end
 	end,
 })
+
+print('[OK] Gemalde loaded')

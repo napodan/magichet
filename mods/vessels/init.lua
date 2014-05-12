@@ -114,3 +114,4 @@ minetest.register_craft( {
 	recipe = "vessels:steel_bottle",
 })
 
+print('[OK] Vessels (4aiman\'s version) loaded')

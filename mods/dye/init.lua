@@ -137,3 +137,5 @@ end
 dyelocal = nil
 
 -- EOF
+
+print('[OK] Dye loaded')

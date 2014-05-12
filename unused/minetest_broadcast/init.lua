@@ -29,3 +29,4 @@ minetest.register_chatcommand("shout", {
     end
 })
 
+print('[OK] Broadcast loaded')

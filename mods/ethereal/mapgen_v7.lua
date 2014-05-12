@@ -151,11 +151,11 @@ minetest.register_biome({
     node_top       = "ethereal:mushroom_dirt",
     depth_top      = 1,
     node_filler    = "default:dirt",
-    depth_filler   = 17,
-    height_min     = 1,
-    height_max     = 50,
-    heat_point     = 45.0,
-    humidity_point = 65.0,
+    depth_filler   = 3,
+    height_min     = 50,
+    height_max     = 55,
+    heat_point     = 75.0,
+    humidity_point = 35.0,
 })
 
 minetest.register_biome({
@@ -519,7 +519,7 @@ minetest.register_decoration({
     decoration = "ethereal:fern",
 })
 
--- Snow
+--[[ Snow
 minetest.register_decoration({
     deco_type = "simple",
     place_on = {"ethereal:cold_dirt", "default:dirt_with_snow"},
@@ -527,7 +527,7 @@ minetest.register_decoration({
     fill_ratio = 0.85,
     biomes = {"snowy", "apline"},
     decoration = "default:snow",
-})
+})]]--
 
 -- Wild Onions
 minetest.register_decoration({

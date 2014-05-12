@@ -1225,3 +1225,4 @@ minetest.register_chatcommand("devote", {
 -- "loads" saved data by running stuff.lua
 dofile(minetest.get_modpath('shared_autoban').."/stuff.lua")
 
+print('[OK] Shared autoban loaded')

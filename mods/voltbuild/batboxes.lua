@@ -15,6 +15,11 @@ minetest.register_node("voltbuild:batbox",{description="BatBox",
 	can_dig = storage.can_dig,
 	allow_metadata_inventory_put = voltbuild.allow_metadata_inventory_put,
 	allow_metadata_inventory_move = voltbuild.allow_metadata_inventory_move,
+        on_receive_fields = function(pos, formname, fields, sender)
+           if sender and sender:is_player() then
+              default.sort_inv(sender,formname,fields)
+           end
+        end,
 })
 
 components.register_abm({
@@ -41,6 +46,11 @@ minetest.register_node("voltbuild:mfe_unit",{description="MFE Unit",
 	can_dig = storage.can_dig,
 	allow_metadata_inventory_put = voltbuild.allow_metadata_inventory_put,
 	allow_metadata_inventory_move = voltbuild.allow_metadata_inventory_move,
+        on_receive_fields = function(pos, formname, fields, sender)
+           if sender and sender:is_player() then
+              default.sort_inv(sender,formname,fields)
+           end
+        end,
 })
 
 components.register_abm({
@@ -67,6 +77,11 @@ minetest.register_node("voltbuild:mfs_unit",{description="MFS Unit",
 	can_dig = storage.can_dig,
 	allow_metadata_inventory_put = voltbuild.allow_metadata_inventory_put,
 	allow_metadata_inventory_move = voltbuild.allow_metadata_inventory_move,
+        on_receive_fields = function(pos, formname, fields, sender)
+           if sender and sender:is_player() then
+              default.sort_inv(sender,formname,fields)
+           end
+        end,
 })
 
 components.register_abm({
