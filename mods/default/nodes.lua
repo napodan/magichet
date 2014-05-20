@@ -688,7 +688,7 @@ minetest.register_node("default:lava_source", {
     liquid_alternative_source = "default:lava_source",
     liquid_viscosity = LAVA_VISC,
     liquid_renewable = false,
-    damage_per_second = 4,
+    damage_per_second = 3,
     post_effect_color = {a=192, r=255, g=64, b=0},
     groups = {lava=3, liquid=2, hot=3, igniter=1},
 })
@@ -793,33 +793,121 @@ local function get_chest_neighborpos(pos, param2, side)
     end
 end
 
-local function hacky_swap_node(pos,name, param2)
-    local node = minetest.get_node(pos)
-    local meta = minetest.get_meta(pos)
-    if node.name == name then
-        return
-    end
-    node.name = name
-    node.param2 = param2 or node.param2
-    local meta0 = meta:to_table()
-    minetest.set_node(pos,node)
-    meta = minetest.get_meta(pos)
-    meta:from_table(meta0)
-end
+-- 3d chest!
+local tdc = {
+    --hp =1,
+    physical = true,
+    collisionbox = {-0.5,-0.5,-0.5, 0.5,0.5,0.5},
+    visual = "mesh",
+    visual_size = {x=5, y=5, z=5},
+    mesh = "chest_proto.x",
+    --mesh = "character.x",
+    textures = {"default_chest3d.png"},
+    makes_footstep_sound = true,
+    groups = {choppy=default.dig.wood},
+    on_punch = function(self, hitter)
+       if self.object:get_hp()<=0 then
+          local pos = self.object:getpos()
+          local node = minetest.get_node(pos)
+          local digger = hitter
+
+            local meta = minetest.get_meta(pos)
+            local meta2 = meta
+            local inv = meta:get_inventory()
+                for i=1,inv:get_size("main") do
+                    print(i)
+                    local stack = inv:get_stack("main", i)
+                    if not stack:is_empty() then
+                        local p = {x=pos.x+math.random(0, 10)/10-0.5, y=pos.y, z=pos.z+math.random(0, 10)/10-0.5}
+                        minetest.add_item(p, stack)
+                    end
+                end
+            minetest.remove_node(pos)
+       end
+    end,
+    on_activate = function(self, staticdata, dtime_s)
+        if staticdata then
+            local tmp = minetest.deserialize(staticdata)
+            if tmp and tmp.textures then
+                self.textures = tmp.textures
+                self.object:set_properties({textures=self.textures})
+            end
+            if tmp and tmp.visual then
+                self.visual = tmp.visual
+                self.object:set_properties({visual=self.visual})
+            end
+            if tmp and tmp.mesh then
+                self.mesh = tmp.mesh
+                self.object:set_properties({mesh=self.mesh})
+            end
+        end
+    end,
+
+    get_staticdata = function(self)
+        local tmp = {
+            textures = self.textures,
+            visual = self.visual,
+            mesh = self.mesh,
+        }
+        return minetest.serialize(tmp)
+    end,
+    on_step = function(self, dtime)
+       local pos = self.object:getpos()
+       if minetest.get_node(pos).name ~='default:chest' then
+          self.object:remove()
+          return
+       end
+    end,
+    on_rightclick = function (self, clicker)
+       local pos = self.object:getpos()
+       local meta = minetest.get_meta(pos)
+       local name = 'default:3dchest'
+       local pll = clicker:get_player_name()
+
+
+       local formspec = meta:get_string('formspec')
+      -- print(formspec)
+      -- print(minetest.get_node(pos).name .. ' at ' .. minetest.pos_to_string(pos))
+       self.object:set_animation({x=10,y=25}, 60, 0)
+       minetest.after(0.1,function(dtime)
+           self.object:set_animation({x=25,y=25}, 20, 0)
+       end)
+       minetest.sound_play('chestopen', {pos = pos, gain = 0.3, max_hear_distance = 5})
+       minetest.show_formspec(pll, name..'_'..minetest.serialize(pos), formspec)
+    end,
+}
+
+minetest.register_entity('default:3dchest', tdc)
 
 minetest.register_node("default:chest", {
     description = "Chest",
     tiles = {"default_chest_top.png", "default_chest_top.png", "default_chest_side.png",
         "default_chest_side.png", "default_chest_side.png", "default_chest_front.png"},
     paramtype2 = "facedir",
-
+    -- temporary workover
+    wield_image = "default_chest_front.png",
+    drawtype = "nodebox",
+    paramtype = "light",
+    walkable = true,
+    node_box = {
+        type = "fixed",
+        fixed = {
+            {-0.005, -0.005, -0.005, 0.005, 0.005, 0.005}
+        },
+    },
+    selection_box = {
+        type = "fixed",
+        fixed = {
+            {-0.005, -0.005, -0.005, 0.005, 0.005, 0.005}
+        },
+    },
     groups = {choppy=default.dig.chest},
     legacy_facedir_simple = true,
     sounds = default.node_sound_wood_defaults(),
     on_construct = function(pos)
         local param2 = minetest.get_node(pos).param2
         local meta = minetest.get_meta(pos)
-        if minetest.get_node(get_chest_neighborpos(pos, param2, "right")).name == "default:chest" then
+      --[[  if minetest.get_node(get_chest_neighborpos(pos, param2, "right")).name == "default:chest" then
             minetest.set_node(pos, {name="default:chest_right",param2=param2})
             local p = get_chest_neighborpos(pos, param2, "right")
             meta:set_string("formspec",
@@ -832,12 +920,12 @@ minetest.register_node("default:chest", {
             "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
             "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;z;true;true]"..
 
-            "list[nodemeta:"..p.x..","..p.y..","..p.z..";main;0,0;9,3;]"..
-            "list[context;main;0,3;9,3;]"..
+            "list[nodemeta:"..p.x..","..p.y..","..p.z..";main;0,3;9,3;]"..
+            "list[context;main;0,0;9,3;]"..
 
             "list[current_player;main;0,6.2;9,3;9]"..
             "list[current_player;main;0,9.4;9,1;]")            meta:set_string("infotext", "Large Chest")
-            hacky_swap_node(p, "default:chest_left", param2)
+            minetest.swap_node(p, {name="default:chest_left", param2=param2})
             local m = minetest.get_meta(p)
             m:set_string("formspec",
             "size[9,10.2]"..
@@ -868,13 +956,13 @@ minetest.register_node("default:chest", {
             "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
             "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
 
-            "list[nodemeta:"..p.x..","..p.y..","..p.z..";main;0,0;9,3;]"..
-            "list[context;main;0,3;9,3;]"..
+            "list[nodemeta:"..p.x..","..p.y..","..p.z..";main;0,3;9,3;]"..
+            "list[context;main;0,0;9,3;]"..
 
             "list[current_player;main;0,6.2;9,3;9]"..
             "list[current_player;main;0,9.4;9,1;]")
             meta:set_string("infotext", "Large Chest")
-            hacky_swap_node(p, "default:chest_right", param2)
+            minetest.swap_node(p, {name="default:chest_right", param2=param2})
             local m = minetest.get_meta(p)
             m:set_string("formspec",
             "size[9,10.2]"..
@@ -892,7 +980,7 @@ minetest.register_node("default:chest", {
             "list[current_player;main;0,6.2;9,3;9]"..
             "list[current_player;main;0,9.4;9,1;]")
             m:set_string("infotext", "Large Chest")
-        else
+        else]]--
             meta:set_string("formspec",
             "size[9,7.2]"..
             "bgcolor[#bbbbbb;false]"..
@@ -902,14 +990,81 @@ minetest.register_node("default:chest", {
             "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
             "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
             "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
-
-            "list[context;main;0,0;9,3;]"..
+            "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";main;0,0;9,3;]"..
+--            "list[context;main;0,0;9,3;]"..
             "list[current_player;main;0,3.2;9,3;9]"..
             "list[current_player;main;0,6.4;9,1;]")
             meta:set_string("infotext", "Chest")
-        end
+       -- end
         local inv = meta:get_inventory()
         inv:set_size("main", 9*3)
+    end,
+    after_place_node = function(pos, placer, itemstack, pointed_thing)
+            local m = minetest.get_meta(pos)
+            local ent = minetest.env:add_entity(pos,'default:3dchest')
+            if ent then
+                local ent2 = ent:get_luaentity()
+                ent:set_animation({x=1,y=1}, 20, 0)
+                local dir = placer:get_look_dir()
+                local absx, absy, absz = math.abs(dir.x), math.abs(dir.y), math.abs(dir.z)
+                local maxd = math.max(math.max(absx,absy),absz)
+                if maxd == absx then
+                   if dir.x>0 then
+                      ent:setyaw(math.pi/2)
+                      m:set_int('dir',1)
+                   else
+                      ent:setyaw(3*math.pi/2)
+                      m:set_int('dir',3)
+                   end
+                elseif maxd == absy then
+                   if dir.x>dir.z then
+                      ent:setyaw(math.pi)
+                      m:set_int('dir',2)
+                   else
+                      ent:setyaw(3*math.pi/2)
+                      m:set_int('dir',3)
+                   end
+                elseif maxd == absz then
+                   if dir.z>0 then
+                      ent:setyaw(math.pi)
+                      m:set_int('dir',2)
+                   else
+                      ent:setyaw(0)
+                      m:set_int('dir',0)
+                   end
+                end
+                m:set_int('3d',1)
+            end
+        local timer = minetest.get_node_timer(pos)
+        timer:start(1)
+    end,
+    on_timer = function(pos,el)
+       local meta = minetest.get_meta(pos)
+       local cover = false
+       local node = minetest.get_node(pos)
+       local objs = minetest.get_objects_inside_radius(pos, 0.1)
+             for i,obj in ipairs(objs) do
+                 if not obj:is_player() then
+                    local self = obj:get_luaentity()
+                    if self.name == 'default:3dchest' and node.name == 'default:chest' then
+                       cover = true
+                       break
+                    else
+                       self.object:remove()
+                    end
+                 end
+             end
+      if not cover then
+         if node.name == 'default:chest' then
+            local ent = minetest.env:add_entity(pos,'default:3dchest')
+            if ent then
+                ent:set_animation({x=1,y=1}, 20, 0)
+                local dir = meta:get_int('dir')
+                ent:setyaw(dir*(math.pi/2))
+            end
+         end
+      end
+       return true
     end,
     after_dig_node = function(pos, oldnode, oldmetadata, digger)
         local meta = minetest.get_meta(pos)
@@ -943,7 +1098,7 @@ minetest.register_node("default:chest", {
            end
         end,
 })
-
+--[[
 minetest.register_node("default:chest_left", {
     tiles = {"default_chest_top_big.png", "default_chest_top_big.png", "default_chest_side.png",
         "default_chest_side.png", "default_chest_side_big.png^[transformFX", "default_chest_front_big.png"},
@@ -976,7 +1131,7 @@ minetest.register_node("default:chest_left", {
             "list[current_player;main;0,3.2;9,3;9]"..
             "list[current_player;main;0,6.4;9,1;]")
         meta:set_string("infotext", "Chest")
-        hacky_swap_node(p, "default:chest")
+        minetest.swap_node(p, {name="default:chest"})
     end,
     after_dig_node = function(pos, oldnode, oldmetadata, digger)
         local meta = minetest.get_meta(pos)
@@ -991,6 +1146,44 @@ minetest.register_node("default:chest_left", {
             end
         end
         meta:from_table(meta2:to_table())
+        local placer=digger
+                   local m = minetest.get_meta(pos)
+            local ent = minetest.env:add_entity(pos,'default:3dchest')
+            if ent then
+                local ent2 = ent:get_luaentity()
+                ent:set_animation({x=1,y=1}, 20, 0)
+                local dir = placer:get_look_dir()
+                local absx, absy, absz = math.abs(dir.x), math.abs(dir.y), math.abs(dir.z)
+                local maxd = math.max(math.max(absx,absy),absz)
+                if maxd == absx then
+                   if dir.x>0 then
+                      ent:setyaw(math.pi/2)
+                      m:set_int('dir',1)
+                   else
+                      ent:setyaw(3*math.pi/2)
+                      m:set_int('dir',3)
+                   end
+                elseif maxd == absy then
+                   if dir.x>dir.z then
+                      ent:setyaw(math.pi)
+                      m:set_int('dir',2)
+                   else
+                      ent:setyaw(3*math.pi/2)
+                      m:set_int('dir',3)
+                   end
+                elseif maxd == absz then
+                   if dir.z>0 then
+                      ent:setyaw(math.pi)
+                      m:set_int('dir',2)
+                   else
+                      ent:setyaw(0)
+                      m:set_int('dir',0)
+                   end
+                end
+                m:set_int('3d',1)
+            end
+        local timer = minetest.get_node_timer(pos)
+        timer:start(1)
     end,
     on_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
         minetest.log("action", player:get_player_name()..
@@ -1010,8 +1203,8 @@ minetest.register_node("default:chest_left", {
            end
         end,
 
-})
-
+})]]
+--[[
 minetest.register_node("default:chest_right", {
     tiles = {"default_chest_top_big.png^[transformFX", "default_chest_top_big.png^[transformFX", "default_chest_side.png",
         "default_chest_side.png", "default_chest_side_big.png", "default_chest_front_big.png^[transformFX"},
@@ -1044,7 +1237,7 @@ minetest.register_node("default:chest_right", {
             "list[current_player;main;0,3.2;9,3;9]"..
             "list[current_player;main;0,6.4;9,1;]")
         meta:set_string("infotext", "Chest")
-        hacky_swap_node(p, "default:chest")
+        minetest.swap_node(p, {name="default:chest"})
     end,
     after_dig_node = function(pos, oldnode, oldmetadata, digger)
         local meta = minetest.get_meta(pos)
@@ -1059,6 +1252,44 @@ minetest.register_node("default:chest_right", {
             end
         end
         meta:from_table(meta2:to_table())
+        local placer=digger
+                   local m = minetest.get_meta(pos)
+            local ent = minetest.env:add_entity(pos,'default:3dchest')
+            if ent then
+                local ent2 = ent:get_luaentity()
+                ent:set_animation({x=1,y=1}, 20, 0)
+                local dir = placer:get_look_dir()
+                local absx, absy, absz = math.abs(dir.x), math.abs(dir.y), math.abs(dir.z)
+                local maxd = math.max(math.max(absx,absy),absz)
+                if maxd == absx then
+                   if dir.x>0 then
+                      ent:setyaw(math.pi/2)
+                      m:set_int('dir',1)
+                   else
+                      ent:setyaw(3*math.pi/2)
+                      m:set_int('dir',3)
+                   end
+                elseif maxd == absy then
+                   if dir.x>dir.z then
+                      ent:setyaw(math.pi)
+                      m:set_int('dir',2)
+                   else
+                      ent:setyaw(3*math.pi/2)
+                      m:set_int('dir',3)
+                   end
+                elseif maxd == absz then
+                   if dir.z>0 then
+                      ent:setyaw(math.pi)
+                      m:set_int('dir',2)
+                   else
+                      ent:setyaw(0)
+                      m:set_int('dir',0)
+                   end
+                end
+                m:set_int('3d',1)
+            end
+        local timer = minetest.get_node_timer(pos)
+        timer:start(1)
     end,
     on_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
         minetest.log("action", player:get_player_name()..
@@ -1079,7 +1310,7 @@ minetest.register_node("default:chest_right", {
         end,
 
 
-})
+})]]--
 
 local function has_locked_chest_privilege(meta, player)
     if player:get_player_name() ~= meta:get_string("owner") then
@@ -1214,14 +1445,8 @@ default.furnace_inactive_formspec =
             "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
             "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
 
-            "list[context;main;0,0;9,3;]"..
             "image[2,1.5;1,1;default_furnace_fire_bg.png]"..
             "image[3,1.5;2,1;default_arrow_bg.png^[transformR270]"..
-            --"image[3,1.5;2,1;default_arrow_bg.png^[transformR270^[lowpart:40:default_arrow_fg.png^[transformR270]"..
-
-            "list[context;fuel;2,2.5;1,1;]"..
-            "list[context;src;2,0.5;1,1;]"..
-            "list[context;dst;5,1;2,2;]"..
 
             "list[current_player;main;0,4.2;9,3;9]"..
             "list[current_player;main;0,7.4;9,1;]"
@@ -1237,20 +1462,46 @@ minetest.register_node("default:furnace", {
     sounds = default.node_sound_stone_defaults(),
     on_construct = function(pos)
         local meta = minetest.get_meta(pos)
-        meta:set_string("formspec", default.furnace_inactive_formspec)
+        meta:set_string("formspect", default.furnace_inactive_formspec)
         meta:set_string("infotext", "Furnace")
                 meta:set_string("percent", "0")
         local inv = meta:get_inventory()
         inv:set_size("fuel", 1)
         inv:set_size("src", 1)
         inv:set_size("dst", 4)
+        inv:set_size("gfuel", 1)
+        inv:set_size("gsrc", 1)
+        inv:set_size("gdst", 4)
+    end,
+    on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+       if clicker and clicker:is_player() then
+          local pll = clicker:get_player_name()
+          local meta = minetest.get_meta(pos)
+          local formspec = meta:get_string("formspect")
+          if not isghost[pll] then
+             formspec = formspec ..
+             "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";fuel;2,2.5;1,1;]"..
+             "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";src;2,0.5;1,1;]"..
+             "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";dst;5,1;2,2;]"
+           --  print('showing NORMAL formspec')
+          else
+            -- ghostly slots >:D
+             formspec = formspec ..
+             "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";gfuel;2,2.5;1,1;]"..
+             "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";gsrc;2,0.5;1,1;]"..
+             "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";gdst;5,1;2,2;]"
+            -- print('showing GHOSTS formspec')
+          end
+          meta:set_string("pll",pll)
+          minetest.show_formspec(pll, 'default:furnace_'..minetest.serialize(pos), formspec)
+       end
     end,
     after_dig_node = function(pos, oldnode, oldmetadata, digger)
         local meta = minetest.get_meta(pos)
         local meta2 = meta
         meta:from_table(oldmetadata)
         local inv = meta:get_inventory()
-        for _,list in ipairs({"fuel", "src", "dst"}) do
+        for _,list in ipairs({"fuel", "src", "dst","gfuel", "gsrc", "gdst"}) do
             for i=1,inv:get_size(list) do
                 local stack = inv:get_stack(list, i)
                 if not stack:is_empty() then
@@ -1265,6 +1516,7 @@ minetest.register_node("default:furnace", {
         local meta = minetest.get_meta(pos)
         local inv = meta:get_inventory()
         if listname == "fuel" then
+            if stack:get_name()=='ghosts:ghostly_block' and not isghost[pll] then return 0 end
             if minetest.get_craft_result({method="fuel",width=1,items={stack}}).time ~= 0 then
                 if inv:is_empty("src") then
                     meta:set_string("infotext","Furnace is empty")
@@ -1273,9 +1525,18 @@ minetest.register_node("default:furnace", {
             else
                 return 0
             end
-        elseif listname == "src" then
+        elseif listname == "gfuel" then
+            if minetest.get_craft_result({method="fuel",width=1,items={stack}}).time ~= 0 then
+                if inv:is_empty("gsrc") then
+                    meta:set_string("infotext","Furnace is empty")
+                end
+                return stack:get_count()
+            else
+                return 0
+            end
+        elseif listname == "src" or listname == "gsrc" then
             return stack:get_count()
-        elseif listname == "dst" then
+        elseif listname == "dst" or listname == "gdst" then
             return 0
         end
     end,
@@ -1284,6 +1545,7 @@ minetest.register_node("default:furnace", {
         local inv = meta:get_inventory()
         local stack = inv:get_stack(from_list, from_index)
         if to_list == "fuel" then
+            -- prohibit gb usage as a fuel if you're alive
             if minetest.get_craft_result({method="fuel",width=1,items={stack}}).time ~= 0 then
                 if inv:is_empty("src") then
                     meta:set_string("infotext","Furnace is empty")
@@ -1292,15 +1554,24 @@ minetest.register_node("default:furnace", {
             else
                 return 0
             end
-        elseif to_list == "src" then
+        elseif to_list == "gfuel" then
+            if minetest.get_craft_result({method="fuel",width=1,items={stack}}).time ~= 0 then
+                if inv:is_empty("gsrc") then
+                    meta:set_string("infotext","Furnace is empty")
+                end
+                return count
+            else
+                return 0
+            end
+        elseif to_list == "src" or to_list == "gsrc" then
             return count
-        elseif to_list == "dst" then
+        elseif to_list == "dst" or to_list == "gdst" then
             return 0
         end
     end,
         on_receive_fields = function(pos, formname, fields, sender)
            if sender and sender:is_player() then
-              default.sort_inv(sender,formname,fields)
+              default.sort_inv(sender,formname,fields,pos)
            end
         end,
 
@@ -1326,7 +1597,8 @@ minetest.register_node("default:furnace_active", {
         local meta2 = meta
         meta:from_table(oldmetadata)
         local inv = meta:get_inventory()
-        for _,list in ipairs({"fuel", "src", "dst"}) do
+         -- make it possible to cheat on ghosts :)
+        for _,list in ipairs({"fuel", "src", "dst","gfuel", "gsrc", "gdst"}) do
             for i=1,inv:get_size(list) do
                 local stack = inv:get_stack(list, i)
                 if not stack:is_empty() then
@@ -1337,10 +1609,58 @@ minetest.register_node("default:furnace_active", {
         end
         meta:from_table(meta2:to_table())
     end,
+    on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+       if clicker and clicker:is_player() then
+          local pll = clicker:get_player_name()
+          local meta = minetest.get_meta(pos)
+          local formspec = meta:get_string("formspect")
+          if not isghost[pll] then
+             formspec = formspec ..
+             "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";fuel;2,2.5;1,1;]"..
+             "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";src;2,0.5;1,1;]"..
+             "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";dst;5,1;2,2;]"
+            -- print('showing NORMAL formspec')
+          else
+            -- ghostly slots >:D
+             formspec = formspec ..
+             "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";gfuel;2,2.5;1,1;]"..
+             "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";gsrc;2,0.5;1,1;]"..
+             "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";gdst;5,1;2,2;]"
+          --   print('showing GHOSTS formspec')
+          end
+          minetest.show_formspec(pll, 'default:furnace_'..minetest.serialize(pos), formspec)
+          meta:set_string("pll",pll)
+          minetest.get_node_timer(pos):start(1)
+       end
+    end,
+    on_timer = function(pos,el)
+          local meta = minetest.get_meta(pos)
+          local pll = meta:get_string("pll")
+          if not minetest.get_player_by_name(pll) then return true end
+          local formspec = meta:get_string("formspect")
+          if not isghost[pll] then
+             formspec = formspec ..
+             "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";fuel;2,2.5;1,1;]"..
+             "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";src;2,0.5;1,1;]"..
+             "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";dst;5,1;2,2;]"
+            -- print('showing NORMAL formspec')
+          else
+            -- ghostly slots >:D
+             formspec = formspec ..
+             "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";gfuel;2,2.5;1,1;]"..
+             "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";gsrc;2,0.5;1,1;]"..
+             "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";gdst;5,1;2,2;]"
+            -- print('showing GHOSTS formspec')
+          end
+          minetest.show_formspec(pll, 'default:furnace_'..minetest.serialize(pos), formspec)
+         return true
+    end,
     allow_metadata_inventory_put = function(pos, listname, index, stack, player)
         local meta = minetest.get_meta(pos)
         local inv = meta:get_inventory()
         if listname == "fuel" then
+            -- prohibit gb usage as a fuel if you're alive
+            if stack:get_name()=='ghosts:ghostly_block' and not isghost[pll] then return 0 end
             if minetest.get_craft_result({method="fuel",width=1,items={stack}}).time ~= 0 then
                 if inv:is_empty("src") then
                     meta:set_string("infotext","Furnace is empty")
@@ -1349,9 +1669,18 @@ minetest.register_node("default:furnace_active", {
             else
                 return 0
             end
-        elseif listname == "src" then
+        elseif listname == "gfuel" then
+            if minetest.get_craft_result({method="fuel",width=1,items={stack}}).time ~= 0 then
+                if inv:is_empty("gsrc") then
+                    meta:set_string("infotext","Furnace is empty")
+                end
+                return stack:get_count()
+            else
+                return 0
+            end
+        elseif listname == "src" or listname == "gsrc" then
             return stack:get_count()
-        elseif listname == "dst" then
+        elseif listname == "dst" or listname == "gdst" then
             return 0
         end
     end,
@@ -1368,15 +1697,27 @@ minetest.register_node("default:furnace_active", {
             else
                 return 0
             end
-        elseif to_list == "src" then
+        elseif to_list == "gfuel" then
+            if minetest.get_craft_result({method="fuel",width=1,items={stack}}).time ~= 0 then
+                if inv:is_empty("gsrc") then
+                    meta:set_string("infotext","Furnace is empty")
+                end
+                return count
+            else
+                return 0
+            end
+        elseif to_list == "src" or to_list == "gsrc" then
             return count
-        elseif to_list == "dst" then
+        elseif to_list == "dst" or to_list == "gdst" then
             return 0
         end
     end,
         on_receive_fields = function(pos, formname, fields, sender)
+
+--          print('act fur fields')
+
            if sender and sender:is_player() then
-              default.sort_inv(sender,formname,fields)
+              default.sort_inv(sender,formname,fields,pos)
            end
         end,
 
@@ -1388,6 +1729,7 @@ minetest.register_abm({
     interval = 1,
     chance = 1,
     action = function(pos, node, active_object_count, active_object_count_wider)
+     -- normal
         local meta = minetest.get_meta(pos)
         for i, name in ipairs({
                 "fuel_totaltime",
@@ -1399,7 +1741,19 @@ minetest.register_abm({
                 meta:set_float(name, 0.0)
             end
         end
+     -- ghosts
+        for i, name in ipairs({
+                "gfuel_totaltime",
+                "gfuel_time",
+                "gsrc_totaltime",
+                "gsrc_time"
+        }) do
+            if meta:get_string(name) == "" then
+                meta:set_float(name, 0.0)
+            end
+        end
 
+      -- normal
         local inv = meta:get_inventory()
 
         local srclist = inv:get_list("src")
@@ -1432,15 +1786,48 @@ minetest.register_abm({
             end
         end
 
+      -- ghosts
+        local gsrclist = inv:get_list("gsrc")
+        local gcooked = nil
+        local gaftercooked
+
+        if gsrclist then
+            gcooked, gaftercooked = minetest.get_craft_result({method = "cooking", width = 1, items = gsrclist})
+        end
+
+        local gwas_active = false
+
+        if meta:get_float("gfuel_time") < meta:get_float("gfuel_totaltime") then
+            gwas_active = true
+            meta:set_float("gfuel_time", meta:get_float("gfuel_time") + 1)
+            meta:set_float("gsrc_time", meta:get_float("gsrc_time") + 1)
+            meta:set_float("gsrc_totaltime", gcooked.time)
+
+            if gcooked and gcooked.item and meta:get_float("gsrc_time") >= gcooked.time then
+                --print('-- check if there\'s room for output in "dst" list')
+                if inv:room_for_item("gdst", gcooked.item) then
+                   -- print('-- Put result in "dst" list')
+                    inv:add_item("gdst", gcooked.item)
+                    --print('-- take stuff from "src" list')
+                    --print(gaftercooked.items[1]:get_name())
+                    inv:set_stack("gsrc", 1, gaftercooked.items[1])
+                else
+                    print("Could not insert ghostly '"..gcooked.item:to_string().."'")
+                end
+                meta:set_string("gsrc_time", 0)
+            end
+        end
+
+     -- normal
         if meta:get_float("fuel_time") < meta:get_float("fuel_totaltime") then
-            local percent = math.floor(meta:get_float("fuel_time") /
-                    meta:get_float("fuel_totaltime") * 100)
-            local percent2 = math.floor(meta:get_float("src_time") /
-                    meta:get_float("src_totaltime") * 100)
+            local percent = math.floor(meta:get_float("fuel_time") / meta:get_float("fuel_totaltime") * 100)
+            local percent2 = math.floor(meta:get_float("src_time") / meta:get_float("src_totaltime") * 100)
             meta:set_string("infotext","Furnace active: "..percent2.."%")
-                        meta:set_string("percent", percent)
-            hacky_swap_node(pos,"default:furnace_active")
-            meta:set_string("formspec",
+            meta:set_string("percent", percent)
+            local node = minetest.get_node(pos)
+            node.name = "default:furnace_active"
+            minetest.swap_node(pos,node,2)
+            meta:set_string("formspect",
             "size[9,8.2]"..
             "bgcolor[#bbbbbb;false]"..
             "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
@@ -1455,20 +1842,51 @@ minetest.register_abm({
             "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
             "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
 
-            "list[context;main;0,0;9,3;]"..
             "image[2,1.5;1,1;default_furnace_fire_bg.png^[lowpart:"..(100-percent)..":default_furnace_fire_fg.png]"..
             "image[3.2,1.5;1.8,1;default_arrow_bg.png^[lowpart:"..(percent2)..":default_arrow_fg.png^[transformR270]"..
 
+            "list[current_player;main;0,4.2;9,3;9]"..
+            "list[current_player;main;0,7.4;9,1;]")
+            minetest.get_node_timer(pos):start(1,0.99)
+            --print('NORMAL burn have some fuel')
+        end
+        if meta:get_float("gfuel_time") < meta:get_float("gfuel_totaltime") then
+            local gpercent = math.floor(meta:get_float("gfuel_time") / meta:get_float("gfuel_totaltime") * 100)
+            local gpercent2 = math.floor(meta:get_float("gsrc_time") / meta:get_float("gsrc_totaltime") * 100)
+            meta:set_string("infotext","Furnace active: "..gpercent2.."%")
+            meta:set_string("percent", gpercent)
+            local gnode = minetest.get_node(pos)
+            gnode.name = "default:furnace_active"
+            minetest.swap_node(pos,gnode,2)
+            meta:set_string("formspect",
+            "size[9,8.2]"..
+            "bgcolor[#bbbbbb;false]"..
+            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
 
-            "list[context;fuel;2,2.5;1,1;]"..
-            "list[context;src;2,0.5;1,1;]"..
-            "list[context;dst;5,1;2,2;]"..
+            "list[current_player;helm;0,0;1,1;]"..
+            "list[current_player;torso;0,1;1,1;]"..
+            "list[current_player;pants;0,2;1,1;]"..
+            "list[current_player;boots;0,3;1,1;]"..
+
+            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
+            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
+            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
+            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
+
+            "image[2,1.5;1,1;default_furnace_fire_bg.png^[lowpart:"..(100-gpercent)..":default_furnace_fire_fg.png]"..
+            "image[3.2,1.5;1.8,1;default_arrow_bg.png^[lowpart:"..(gpercent2)..":default_arrow_fg.png^[transformR270]"..
 
             "list[current_player;main;0,4.2;9,3;9]"..
             "list[current_player;main;0,7.4;9,1;]")
-            return
+            minetest.get_node_timer(pos):start(1,0.99)
+            --print('GHOSTly burn have some fuel')
         end
+        if meta:get_float("fuel_time") < meta:get_float("fuel_totaltime")
+        or meta:get_float("gfuel_time") < meta:get_float("gfuel_totaltime")
+        then return end
 
+
+     -- normal
         local fuel = nil
         local afterfuel
         local cooked = nil
@@ -1482,27 +1900,84 @@ minetest.register_abm({
             fuel, afterfuel = minetest.get_craft_result({method = "fuel", width = 1, items = fuellist})
         end
 
+     -- ghosts
+        local gfuel = nil
+        local gafterfuel
+        local gcooked = nil
+        local gfuellist = inv:get_list("gfuel")
+        local gsrclist = inv:get_list("gsrc")
+
+        if gsrclist then
+            gcooked = minetest.get_craft_result({method = "cooking", width = 1, items = gsrclist})
+        end
+        if gfuellist then
+            gfuel, gafterfuel = minetest.get_craft_result({method = "fuel", width = 1, items = gfuellist})
+        end
+
+
         if fuel.time <= 0 then
             meta:set_string("infotext","Furnace out of fuel")
-            hacky_swap_node(pos,"default:furnace")
-            meta:set_string("formspec", default.furnace_inactive_formspec)
-            return
+            meta:set_string("formspect", default.furnace_inactive_formspec)
+            local node = minetest.get_node(pos)
+            node.name = "default:furnace"
+            minetest.swap_node(pos,node,2)
+            --print('NORMAL out of fuel')
         end
+        if gfuel.time <= 0 then
+            meta:set_string("infotext","Furnace out of fuel")
+            meta:set_string("formspect", default.furnace_inactive_formspec)
+            local gnode = minetest.get_node(pos)
+            gnode.name = "default:furnace"
+            minetest.swap_node(pos,gnode,2)
+            --print('GHOSTly out of fuel')
+        end
+        --if (fuel.time <= 0 and cooked.item:is_empty()) or (gfuel.time <= 0 and gcooked.item:is_empty()) then return end
+       if (fuel.time <= 0 and gfuel.time <= 0 ) then return end
 
         if cooked.item:is_empty() then
             if was_active then
                 meta:set_string("infotext","Furnace is empty")
-                hacky_swap_node(pos,"default:furnace")
-                meta:set_string("formspec", default.furnace_inactive_formspec)
+                meta:set_string("formspect", default.furnace_inactive_formspec)
+                local node = minetest.get_node(pos)
+                node.name = "default:furnace"
+                minetest.swap_node(pos,node,2)
             end
-            return
+            --print('NORMAL out of items')
+        end
+        if gcooked.item:is_empty() then
+            if gwas_active then
+                meta:set_string("infotext","Furnace is empty")
+                meta:set_string("formspect", default.furnace_inactive_formspec)
+                local gnode = minetest.get_node(pos)
+                gnode.name = "default:furnace"
+                minetest.swap_node(pos,gnode,2)
+            end
+            --print('GHOSTly out of items')
+        end
+        if cooked.item:is_empty() and gcooked.item:is_empty() then return end
+
+     -- normal
+        if not cooked.item:is_empty() and not (fuel.time <= 0) then
+            meta:set_string("fuel_totaltime", fuel.time)
+            meta:set_string("fuel_time", 0)
+
+            inv:set_stack("fuel", 1, afterfuel.items[1])
         end
 
-        meta:set_string("fuel_totaltime", fuel.time)
-        meta:set_string("fuel_time", 0)
+     -- ghosts
+        if not gcooked.item:is_empty() and not (gfuel.time <= 0) then
+            meta:set_string("gfuel_totaltime", gfuel.time)
+            meta:set_string("gfuel_time", 0)
 
-        inv:set_stack("fuel", 1, afterfuel.items[1])
+            inv:set_stack("gfuel", 1, gafterfuel.items[1])
+        end
+
+        --print("fuel_totaltime = " .. fuel.time)
+        --print("fuel_time = " .. 0)
+        --print("gfuel_totaltime = " .. gfuel.time)
+        --print("gfuel_time = " .. 0)
     end,
+
 })
 
 minetest.register_node("default:cobble", {
@@ -1518,7 +1993,7 @@ minetest.register_node("default:mossycobble", {
     description = "Mossy Cobblestone",
     tiles = {"default_mossycobble.png"},
     is_ground_content = true,
-
+    drop = 'default:cobble',
     groups = {cracky=default.dig.cobble},
     sounds = default.node_sound_stone_defaults(),
 })
@@ -1651,11 +2126,19 @@ minetest.register_node("default:ice", {
     description = "Ice",
     tiles = {"default_ice.png"},
     is_ground_content = true,
+    drawtype = "glasslike",
+    node_box = {
+        type = "fixed",
+        fixed = {
+            {-0.4999, -0.4999, -0.4999,  0.4999, 0.4999, 0.4999},
+        },
+    },
+
     paramtype = "light",
     drop='',
     use_texture_alpha=true,
     on_dig = function(pos, oldnode, oldmetadata, digger)
-       minetest.set_node(pos, {name="default:water_source", param1=0,param2=0}, true)
+       minetest.set_node(pos, {name="default:water_source", param1=0,param2=0}, 2)
     end,
     groups = {cracky=default.dig.ice},
     sounds = default.node_sound_glass_defaults(),
@@ -1748,9 +2231,9 @@ minetest.register_node("default:workbench", {
             "list[current_player;main;0,4.2;9,3;9]"..
             "list[current_player;main;0,7.4;9,1;]")
     end,
-        on_receive_fields = function(pos, formname, fields, sender)
-             default.sort_inv(sender,formname,fields, pos)
-        end,
+    on_receive_fields = function(pos, formname, fields, sender)
+         default.sort_inv(sender,formname,fields, pos)
+    end,
 
 })
 

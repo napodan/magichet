@@ -21,8 +21,8 @@ Say you want to increase by ϕ radians. Then the new point is (a+rcos(θ+ϕ),b+r
 
 minetest.register_tool("jetpack:jet", {
   description = "Jetpack",
-  inventory_image = "jetpack_jet.png",
-  wield_image = "jetpack_jet.png",
+  inventory_image = "jetpack_jet_inv.png",
+  wield_image = "jetpack_jet_inv.png",
         voltbuild = {max_charge = 30000,
                 max_speed = 60,
                 charge_tier = 1},
@@ -30,7 +30,8 @@ minetest.register_tool("jetpack:jet", {
                 "You can fly as high as 128 nodes above with this charged."},
         tool_capabilities =
                 {max_drop_level=0,
-                groupcaps={fleshy={times={}, uses=1, maxlevel=0}}}
+                groupcaps={fleshy={times={}, uses=1, maxlevel=0}}},
+        groups = {armor=5, armor_use=100},
 })
 
 minetest.register_craft({

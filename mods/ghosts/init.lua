@@ -35,6 +35,8 @@ ghosts={}   -- dead?
 ghosts2={}  -- hud activated?
 ghosts3={}  -- ID of a hud
 ghosts4={}  -- Warned about beeing ghost!
+local deaths_count = {}  -- count of deaths
+ghosts_maxhp={}
 ginvs={}
 ghost_speed_modifier = 0.5
 ghost_jump_modifier = 1.05
@@ -45,8 +47,14 @@ ghost_sneak_glitch = true
 local poses = {} -- keeps track of players' pos
 
 local locale = os.setlocale(nil, 'collate')
+
 -- load my stuff! :)
-dofile(minetest.get_modpath('ghosts').."/stuff.lua")
+local input = io.open(minetest.get_worldpath().."/ghosts.lua", "r")
+   if input then
+      io.close(input)
+      dofile(minetest.get_worldpath().."/ghosts.lua")
+   end
+
 
 local rus
 -- future would be far more dangerous and mysterious... but for now :)
@@ -86,7 +94,7 @@ local welcome_rus = 'Приветствуем в ином мире!'
 if (locale:find('Russian') ~= nil) or (locale:find('ru_RU') ~= nil) then rus=1 else rus = 0 end
 rus = 0
 function g_save_stuff()
-    local output = io.open(minetest.get_modpath('ghosts').."/stuff.lua", "w")
+    local output = io.open(minetest.get_worldpath().."/ghosts.lua", "w")
     if output then
        o  = minetest.serialize(isghost)
        i  = string.find(o, "return")
@@ -130,6 +138,20 @@ function g_save_stuff()
        output:write(o1 .. "\n")
        output:write("ghosts_skin = minetest.deserialize('" .. o2 .. "')\n")
 
+       o  = minetest.serialize(deaths_count)
+       i  = string.find(o, "return")
+       o1 = string.sub(o, 1, i-1)
+       o2 = string.sub(o, i-1, -1)
+       output:write(o1 .. "\n")
+       output:write("deaths_count = minetest.deserialize('" .. o2 .. "')\n")
+
+       o  = minetest.serialize(ghosts_maxhp)
+       i  = string.find(o, "return")
+       o1 = string.sub(o, 1, i-1)
+       o2 = string.sub(o, i-1, -1)
+       output:write(o1 .. "\n")
+       output:write("ghosts_maxhp = minetest.deserialize('" .. o2 .. "')\n")
+
        io.close(output)
     end
 end
@@ -154,7 +176,7 @@ function check_for_revival_struct(pos)
                       mat  = string.find(node.name, "gold")
                       if mat then nodes.gold=nodes.gold+1
                       else
-                          mat  = string.find(node.name, "mese")
+                          mat  = string.find(node.name, ":mese")
                           if mat and not string.find(node.name, "mesecon") then nodes.mese=nodes.mese+1
                           else
                               mat  = string.find(node.name, "diamond")
@@ -184,7 +206,7 @@ function check_for_revival_struct(pos)
                       mat  = string.find(node.name, "gold")
                       if mat then nodes.gold=nodes.gold+1
                       else
-                          mat  = string.find(node.name, "mese")
+                          mat  = string.find(node.name, ":mese")
                           if mat and not string.find(node.name, "mesecon") then nodes.mese=nodes.mese+1
                           else
                               mat  = string.find(node.name, "diamond")
@@ -211,7 +233,7 @@ function check_for_revival_struct(pos)
                       mat  = string.find(node.name, "gold")
                       if mat then nodes.gold=nodes.gold+1
                       else
-                          mat  = string.find(node.name, "mese")
+                          mat  = string.find(node.name, ":mese")
                           if mat and not string.find(node.name, "mesecon") then nodes.mese=nodes.mese+1
                           else
                               mat  = string.find(node.name, "diamond")
@@ -238,7 +260,7 @@ function check_for_revival_struct(pos)
                       mat  = string.find(node.name, "gold")
                       if mat then nodes.gold=nodes.gold+1
                       else
-                          mat  = string.find(node.name, "mese")
+                          mat  = string.find(node.name, ":mese")
                           if mat and not string.find(node.name, "mesecon") then nodes.mese=nodes.mese+1
                           else
                               mat  = string.find(node.name, "diamond")
@@ -265,7 +287,7 @@ function check_for_revival_struct(pos)
                       mat  = string.find(node.name, "gold")
                       if mat then nodes.gold=nodes.gold+1
                       else
-                          mat  = string.find(node.name, "mese")
+                          mat  = string.find(node.name, ":mese")
                           if mat and not string.find(node.name, "mesecon") then nodes.mese=nodes.mese+1
                           else
                               mat  = string.find(node.name, "diamond")
@@ -424,7 +446,7 @@ minetest.register_node("ghosts:reincarnator", {
       print(dump(fields))
         --print("Sign at "..minetest.pos_to_string(pos).." got "..dump(fields))
        local meta = minetest.get_meta(pos)
-       if fields.g_chk then --charge it!          
+       if fields.g_chk then --charge it!
           local player=sender
           if player and sender:is_player() then
                local pll = player:get_player_name()
@@ -444,11 +466,11 @@ minetest.register_node("ghosts:reincarnator", {
           end
         end
        if fields.g_rei then
-          print('GREI!!')
+
           -- reincarnate!
           local player=sender
           if player and player:is_player() then
-             print('player is a player')
+
                local pll = player:get_player_name()
                if not isghost[pll] then return end
                local inv = meta:get_inventory()
@@ -456,13 +478,12 @@ minetest.register_node("ghosts:reincarnator", {
                local count = tonumber(meta:get_string("stored")) --place:get_count()
                local cname=place:get_name()
                if not g_blocks_count[pll] then g_blocks_count[pll]=0 end
-               if count >= g_blocks_count[pll] then
-                  count = count-g_blocks_count[pll]
-                  g_blocks_count[pll]=nil
+               local gb = math.ceil(g_blocks_count[pll]/10)
+               if count >= gb then
+                  count = count-gb
                   meta:set_string("stored",tostring(count))
                   g_blocks_count[pll] = nil
-    --            player:setpos({0,10,0})
-                  minetest.debug(pll .. ' used Reincarnator...')
+                  --minetest.debug(pll .. ' used Reincarnator...')
                   ghosts[pll]=nil
                   isghost[pll]=nil
                   player:set_physics_override({ speed = ghost_speed_modifier, -- multiplier to default value
@@ -507,14 +528,18 @@ minetest.register_node("ghosts:reincarnator", {
                         end
                     end
                 g_changed = true
+               else
+                   -- ask if a player wants to lose ANYTHING
+                   -- g_blocks_count[pll]
                end
+--
           end
 
         end
         -- quit fields
            if sender and sender:is_player() then
               default.sort_inv(sender,formname,fields,pos)
-           end        
+           end
     end,
 
 
@@ -528,6 +553,30 @@ minetest.after(3, function()
    if #players == 0 then return end
    for i,player in ipairs(players) do
        local pll=player:get_player_name()
+
+       -- heal a ghost anytime! (ghosts cannot be killed with /kill)
+       if isghost[pll] then
+       if ghosts_maxhp[pll] then
+        ghosts_maxhp[pll]['time_before_diminish']=ghosts_maxhp[pll]['time_before_diminish']-dtime
+        if ghosts_maxhp[pll]['time_before_diminish']<0 then
+         ghosts_maxhp[pll]['time_before_diminish']=60+5*ghosts_maxhp[pll]['max_hp']
+         if ghosts_maxhp[pll]['max_hp']>0 then
+            ghosts_maxhp[pll]['max_hp']=ghosts_maxhp[pll]['max_hp']-1
+         end
+        end
+       else
+        ghosts_maxhp[pll]={['time_before_diminish']=1, ['max_hp']=20, ['enabled']=true}
+       end
+       if ghosts_maxhp[pll]['enabled'] then
+          if ghosts_maxhp[pll]['max_hp']==0 then
+             ghosts_maxhp[pll]={['time_before_diminish']=1, ['max_hp']=20, ['enabled']=false}
+             player:set_hp(0)
+          else
+              player:set_hp(ghosts_maxhp[pll]['max_hp'])
+          end
+       end
+       end
+
        -- ectoplasm generation:
        if isghost[pll] then
          -- print(pll .. ' is a ghost and...')
@@ -546,13 +595,20 @@ minetest.after(3, function()
           end
           if pos_changed then
               local bel = {x=pos.x, y=pos.y-1, z=pos.z}
-              local meta = minetest.get_meta(bel)
-              local ecto = meta:get_int("ecto")+1
-              if ecto>20 then minetest.set_node(pos,{name = "ghosts:ectoplasm"})
-              else meta:set_int("ecto",ecto)
-              end
+              local bb = minetest.get_node(bel)
+              -- no mid-air generation
+                local meta = minetest.get_meta(bel)
+                local ecto = meta:get_int("ecto")+1
+                if ecto>20 and bb and bb.name~='air' then
+                   minetest.set_node(pos,{name = "ghosts:ectoplasm"})
+                elseif ecto<2100 then
+                   -- restrict MAXecto to 2100. Maybe later there would be a use for it
+                   meta:set_int("ecto",ecto)
+                end
+
           end
        end
+
 
      --  minetest.debug('isghost = ' .. minetest.serialize(isghost[pll]) ..'\n g_blocks_count = '.. minetest.serialize(g_blocks_count[pll]) ..'\n ghosts3 (huds) = '.. minetest.serialize(ghosts3[pll]))
        if isghost[pll] and g_blocks_count[pll]~=nil and ghosts3[pll] and ghosts3[pll][1]~=nil then
@@ -563,7 +619,7 @@ minetest.after(3, function()
                     offset = {x=-0, y=0},
                     alignment = {x=1, y=-1},
                     number = 0xFFFFFF ,
-                    text = "GM: ".. tostring(g_blocks_count[pll]),
+                    text = "GM: ".. tostring(math.ceil(g_blocks_count[pll]/10)),
                 })
        end
 
@@ -585,7 +641,7 @@ minetest.after(3, function()
                     offset = {x=-0, y=0},
                     alignment = {x=1, y=-1},
                     number = 0xFFFFFF ,
-                    text = "GM: ".. tostring(g_blocks_count[pll]),
+                    text = "GM: ".. tostring(math.ceil(g_blocks_count[pll]/10)),
                 })
                ghosts3[pll][1]=hud2
            end
@@ -600,13 +656,17 @@ minetest.after(3, function()
            ghosts3[pll][1]=nil
          end
     end
- end
-    )
+ end)
 end)
 
-    minetest.register_on_dieplayer(function(player)
+minetest.register_on_dieplayer(function(player)
         if player then
            local pll=player:get_player_name()
+           --if not deaths_count then deaths_count = {} end
+           if not deaths_count[pll] then deaths_count[pll] = 0 end
+           if isghost[pll] then
+              deaths_count[pll] = deaths_count[pll] + 1
+           end
            local pos = player:getpos()
            bdeathpos[pll]=pos
            minetest.debug(pll .. ' has died!')
@@ -614,7 +674,7 @@ end)
         end
     end)
 
-    minetest.register_on_respawnplayer(function(player)
+minetest.register_on_respawnplayer(function(player)
         local pll=player:get_player_name()
         minetest.debug(pll .. ' has respawned...')
         if (ghosts2[pll]) then
@@ -652,16 +712,16 @@ end)
                     "button_exit[1.5,1.0;2.5,1;g_close;" .. localized_close .."]"..
                     "button_exit[5,1;2.5,1;g_reinc;" .. localized_reinc .."]"
               end
-              -- minetest.debug(formspec)
-              if pll and formspec then
+              -- if a player is NOT a ghost
+              if pll and formspec and not isghost[pll] then
                  minetest.show_formspec(pll,"ghosts:unlocked",formspec)
               end
-        minetest.debug('formspec shown!')
+        --minetest.debug('formspec shown!')
         else
         end
     end)
 
-    minetest.register_on_player_receive_fields(function(player, formname, fields)
+minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 
         if not player then return end
@@ -671,11 +731,13 @@ end)
                return
            end
 
-        if fields.g_close or (fields.quit and not fields.g_reinc) then
+        if fields.g_close or (fields.quit and formname == "ghosts:unlocked" and not fields.g_reinc) then
+         -- not reincarnated
+
+           ghosts_maxhp[pll]={['time_before_diminish']=80, ['max_hp']=20}
          -- you're allready a ghost, so nothing to do :)
 
                if not isghost[pll] then
-                -- not reincarnated, keep inventory... but in ghosts list
                --------------------------------------
         if skins then
         ghosts_skin[pll] = skins.skins[pll]
@@ -684,37 +746,45 @@ end)
         skins.update_player_skin(player)
         end
 
-
         g_changed = true
 
-               --------------------------------------
+               --------------keep inventory... but in ghosts list ------------------------
                   ghosts[pll]=1
                   isghost[pll]=1
-                  local inv = player:get_inventory()
-                    local ginv = minetest.get_inventory({type="detached", name="ghosts_".. pll})
-                    ---if inv then minetest.debug("Got player's inventory!") end
-                    if ginv then --minetest.debug("Got the ''ghosts'' inventory!")
-                    else
-                       ginv = minetest.create_detached_inventory("ghosts_"..pll)
-                       if ginv then --minetest.debug("Got the ''ghosts'' inventory!")
-                       else --minetest.debug("Failed to create ginv...")
-                       end
-                    end
+                    -- if pll isn't a ghost then...
+                    local inv = player:get_inventory()
+                      local ginv = minetest.get_inventory({type="detached", name="ghosts_".. pll})
+                      ---if inv then minetest.debug("Got player's inventory!") end
+                      if ginv then --minetest.debug("Got the ''ghosts'' inventory!")
+                      else
+                         ginv = minetest.create_detached_inventory("ghosts_"..pll)
+                         if ginv then --minetest.debug("Got the ''ghosts'' inventory!")
+                         else --minetest.debug("Failed to create ginv...")
+                         end
+                      end
 
-                    --minetest.debug("COPYING")
-                    if inv and ginv then
-                        for i,stack in ipairs(inv:get_list("main")) do
-                            --minetest.debug("item #"..tostring(i).." is " .. stack:get_name() .. " x" .. stack:get_count() .. "!")
-                            --ginv:add_item("copy", stack)
-                            ginv:set_stack("copy", i, stack)
-                            --minetest.debug('We\'ll give it it to ginv')
-                            stack:clear()
-                            --minetest.debug('Then we\'ll clear the stack')
-                            inv:set_stack("main", i, stack)
-
-                            --minetest.debug('And empty the main stack')
-                        end
-                    end
+                      --minetest.debug("COPYING")
+                      if inv and ginv then
+                          for i,stack in ipairs(inv:get_list("main")) do
+                              --minetest.debug("item #"..tostring(i).." is " .. stack:get_name() .. " x" .. stack:get_count() .. "!")
+                              --ginv:add_item("copy", stack)
+                              if not isghost[pll] then
+                                 -- if it's your first life, then copy to ginv
+                                 ginv:set_stack("copy", i, stack)
+                              else
+                                 -- else add to ginv beyound your 9*4 inv (up to 5x inventories)
+                                 if i+9*4*deaths_count[pll] <=9*4*5 then
+                                    ginv:set_stack("copy", i+9*4*deaths_count[pll], stack)
+                                    --ginv:add_item("copy", stack)
+                                 end
+                              end
+                              --minetest.debug('We\'ll give it it to ginv')
+                              stack:clear()
+                              --minetest.debug('Then we\'ll clear the stack')
+                              inv:set_stack("main", i, stack)
+                              --minetest.debug('And empty the main stack')
+                          end
+                      end
                 ------------------------------------
 
                   minetest.debug(pll .. ' is a mere ghost now...')
@@ -738,11 +808,22 @@ end)
 
         if fields.g_reinc then
          -- clear up your stuff and onto your reincarnation, Muah-ha-ha-haaaa he-hee hoooo...
-                  player:setpos({x=0,y=10,z=0})
+                  local pos = bdeathpos[pll]
+                  if not bdeathpos[pll] then pos = player:getpos() end
+                  player:setpos(findapos())
                   -- emptying one's pockets :)
 ------------------------------------------------------------
                     local pos = bdeathpos[pll]
-          if pos then
+                    local objs = minetest.get_objects_inside_radius(pos, 50)
+                    local pllc = false
+                    for i,obj in ipairs(objs) do
+                        if obj:is_player() then
+                        pllc = true
+                        break
+                        end
+                    end
+
+                  if pllc and pos then
                     local inv = player:get_inventory()
                 --  local pos = player:getpos()
                     for i,stack in ipairs(inv:get_list("main")) do
@@ -756,6 +837,8 @@ end)
                         pos.x = pos.x - x
                         pos.z = pos.z - z
                     end
+                    -- decrease inventory by 1*2^deaths_count
+                    inv:set_size(inv:get_size() - 1*math.pow(2,deaths_count[pll]))
           end
 ------------------------------------------------------------
                g_blocks_count[pll]=nil
@@ -784,9 +867,7 @@ end)
            end
     end)
 
-
 -- save it every <save_delta> seconds
-
 local delta = 0
 minetest.register_globalstep(function(dtime)
     delta = delta + dtime
@@ -802,27 +883,19 @@ end)
 
 dofile(minetest.get_modpath('ghosts').."/gb.lua")
 
---minetest.after(0,function()
+
 minetest.register_on_joinplayer(function(player)
---local pls = minetest.get_connected_players()
---for i,player in ipairs(pls) do
       if player and player:is_player() then
          local pll=player:get_player_name()
          poses[pll] = {x=0,y=0,z=0}
          local inv = minetest.create_detached_inventory("ghosts_"..pll)
-         inv:set_size("copy", 9*4)
-
-
+         inv:set_size("copy", 9*4*5)
          if ginvs and ginvs[pll]
          then load_ginv(pll)
          end
-         --[[if inv then minetest.debug(pll .. ' has ginv now!')
-         else minetest.debug(pll .. ' is without ginv :(!')
-         end]]--
          local NOT=""
-         
          if not isghost[pll] then NOT=" not" end
-               print(pll..' is'..NOT..' a ghost!\n'..minetest.serialize(isghost))         
+               print(pll..' is'..NOT..' a ghost!\n'..minetest.serialize(isghost))
                if isghost[pll] then
                   minetest.debug(pll .. ' has ghosts physics')
                   player:set_physics_override({ speed = ghost_speed_modifier, -- multiplier to default value
@@ -831,11 +904,11 @@ minetest.register_on_joinplayer(function(player)
                                                 sneak = ghost_sneak_value, -- whether player can sneak
                                                 sneak_glitch = false, -- whether player can use the sneak glitch
                                               })
-  				 if skins then 
-				    skins.skins[pll]="player_13"
-				    skins.update_player_skin(player)
-				 end
-				 g_changed = true
+           if skins then
+            skins.skins[pll]="player_13"
+            skins.update_player_skin(player)
+         end
+         g_changed = true
                else
                   minetest.debug(pll .. ' has normal physics')
                   player:set_physics_override({ speed = 1, -- multiplier to default value
@@ -844,36 +917,18 @@ minetest.register_on_joinplayer(function(player)
                                                 sneak = true, -- whether player can sneak
                                                 sneak_glitch = false, -- whether player can use the sneak glitch
                                                })
-				  if skins then
-				     skins.update_player_skin(player)
-				  end
-				  minetest.after(0,function()
-					  if armor then
-						 armor:update_player_visuals(player)
-					  end
-                  end)
-               end
-              -- minetest.debug(pll .. ' physics wasn\'t set!')
+          if skins then
+             skins.update_player_skin(player)
+          end
+          minetest.after(0,function()
+            if armor then
+             armor:update_player_visuals(player)
+            end
+          end)
+        end
      end
---end
 end)
 
---[[
-minetest.register_chatcommand("ginvs", {
-    func = function(name, param)
-           save_ginv(name)
-           return
-    end
-})
-
-minetest.register_chatcommand("ginvs2", {
-    func = function(name, param)
-           load_ginv(name)
-           return
-    end
-})
-
-]]--
 minetest.register_on_shutdown(function()
 local pls = minetest.get_connected_players()
 for i,player in ipairs(pls) do
@@ -894,22 +949,18 @@ minetest.register_chatcommand("ghost", {
         ghosts_skin[name]=skins.skins[name]
         skins.skins[name]=param
         skins.update_player_skin(player)
- -- print(debug.getinfo(1, "n").name);
         end
         g_changed = true
            return
     end
 })
 
-
---[[
 minetest.register_chatcommand("isghost", {
     func = function(name, param)
            isghost[name]=not isghost[name]
            return
     end
-})]]--
-
+})
 
 minetest.register_craft({
     output = 'ghosts:reincarnator',

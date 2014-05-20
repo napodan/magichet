@@ -79,6 +79,10 @@ at 4aiman.ucoz.ru. Non-Russian players are also welcomed, but I doubt that many
 people at 4aiman.ucoz.ru would speak English well enough to answer you. And
 googletranslate does hideous things upon messages...
 
+Also, the game includes some TODO info and all the mods in the "unused"
+folder are to be added sooner or later.
+
+
 
 II Game Mechanics (what's different from MC?)
 ---------------------------------------------
@@ -172,17 +176,44 @@ The best materials are to the right.
 Unfinished structures may not be able to reincarnate you.
 Efficienty is calculated based on material and % of "finishness" of a structure.
 
-####Example:
+#####Example:
 
-If a structure is 90% finished and is made of mese then you'll be
-reincarnated with the probability of 90% and every item you had before your
-death will be decreased in count or durability left.
+	If a structure is 90% finished and is made of mese then you'll be
+	reincarnated with the probability of 90% and every item you had before your
+	death will be decreased in count or durability left.
 
 So, it's in your best interest to reincarnate in some finished structure made
 of diamond blocks.
 
-There's more comming soon.
+There's more about reincarnators comming soon.
 
+####Life as a ghost:
+
+- you cannot be hurted\*<br />
+- you cannot die in a normal way<br />
+- you cannot reincarnate by death once you've chosen to be a ghost<br />
+- should you reincarnate and there's no one within 50 nodes from your death spot - your stuff will be as good as gone<br />
+- you cannot pickup items<br />
+- you cannot build<br />
+- you cannot dig<br />
+- you can collect and place ghostly blocks<br />
+- you can punch entities (will be disabled)<br />
+- every time you die (no matter if you\'re a ghost) your inventory is cleared<br />
+- cleared items can be retreived upon reincarnation<br />
+- you produce ectoplasm by walking<br />
+- you can jump very high<br />
+- your sight is not so clear, though<br />
+- you can access inventories<br />
+- you can cause a poltergeist by using a furnace (normal one and desert one)<br />
+- your max HP will decrease every MAX_HP*5+60<br />
+- the number of your inventory slots will be decreased upon multiple deaths<br />
+- you\'ll die as a ghost in around 3 days if you wouldn\'t reincarnate<br />
+- you need 10% of a dug nodes to fully reincarnate<br />
+- you\'ll have to cooperate with others to reincarnate<br />
+- a lot more ...
+
+\* Actually you get healed every dtime, so nothing can kill you due to a
+bug in MT's health tracking system.
 
 ###II-4 Chat commands
 
@@ -205,6 +236,9 @@ or her life. This, however, won't give you any directions, just the distance.
 
 Eventually there will be clerics and black mages that can either heal or kill
 you with magic. Maybe chat commands would be a way to cadt some spells.
+
+Being beta there's a lot of debug comands too. I'm not going to remove 
+them until some certain point deeper in the development.
 
 ###II-5 Awards
 
@@ -271,17 +305,17 @@ anything etc. If you think you can just build a pillar and break it to get both
 digger and builder xp, then you're wrong :) The game has a protection against
 that, and you would only wear out your tool if you try to dig your own
 buildings.
-That means your builder xp WOULD decrease and your digger xp would NOT increase
+That means your builder xp WILL decrease and your digger xp will NOT increase
 in such a case.
 
 Th second one is another drawback - The Gods of Ancient Magic do NOT appreciate
 your hacky ways of using their powers.
-But maybe there ARE some cases when redistribution would help?
+But maybe there ARE some cases when redistribution would help? ;)
 
 ###II-8 Vehicles
 
-Boats, cars, jetpacks, helicopters and even UFOs!
-Find recipes on your own ;)
+Boats, cars, jetpacks, helicopters and even UFOs! All are subject to be 
+included. Find recipes on your own ;)
 
 ###II-10 Industry
 
@@ -289,24 +323,38 @@ Do you know Industrial Craft addon?
 Well, something like that is INBUILT in this game. That was made so one would
 decide whether he's techie or "highly-spirited".
 
-However, there are some new things like electricity-driven hospitals.
-Some of BuildCraft features are also introduced. Feel free to find which ;)
+However, there are some new things - feel free to find which ;)
+Some of BuildCraft features are also to be introduced. 
+
 
 ###II-9 Inventory tools
 
-Your inventory is multi-paged unlike MC's one.
-You'll even have crafting guide (no need to see wiki for this anymore!) and
-INBUILT SKIN SELECTION feature!
-
-Aside from this there are separate pages of your inventory for specialties,
-backpacks, armor and much more (in time).
-
-So this game is way more user-friendly and provide anything you might want to
-discover the awesomeness of MT engine.
+ATM your inventory has unbuilt craft guide.
+In the future there will be bags, skins and more!
 
 And if you'll use this game inside Freeminer engine, you will have even more MC
 features like a Z-key-zoom or a speed-based-FOV. So, try out Freeminer engine if
 you lack those.
+
+
+###II-10 Mobs
+
+Some MC-like mobs are avaiilable: chickens, cows, sheeps and pigs.
+There are also MT-only mobs: Oerkki, DungeonMaster, Stone, Sand and Dirt 
+Monsters, Rats, Tree Monster.
+
+All the above are subject to be shaped and balanced.
+However, you can breed any passive animal right now in a way you'd do it
+while playing MC - feed them and let them multiply :o
+
+
+###II-11 Farming
+
+Farming is rather inferior ATM. Currently there are: wheat, pumpkins,
+carrots, potatos, strawberries, onions, cotton. Melons are the subject
+to be added, as well as other MC-like crops.
+
+Fertilizer can be crafted too. 
 
 
 
@@ -325,7 +373,7 @@ IV - More great news
 Some parts of this game can be used on their own!
 Texturepack, mods, models... They're all are free as in "freedom" and you can
 use, edit and share! Licenses for every part can be found inside that part's
-folder.
+folder. If there are nothing - you're granted GPLv3 freedoms.
 
 
 
@@ -362,7 +410,7 @@ Anyway, there quite a lot of them and the list is being changed and if we are to
 ...and many others not listed here - tell me if you want someone's name to take
 it's rightful place in the list above.
 
-(Please, be patient, till BETA I'll fill this with all contributors to all mods
+(Please, be patient, I'll fill this with all contributors to all mods
 within mods itself and within this readme)
 
 
@@ -370,8 +418,9 @@ VI - License
 ------------
 
 **Beta** is here!
-All stuff in /mods has become GPLv3 if that's possible.
-Those parts which isn't are the subject to be replaced.
+All stuff in /mods has become GPLv3 if that's possible. 
+If it isn't for some mod - that is the subject to be replaced by my own 
+somewhat similar mod written/rewritten from scratch.
 
 That means that:
  * You can fork it and make pull requests

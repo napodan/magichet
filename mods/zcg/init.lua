@@ -68,22 +68,12 @@ end
 
 zcg.load_crafts = function(name)
         zcg.crafts[name] = {}
-       -- local _recipes = {}
-     --   for i,item in pairs(minetest.registered_items) do
-            local _recipes = minetest.get_craft_recipe(name)
-            --table.insert(_recipes, recipe)
-      --  end
-
-
-        --local _recipes = minetest.get_all_craft_recipes(name)
+        local _recipes = minetest.get_craft_recipe(name)
         if _recipes then
-       -- minetest.debug(minetest.serialize(_recipes))
-                --for i, recipe in ipairs(_recipes) do
                         if (_recipes.items and _recipes.type) then
                            minetest.debug(minetest.serialize(_recipes))
                                 zcg.add_craft(_recipes, name)
                         end
-                --end
         end
         if zcg.crafts[name] == nil or #zcg.crafts[name] == 0 then
                 zcg.crafts[name] = nil
@@ -113,8 +103,7 @@ zcg.formspec = function(pn)
         page = zcg.users[pn].page
         alt = zcg.users[pn].alt
         current_item = zcg.users[pn].current_item
-        local formspec = "size[8,7.5]"
-        .. "button[0,0;2,.5;main;Back]"..
+        local formspec = "size[8,7.5]"..     
         "bgcolor[#bbbbbb;false]"..
             "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"
         if zcg.users[pn].history.index > 1 then
@@ -181,43 +170,43 @@ zcg.formspec = function(pn)
 end
 
 minetest.register_on_joinplayer(function(player)
-        inventory_plus.register_button(player,"zcg","Craft guide")
+        --inventory_plus.register_button(player,"zcg","Craft guide")
 end)
 
 minetest.register_on_player_receive_fields(function(player,formname,fields)
-        pn = player:get_player_name();
-        if zcg.users[pn] == nil then zcg.users[pn] = {current_item = "", alt = 1, page = 0, history={index=0,list={}}} end
+        pll = player:get_player_name();
+        if zcg.users[pll] == nil then zcg.users[pll] = {current_item = "", alt = 1, page = 0, history={index=0,list={}}} end
         if fields.zcg then
-                inventory_plus.set_inventory_formspec(player, zcg.formspec(pn))
+                minetest.show_formspec(pll, 'zgc_'..pll, zcg.formspec(pll))
                 return
         elseif fields.zcg_previous then
-                if zcg.users[pn].history.index > 1 then
-                        zcg.users[pn].history.index = zcg.users[pn].history.index - 1
-                        zcg.users[pn].current_item = zcg.users[pn].history.list[zcg.users[pn].history.index]
-                        inventory_plus.set_inventory_formspec(player,zcg.formspec(pn))
+                if zcg.users[pll].history.index > 1 then
+                        zcg.users[pll].history.index = zcg.users[pll].history.index - 1
+                        zcg.users[pll].current_item = zcg.users[pll].history.list[zcg.users[pll].history.index]
+                        minetest.show_formspec(pll, 'zgc_'..pll, zcg.formspec(pll))
                 end
         elseif fields.zcg_next then
-                if zcg.users[pn].history.index < #zcg.users[pn].history.list then
-                        zcg.users[pn].history.index = zcg.users[pn].history.index + 1
-                        zcg.users[pn].current_item = zcg.users[pn].history.list[zcg.users[pn].history.index]
-                        inventory_plus.set_inventory_formspec(player,zcg.formspec(pn))
+                if zcg.users[pll].history.index < #zcg.users[pll].history.list then
+                        zcg.users[pll].history.index = zcg.users[pll].history.index + 1
+                        zcg.users[pll].current_item = zcg.users[pll].history.list[zcg.users[pll].history.index]
+                        minetest.show_formspec(pll, 'zgc_'..pll, zcg.formspec(pll))
                 end
         end
         for k, v in pairs(fields) do
                 if (k:sub(0,4)=="zcg:") then
                         local ni = k:sub(5)
                         if zcg.crafts[ni] then
-                                zcg.users[pn].current_item = ni
-                                table.insert(zcg.users[pn].history.list, ni)
-                                zcg.users[pn].history.index = #zcg.users[pn].history.list
-                                inventory_plus.set_inventory_formspec(player,zcg.formspec(pn))
+                                zcg.users[pll].current_item = ni
+                                table.insert(zcg.users[pll].history.list, ni)
+                                zcg.users[pll].history.index = #zcg.users[pll].history.list
+                                minetest.show_formspec(pll, 'zgc_'..pll, zcg.formspec(pll))
                         end
                 elseif (k:sub(0,9)=="zcg_page:") then
-                        zcg.users[pn].page = tonumber(k:sub(10))
-                        inventory_plus.set_inventory_formspec(player,zcg.formspec(pn))
+                        zcg.users[pll].page = tonumber(k:sub(10))
+                        minetest.show_formspec(pll, 'zgc_'..pll, zcg.formspec(pll))
                 elseif (k:sub(0,8)=="zcg_alt:") then
-                        zcg.users[pn].alt = tonumber(k:sub(9))
-                        inventory_plus.set_inventory_formspec(player,zcg.formspec(pn))
+                        zcg.users[pll].alt = tonumber(k:sub(9))
+                        minetest.show_formspec(pll, 'zgc_'..pll, zcg.formspec(pll))
                 end
         end
 end)

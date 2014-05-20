@@ -189,7 +189,9 @@ minetest.register_on_joinplayer(function(player)
 
             "button[6.6,-0.0;0.8,0.5;sort_horz;=]"..
             "button[7.4,-0.0;0.8,0.5;sort_vert;||]"..
-            "button[8.2,-0.0;0.8,0.5;sort_norm;Z]"
+            "button[8.2,-0.0;0.8,0.5;sort_norm;Z]"..
+            -- craft guide
+            "image_button[1,0;1,1;inventory_plus_zcg.png;zgc;]"            
         )
 
         -- common lists
@@ -288,37 +290,69 @@ default.sort_inv = function(player, formname, fields, pos)
               end
         end
     elseif fields.quit then
-       -- drop down a workbench inventory
-       if pos and minetest.get_node(pos).name=='default:workbench' then
-          local inv = player:get_inventory()
-          local pll = player:get_player_name()
-          pos.y=pos.y+1
-          if not minetest.get_node(pos).name=='air' then
-             pos = minetest.find_node_near(pos, 1, {'air','default:water_source','default:water_flowing','bucket:CO2_source','bucket:CO2_flowing','oil:oil_source','oil:oil_flowing','group:liquid'})
-          end
-          for i=1,inv:get_size("craft") do
-              local stack = inv:get_stack("craft",i)
-              if pos and stack and not stack:is_empty() then
-
-                  local itm = minetest.add_item(pos, stack)
-                  math.randomseed(os.time())
-                  itm:setvelocity({x=math.random()*math.random(-1,1),y=math.random()*math.random(0,2),z=math.random()*math.random(-1,1)})
-                  stack:clear()
-                  inv:set_stack("craft",i,stack)
+       if pos then
+          -- drop down a workbench's inventory
+           if minetest.get_node(pos).name=='default:workbench' then
+              local inv = player:get_inventory()
+              local pll = player:get_player_name()
+              pos.y=pos.y+1
+              if not minetest.get_node(pos).name=='air' then
+                 pos = minetest.find_node_near(pos, 1, {'air','default:water_source','default:water_flowing','bucket:CO2_source','bucket:CO2_flowing','oil:oil_source','oil:oil_flowing','group:liquid'})
               end
-          end
+              for i=1,inv:get_size("craft") do
+                  local stack = inv:get_stack("craft",i)
+                  if pos and stack and not stack:is_empty() then
+                      local itm = minetest.add_item(pos, stack)
+                      math.randomseed(os.time())
+                      itm:setvelocity({x=math.random()*math.random(-1,1),y=math.random()*math.random(0,2),z=math.random()*math.random(-1,1)})
+                      stack:clear()
+                      inv:set_stack("craft",i,stack)
+                  end
+              end
+           end
        end
-       -- handle ghosts quit to be equal to "live as a ghost"
-          
+
+      -- disable furnace interface if player has quitted
+       if formname:find('default:furnace') then
+          local pos = minetest.deserialize(string.split(formname,'_')[2])
+          print(minetest.pos_to_string(pos))
+          meta = minetest.get_meta(pos)
+          meta:set_string("pll","")
+          minetest.get_node_timer(pos):stop()
+       end
+
+      -- close 3dchests at pos
+           if formname:find('default:3dchest') then
+              local pos = minetest.deserialize(string.split(formname,'_')[2])
+              local objs = minetest.get_objects_inside_radius(pos, 0.1)
+              for i,obj in ipairs(objs) do
+                  if not obj:is_player() then
+                     local self = obj:get_luaentity()
+                     if self.name == 'default:3dchest' then
+                        self.object:set_animation({x=25,y=40}, 60, 0)
+                        minetest.sound_play('chestclosed', {pos = pos, gain = 0.3, max_hear_distance = 5})
+                        minetest.after(0.1, function(dtime)
+                           self.object:set_animation({x=1,y=1}, 1, 0)
+                        end)
+
+                     end
+                  end
+              end
+           end
 
     end
 end
 
 minetest.register_on_player_receive_fields(function(player, formname, fields,pos)
-  if player and player:is_player() then
+  if player and player:is_player() then     
+     if fields.zgc then 
+        local pll = player:get_player_name()
+        minetest.show_formspec(pll, 'zgc_'..pll, zcg.formspec(pll)) 
+        return true 
+     end
      default.sort_inv(player,formname,fields,pos)
      return true
-  end
+  end  
 end)
 
 minetest.register_on_leaveplayer(function(player)

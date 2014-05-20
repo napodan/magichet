@@ -1,0 +1,2 @@
+-- this is used to supply my game with my texture pack
+-- no other use than this

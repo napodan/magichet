@@ -1,6 +1,8 @@
 
 local do_dig_node = minetest.node_dig
 function minetest.node_dig(pos, node, digger)
+   -- if there's unknown node it'll break all other code. Don't want it to.
+   if not minetest.registered_nodes[node.name] then minetest.remove_node(pos) end
    if digger~= nil and digger:is_player() then
       local pll=digger:get_player_name()
        if not isghost[pll] or check_for_ghost_tool(digger) then
@@ -296,4 +298,10 @@ minetest.register_craft({
     type = 'cooking',
     output = 'ghosts:ectoplasm 2',
     recipe = "ghosts:ghostly_block",
+})
+
+minetest.register_craft({
+    type = "fuel",
+    recipe = "ghosts:ghostly_block",
+    burntime = 1,
 })

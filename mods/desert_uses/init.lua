@@ -199,229 +199,161 @@ minetest.register_craft({
 })
 
 
-minetest.register_node("desert_uses:desert_furnace", {
-        description = "Desert Furnace",
-        tiles = {"desert_uses_furnace_top.png", "desert_uses_furnace_bottom.png", "desert_uses_furnace_side.png",
-                "desert_uses_furnace_side.png", "desert_uses_furnace_side.png", "desert_uses_furnace_front.png"},
-        paramtype2 = "facedir",
-        groups = {cracky=default.dig.stone},
-        legacy_facedir_simple = true,
-        sounds = default.node_sound_stone_defaults(),
-        on_construct = function(pos)
-                local meta = minetest.get_meta(pos)
-                meta:set_string("formspec", default.furnace_inactive_formspec)
-                meta:set_string("infotext", "Furnace inactive")
-                meta:set_string("percent", "0")
-                local inv = meta:get_inventory()
-                inv:set_size("fuel", 1)
-                inv:set_size("src", 1)
-                inv:set_size("dst", 4)
-        end,
-        can_dig = function(pos,player)
-                local meta = minetest.get_meta(pos);
-                local inv = meta:get_inventory()
-                if not inv:is_empty("fuel") then
-                        return false
-                elseif not inv:is_empty("dst") then
-                        return false
-                elseif not inv:is_empty("src") then
-                        return false
-                end
-                return true
-        end,
-        on_receive_fields = function(pos, formname, fields, sender)
-           if sender and sender:is_player() then
-              default.sort_inv(sender,formname,fields)
-           end
-        end,
+-- This fits me perfectly (taken from http://lua-users.org/wiki/CopyTable)
+function deepcopy(orig)
+    local orig_type = type(orig)
+    local copy
+    if orig_type == 'table' then
+        copy = {}
+        for orig_key, orig_value in next, orig, nil do
+            copy[deepcopy(orig_key)] = deepcopy(orig_value)
+        end
+        setmetatable(copy, deepcopy(getmetatable(orig)))
+    else -- number, string, boolean, etc
+        copy = orig
+    end
+    return copy
+end
+
+-- copy furnace and change the textures ))
+local furnace_inactive_def = deepcopy(minetest.registered_nodes['default:furnace'])
+furnace_inactive_def.tiles ={"desert_uses_furnace_top.png", "desert_uses_furnace_bottom.png", "desert_uses_furnace_side.png",
+                "desert_uses_furnace_side.png", "desert_uses_furnace_side.png", "desert_uses_furnace_front.png"}
+furnace_inactive_def.description = "Desert Furnace"
+minetest.register_node("desert_uses:desert_furnace", furnace_inactive_def)
 
 
-})
-
-minetest.register_node("desert_uses:desert_furnace_active", {
-        description = "Desert Furnace",
-        tiles = {"desert_uses_furnace_top.png", "desert_uses_furnace_bottom.png", "desert_uses_furnace_side.png",
+local furnace_active_def = deepcopy(minetest.registered_nodes['default:furnace_active'])
+furnace_active_def.tiles = {"desert_uses_furnace_top.png", "desert_uses_furnace_bottom.png", "desert_uses_furnace_side.png",
                 "desert_uses_furnace_side.png", "desert_uses_furnace_side.png",
                 {
                         image="desert_uses_furnace_front_active.png",
                         backface_culling=true,
                         animation={type="vertical_frames", aspect_w=32, aspect_h=32, length=0.8}
                 },
-                },
-        paramtype2 = "facedir",
-        light_source = 8,
-        drop = "desert_uses:desert_furnace",
-        groups = {cracky=2, not_in_creative_inventory=1},
-        legacy_facedir_simple = true,
-        sounds = default.node_sound_stone_defaults(),
-        on_construct = function(pos)
-                local meta = minetest.get_meta(pos)
-                meta:set_string("formspec", default.furnace_inactive_formspec)
-                meta:set_string("infotext", "Furnace active");
-                local inv = meta:get_inventory()
-                inv:set_size("fuel", 1)
-                inv:set_size("src", 1)
-                inv:set_size("dst", 4)
-        end,
-        can_dig = function(pos,player)
-                local meta = minetest.get_meta(pos);
-                local inv = meta:get_inventory()
-                if not inv:is_empty("fuel") then
-                        return false
-                elseif not inv:is_empty("dst") then
-                        return false
-                elseif not inv:is_empty("src") then
-                        return false
-                end
-                return true
-        end,
-        on_receive_fields = function(pos, formname, fields, sender)
-           if sender and sender:is_player() then
-              default.sort_inv(sender,formname,fields)
-           end
-        end,
-
-
-
-})
-
-function hacky_swap_node(pos,name)
-        local node = minetest.get_node(pos)
-        local meta = minetest.get_meta(pos)
-        local meta0 = meta:to_table()
-        if node.name == name then
-                return
-        end
-        node.name = name
-        local meta0 = meta:to_table()
-        minetest.set_node(pos,node)
-        meta = minetest.get_meta(pos)
-        meta:from_table(meta0)
-end
+                }
+furnace_inactive_def.description = "Desert Furnace"
+minetest.register_node("desert_uses:desert_furnace_active",furnace_active_def)
 
 minetest.register_abm({
-        nodenames = {"desert_uses:desert_furnace","desert_uses:desert_furnace_active"},
-        interval = 1.0,
-        chance = 1,
-        action = function(pos, node, active_object_count, active_object_count_wider)
-                local meta = minetest.get_meta(pos)
-                for i, name in ipairs({
-                                "fuel_totaltime",
-                                "fuel_time",
-                                "src_totaltime",
-                                "src_time"
-                }) do
-                        if meta:get_string(name) == "" then
-                                meta:set_float(name, 0.0)
-                        end
+    nodenames = {"desert_uses:desert_furnace","desert_uses:desert_furnace_active"},
+    interval = 1,
+    chance = 1,
+    action = function(pos, node, active_object_count, active_object_count_wider)
+        local meta = minetest.get_meta(pos)
+        for i, name in ipairs({
+                "fuel_totaltime",
+                "fuel_time",
+                "src_totaltime",
+                "src_time"
+        }) do
+            if meta:get_string(name) == "" then
+                meta:set_float(name, 0.0)
+            end
+        end
+
+        local inv = meta:get_inventory()
+
+        local srclist = inv:get_list("src")
+        local cooked = nil
+        local aftercooked
+
+        if srclist then
+            cooked, aftercooked = minetest.get_craft_result({method = "cooking", width = 1, items = srclist})
+        end
+
+        local was_active = false
+
+        if meta:get_float("fuel_time") < meta:get_float("fuel_totaltime") then
+            was_active = true
+            meta:set_float("fuel_time", meta:get_float("fuel_time") + 1)
+            meta:set_float("src_time", meta:get_float("src_time") + 1)
+            meta:set_float("src_totaltime", cooked.time)
+
+            if cooked and cooked.item and meta:get_float("src_time") >= cooked.time then
+                -- check if there's room for output in "dst" list
+                if inv:room_for_item("dst",cooked.item) then
+                    -- Put result in "dst" list
+                    inv:add_item("dst", cooked.item)
+                    -- take stuff from "src" list
+                    inv:set_stack("src", 1, aftercooked.items[1])
+                else
+                    print("Could not insert '"..cooked.item:to_string().."'")
                 end
+                meta:set_string("src_time", 0)
+            end
+        end
 
-                local inv = meta:get_inventory()
+        if meta:get_float("fuel_time") < meta:get_float("fuel_totaltime") then
+            local percent = math.floor(meta:get_float("fuel_time") / meta:get_float("fuel_totaltime") * 100)
+            local percent2 = math.floor(meta:get_float("src_time") / meta:get_float("src_totaltime") * 100)
+            meta:set_string("infotext","Desert Furnace active: "..percent2.."%")
+            meta:set_string("percent", percent)
+            local node = minetest.get_node(pos)
+            node.name = "desert_uses:desert_furnace_active"
+            minetest.swap_node(pos,node,2)
+            meta:set_string("formspect",
+            "size[9,8.2]"..
+            "bgcolor[#bbbbbb;false]"..
+            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
 
-                local srclist = inv:get_list("src")
-                local cooked = nil
+            "list[current_player;helm;0,0;1,1;]"..
+            "list[current_player;torso;0,1;1,1;]"..
+            "list[current_player;pants;0,2;1,1;]"..
+            "list[current_player;boots;0,3;1,1;]"..
 
-                if srclist then
-                        cooked = minetest.get_craft_result({method = "cooking", width = 1, items = srclist})
-                end
+            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
+            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
+            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
+            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
 
-                local was_active = false
+            "image[2,1.5;1,1;default_furnace_fire_bg.png^[lowpart:"..(100-percent)..":default_furnace_fire_fg.png]"..
+            "image[3.2,1.5;1.8,1;default_arrow_bg.png^[lowpart:"..(percent2)..":default_arrow_fg.png^[transformR270]"..
 
-                if meta:get_float("fuel_time") < meta:get_float("fuel_totaltime") then
-                        was_active = true
-                        meta:set_float("fuel_time", meta:get_float("fuel_time") + 1)
-                        meta:set_float("src_time", meta:get_float("src_time") + 1)
-                        meta:set_float("src_totaltime", cooked.time)
+            "list[current_player;main;0,4.2;9,3;9]"..
+            "list[current_player;main;0,7.4;9,1;]")
+            minetest.get_node_timer(pos):start(1,0.99)
+            return
+        end
 
-                        if cooked and cooked.item and meta:get_float("src_time") >= cooked.time then
-                                -- check if there's room for output in "dst" list
-                                if inv:room_for_item("dst",cooked.item) then
-                                        -- Put result in "dst" list
-                                        inv:add_item("dst", cooked.item)
-                                        -- take stuff from "src" list
-                                        srcstack = inv:get_stack("src", 1)
-                                        srcstack:take_item()
-                                        inv:set_stack("src", 1, srcstack)
-                                else
-                                        print("Could not insert '"..cooked.item:to_string().."'")
-                                end
-                                meta:set_string("src_time", 0)
-                        end
-                end
+        local fuel = nil
+        local afterfuel
+        local cooked = nil
+        local fuellist = inv:get_list("fuel")
+        local srclist = inv:get_list("src")
 
-                if meta:get_float("fuel_time") < meta:get_float("fuel_totaltime") then
-                        local percent = math.floor(meta:get_float("fuel_time") /
-                                        meta:get_float("fuel_totaltime") * 100)
-                        local percent2 = math.floor(meta:get_float("src_time") /
-                                    meta:get_float("src_totaltime") * 100)
-                            meta:set_string("infotext","Furnace active: "..percent2.."%")
-                                        meta:set_string("percent", percent)
-                            hacky_swap_node(pos,"desert_uses:desert_furnace_active")
-                            meta:set_string("formspec",
-                            "size[9,8.2]"..
-                            "bgcolor[#bbbbbb;false]"..
-                            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
-
-                            "list[current_player;helm;0,0;1,1;]"..
-                            "list[current_player;torso;0,1;1,1;]"..
-                            "list[current_player;pants;0,2;1,1;]"..
-                            "list[current_player;boots;0,3;1,1;]"..
-
-                            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
-                            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
-                            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
-                            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
-
-                            "list[context;main;0,0;9,3;]"..
-                            "image[2,1.5;1,1;default_furnace_fire_bg.png^[lowpart:"..(100-percent)..":default_furnace_fire_fg.png]"..
-                            "image[3.2,1.5;1.8,1;default_arrow_bg.png^[lowpart:"..(percent2)..":default_arrow_fg.png^[transformR270]"..
-
-
-                            "list[context;fuel;2,2.5;1,1;]"..
-                            "list[context;src;2,0.5;1,1;]"..
-                            "list[context;dst;5,1;2,2;]"..
-
-                            "list[current_player;main;0,4.2;9,3;9]"..
-                            "list[current_player;main;0,7.4;9,1;]")
-
-                        return
-                end
-
-                local fuel = nil
-                local cooked = nil
-                local fuellist = inv:get_list("fuel")
-                local srclist = inv:get_list("src")
-
-                if srclist then
-                        cooked = minetest.get_craft_result({method = "cooking", width = 1, items = srclist})
-                end
-                if fuellist then
-                        fuel = minetest.get_craft_result({method = "fuel", width = 1, items = fuellist})
-                end
+        if srclist then
+            cooked = minetest.get_craft_result({method = "cooking", width = 1, items = srclist})
+        end
+        if fuellist then
+            fuel, afterfuel = minetest.get_craft_result({method = "fuel", width = 1, items = fuellist})
+        end
 
         if fuel.time <= 0 then
-            meta:set_string("infotext","Furnace out of fuel")
-            hacky_swap_node(pos,"desert_uses:desert_furnace")
-            meta:set_string("formspec", default.furnace_inactive_formspec)
+            meta:set_string("infotext","Desert Furnace out of fuel")
+            meta:set_string("formspect", default.furnace_inactive_formspec)
+            local node = minetest.get_node(pos)
+            node.name = "desert_uses:desert_furnace"
+            minetest.swap_node(pos,node,2)
             return
         end
 
         if cooked.item:is_empty() then
             if was_active then
-                meta:set_string("infotext","Furnace is empty")
-                hacky_swap_node(pos,"desert_uses:desert_furnace")
-                meta:set_string("formspec", default.furnace_inactive_formspec)
+                meta:set_string("infotext","Desert Furnace is empty")
+                meta:set_string("formspect", default.furnace_inactive_formspec)
+                local node = minetest.get_node(pos)
+                node.name = "desert_uses:desert_furnace"
+                minetest.swap_node(pos,node,2)
             end
             return
         end
 
-                meta:set_string("fuel_totaltime", fuel.time)
-                meta:set_string("fuel_time", 0)
+        meta:set_string("fuel_totaltime", fuel.time)
+        meta:set_string("fuel_time", 0)
 
-                local stack = inv:get_stack("fuel", 1)
-                stack:take_item()
-                inv:set_stack("fuel", 1, stack)
-        end,
+        inv:set_stack("fuel", 1, afterfuel.items[1])
+    end,
 })
 
 print("[OK] Desert uses 4 loaded")

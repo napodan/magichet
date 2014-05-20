@@ -1,0 +1,870 @@
+output is voltbuild:hv_cable2_000000
+In game description is 2xIns. HV cable
+method is normal
+shapeless is true
+recipe is
+   voltbuild:hv_cable0_000000, voltbuild:rubber, voltbuild:rubber
+method is normal
+shapeless is true
+recipe is
+   voltbuild:hv_cable1_000000, voltbuild:rubber, ""
+method is normal
+recipe is
+   voltbuild:rubber, voltbuild:rubber, voltbuild:rubber, 
+   voltbuild:rubber, voltbuild:refined_iron_ingot, voltbuild:rubber, 
+   voltbuild:rubber, voltbuild:rubber, voltbuild:rubber
+
+
+output is voltbuild:lapotron_crystal
+In game description is Lapotron crystal
+method is normal
+recipe is
+   voltbuild:silicon_mesecon, voltbuild:circuit, voltbuild:silicon_mesecon, 
+   voltbuild:silicon_mesecon, voltbuild:energy_crystal, voltbuild:silicon_mesecon, 
+   voltbuild:silicon_mesecon, voltbuild:circuit, voltbuild:silicon_mesecon
+
+
+output is voltbuild:reactor_wiring
+In game description is Reactor Wiring
+method is normal
+recipe is
+   voltbuild:hv_cable3_000000
+
+
+output is voltbuild:refined_iron_ingot
+In game description is Refined iron ingot
+method is cooking
+recipe is
+   default:steel_ingot, "", ""
+method is normal
+recipe is
+   voltbuild:machine
+
+
+output is voltbuild:compressor
+In game description is compressor
+method is normal
+recipe is
+   default:bronze_ingot, default:bronze_ingot, default:bronze_ingot, 
+   voltbuild:machine, default:bronze_ingot, default:bronze_ingot, 
+   voltbuild:circuit, default:bronze_ingot, ""
+
+
+output is voltbuild:teleport_gloves_discharged
+In game description is Teleportation Gloves
+method is normal
+recipe is
+   voltbuild:alunra_gem, voltbuild:mfs_unit, voltbuild:alunra_gem, 
+   voltbuild:alunra_gem, voltbuild:silicon_mese_block, voltbuild:alunra_gem, 
+   voltbuild:alunra_gem, voltbuild:mfs_unit, voltbuild:alunra_gem
+
+
+output is voltbuild:detector_cable_off_000000
+In game description is Detector cable
+method is normal
+recipe is
+   voltbuild:circuit, mesecons:wire_00000000_off, voltbuild:hv_cable3_000000, 
+   mesecons:wire_00000000_off, mesecons:wire_00000000_off, ""
+
+
+output is voltbuild:gold_cable2_000000
+In game description is 2xIns. gold cable
+method is normal
+shapeless is true
+recipe is
+   voltbuild:gold_cable0_000000, voltbuild:rubber, voltbuild:rubber
+method is normal
+shapeless is true
+recipe is
+   voltbuild:gold_cable1_000000, voltbuild:rubber, ""
+method is normal
+recipe is
+   voltbuild:rubber, voltbuild:rubber, voltbuild:rubber, 
+   voltbuild:rubber, default:gold_ingot, voltbuild:rubber, 
+   voltbuild:rubber, voltbuild:rubber, voltbuild:rubber
+
+
+output is voltbuild:silicon_mesecon
+In game description is Silicon-doped mesecon
+method is normal
+recipe is
+   voltbuild:silicon_mese_block
+method is normal
+shapeless is true
+recipe is
+   mesecons:wire_00000000_off, mesecons_materials:silicon, voltbuild:copper_dust
+
+
+output is voltbuild:tin_cable0_000000
+In game description is Uninsulated tin cable
+method is normal
+recipe is
+   voltbuild:tin_ingot, voltbuild:tin_ingot, voltbuild:tin_ingot
+
+
+output is voltbuild:od_scanner
+In game description is OD Scanner
+method is normal
+recipe is
+   voltbuild:gold_dust, voltbuild:circuit, voltbuild:re_battery, 
+   voltbuild:circuit, voltbuild:copper_cable1_000000, voltbuild:copper_cable1_000000, 
+   voltbuild:copper_cable1_000000, "", ""
+
+
+output is voltbuild:reactor_fan
+In game description is Reactor Fan
+method is normal
+recipe is
+   voltbuild:fan
+
+
+output is voltbuild:nuclear_reaction_chamber
+In game description is Reaction Chamber
+method is normal
+recipe is
+   voltbuild:lapotron_crystal, voltbuild:generator, voltbuild:lapotron_crystal
+
+
+output is voltbuild:splitter_cable_000000
+In game description is Splitter cable
+method is normal
+recipe is
+   mesecons:wire_00000000_off, voltbuild:hv_cable3_000000, mesecons_walllever:wall_lever_off, 
+   voltbuild:hv_cable3_000000, mesecons:wire_00000000_off, ""
+
+
+output is voltbuild:mfs_unit
+In game description is MFS Unit
+method is normal
+recipe is
+   voltbuild:lapotron_crystal, voltbuild:advanced_circuit, voltbuild:lapotron_crystal, 
+   voltbuild:lapotron_crystal, voltbuild:mfe_unit, voltbuild:lapotron_crystal, 
+   voltbuild:lapotron_crystal, voltbuild:advanced_machine, voltbuild:lapotron_crystal
+
+
+output is voltbuild:ov_scanner
+In game description is OV Scanner
+method is normal
+recipe is
+   voltbuild:gold_dust, voltbuild:gold_dust, voltbuild:advanced_circuit, 
+   voltbuild:gold_dust, voltbuild:gold_cable2_000000, voltbuild:od_scanner, 
+   voltbuild:gold_cable2_000000, "", ""
+
+
+output is voltbuild:carbon_fibers
+In game description is Carbon fibers
+method is normal
+recipe is
+   voltbuild:coal_dust, voltbuild:coal_dust, 
+   voltbuild:coal_dust, voltbuild:coal_dust
+
+
+output is voltbuild:copper_cable1_000000
+In game description is Insulated copper cable
+method is normal
+shapeless is true
+recipe is
+   voltbuild:copper_cable0_000000, voltbuild:rubber, ""
+method is normal
+recipe is
+   voltbuild:rubber, voltbuild:rubber, voltbuild:rubber, 
+   default:copper_ingot, default:copper_ingot, default:copper_ingot, 
+   voltbuild:rubber, voltbuild:rubber, voltbuild:rubber
+
+
+output is voltbuild:copper_cable0_000000
+In game description is Uninsulated copper cable
+method is normal
+recipe is
+   default:copper_ingot, default:copper_ingot, default:copper_ingot
+
+
+output is voltbuild:air_compressor
+In game description is Air Compressor
+method is normal
+recipe is
+   voltbuild:advanced_circuit, voltbuild:extractor, default:mese_crystal_fragment, 
+   voltbuild:fan, voltbuild:casing, voltbuild:advanced_circuit, 
+   voltbuild:extractor, default:mese_crystal_fragment, ""
+
+
+output is voltbuild:recycler
+In game description is recycler
+method is normal
+recipe is
+   voltbuild:gold_dust, default:dirt, voltbuild:compressor, 
+   default:dirt, voltbuild:refined_iron_ingot, default:dirt, 
+   voltbuild:refined_iron_ingot, "", ""
+
+
+output is voltbuild:tin_block
+In game description is Tin block
+method is normal
+recipe is
+   voltbuild:tin_ingot, voltbuild:tin_ingot, voltbuild:tin_ingot, 
+   voltbuild:tin_ingot, voltbuild:tin_ingot, voltbuild:tin_ingot, 
+   voltbuild:tin_ingot, voltbuild:tin_ingot, voltbuild:tin_ingot
+
+
+output is voltbuild:macerator
+In game description is Macerator
+method is normal
+recipe is
+   default:gravel, voltbuild:re_battery, default:gravel, 
+   default:sandstonebrick, voltbuild:machine, default:sandstonebrick, 
+   default:desert_stone, default:desert_stone, default:desert_stone
+
+
+output is voltbuild:mv_transformer
+In game description is MV Transformer
+method is normal
+recipe is
+   voltbuild:gold_cable2_000000, 
+   voltbuild:machine, 
+   voltbuild:gold_cable2_000000
+
+
+output is voltbuild:mixed_metal_ingot
+In game description is Mixed metal ingot
+method is normal
+recipe is
+   voltbuild:refined_iron_ingot, voltbuild:refined_iron_ingot, voltbuild:refined_iron_ingot, 
+   default:bronze_ingot, default:bronze_ingot, default:bronze_ingot, 
+   voltbuild:tin_ingot, voltbuild:tin_ingot, voltbuild:tin_ingot
+
+
+output is voltbuild:silicon_mese_block
+In game description is Silicon-doped mese block
+method is normal
+recipe is
+   voltbuild:silicon_mesecon, voltbuild:silicon_mesecon, voltbuild:silicon_mesecon, 
+   voltbuild:silicon_mesecon, voltbuild:silicon_mesecon, voltbuild:silicon_mesecon, 
+   voltbuild:silicon_mesecon, voltbuild:silicon_mesecon, voltbuild:silicon_mesecon
+
+
+output is voltbuild:advanced_circuit
+In game description is Advanced circuit
+method is normal
+recipe is
+   mesecons:wire_00000000_off, voltbuild:silicon_mesecon, mesecons:wire_00000000_off, 
+   voltbuild:gold_dust, voltbuild:circuit, voltbuild:gold_dust, 
+   mesecons:wire_00000000_off, voltbuild:silicon_mesecon, mesecons:wire_00000000_off
+method is normal
+recipe is
+   mesecons:wire_00000000_off, voltbuild:gold_dust, mesecons:wire_00000000_off, 
+   voltbuild:silicon_mesecon, voltbuild:circuit, voltbuild:silicon_mesecon, 
+   mesecons:wire_00000000_off, voltbuild:gold_dust, mesecons:wire_00000000_off
+
+
+output is voltbuild:bronze_dust
+In game description is Bronze dust
+method is normal
+shapeless is true
+recipe is
+   voltbuild:copper_dust, voltbuild:copper_dust, voltbuild:copper_dust, 
+   voltbuild:tin_dust, "", ""
+
+
+output is voltbuild:mining_pipe
+In game description is Mining pipe
+method is normal
+recipe is
+   voltbuild:refined_iron_ingot, voltbuild:refined_iron_ingot, voltbuild:refined_iron_ingot, 
+   voltbuild:refined_iron_ingot, voltbuild:refined_iron_ingot, voltbuild:treetap, 
+   voltbuild:refined_iron_ingot, "", ""
+
+
+output is voltbuild:electric_furnace
+In game description is Electric furnace
+method is normal
+recipe is
+   voltbuild:circuit, mesecons:wire_00000000_off, voltbuild:iron_furnace, 
+   mesecons:wire_00000000_off, "", ""
+
+
+output is voltbuild:hv_transformer
+In game description is HV Transformer
+method is normal
+recipe is
+   voltbuild:hv_cable3_000000, voltbuild:circuit, voltbuild:mv_transformer, 
+   voltbuild:energy_crystal, voltbuild:hv_cable3_000000, ""
+
+
+output is voltbuild:geothermal_generator
+In game description is Geothermal Generator
+method is normal
+recipe is
+   voltbuild:casing, voltbuild:ignis_gem, voltbuild:casing, 
+   voltbuild:ignis_gem, voltbuild:generator, voltbuild:ignis_gem, 
+   voltbuild:casing, voltbuild:ignis_gem, voltbuild:casing
+
+
+output is voltbuild:nuclear_reactor
+In game description is Nuclear Reactor
+method is normal
+recipe is
+   voltbuild:advanced_alloy, voltbuild:windmill, voltbuild:advanced_alloy, 
+   voltbuild:lapotron_crystal, voltbuild:advanced_machine, voltbuild:lapotron_crystal, 
+   voltbuild:advanced_alloy, voltbuild:advanced_circuit, voltbuild:advanced_alloy
+
+
+output is voltbuild:casing
+In game description is Reactor Heat Casing
+method is normal
+recipe is
+   voltbuild:refined_iron_ingot, voltbuild:advanced_alloy, voltbuild:refined_iron_ingot
+
+
+output is voltbuild:radioactive_shielding
+In game description is Radioactive Shielding
+method is normal
+recipe is
+   voltbuild:advanced_alloy, voltbuild:coal_dust, voltbuild:advanced_alloy
+
+
+output is voltbuild:watermill
+In game description is Watermill
+method is normal
+recipe is
+   default:stick, default:wood, default:stick, 
+   default:wood, voltbuild:generator, default:wood, 
+   default:stick, default:wood, default:stick
+
+
+output is voltbuild:solar_panel
+In game description is Solar panel
+method is normal
+recipe is
+   voltbuild:coal_dust, default:glass, voltbuild:coal_dust, 
+   default:glass, voltbuild:coal_dust, default:glass, 
+   voltbuild:tin_ingot, voltbuild:generator, voltbuild:tin_ingot
+
+
+output is voltbuild:mining_drill_discharged
+In game description is Mining drill
+method is normal
+recipe is
+   voltbuild:refined_iron_ingot, voltbuild:refined_iron_ingot, voltbuild:circuit, 
+   voltbuild:refined_iron_ingot, voltbuild:refined_iron_ingot, voltbuild:re_battery, 
+   voltbuild:refined_iron_ingot, "", ""
+
+
+output is voltbuild:single_use_battery
+In game description is Single use battery
+method is normal
+recipe is
+   voltbuild:tin_cable0_000000, voltbuild:rubber, voltbuild:tin_cable0_000000, 
+   voltbuild:rubber, voltbuild:rubber, voltbuild:tin_cable0_000000, 
+   voltbuild:rubber, "", ""
+
+
+output is voltbuild:solar_battery
+In game description is Solar Battery
+method is normal
+recipe is
+   voltbuild:mobile_solar_panel, voltbuild:mobile_solar_panel, voltbuild:re_battery, 
+   voltbuild:mobile_solar_panel, voltbuild:mobile_solar_panel, ""
+
+
+output is voltbuild:re_battery
+In game description is RE Battery
+method is normal
+recipe is
+   voltbuild:copper_cable1_000000, voltbuild:tin_ingot, voltbuild:copper_cable1_000000, 
+   voltbuild:tin_ingot, voltbuild:tin_ingot, voltbuild:copper_cable1_000000, 
+   voltbuild:tin_ingot, "", ""
+
+
+output is voltbuild:iron_furnace
+In game description is Iron furnace
+method is normal
+recipe is
+   default:steel_ingot, default:steel_ingot, default:steel_ingot, 
+   default:steel_ingot, default:furnace, default:steel_ingot
+method is normal
+recipe is
+   default:steel_ingot, default:steel_ingot, default:steel_ingot, 
+   default:steel_ingot, default:steel_ingot, default:steel_ingot, 
+   default:steel_ingot, default:steel_ingot, ""
+
+
+output is voltbuild:ignis_dust
+In game description is Ignis dust
+method is cooking
+recipe is
+   voltbuild:ice_with_ignis, "", ""
+
+
+output is voltbuild:miner
+In game description is Miner
+method is normal
+recipe is
+   voltbuild:advanced_circuit, voltbuild:extractor, voltbuild:advanced_circuit, 
+   voltbuild:mining_pipe, voltbuild:mining_pipe, ""
+
+
+output is voltbuild:reactor_steam_gen
+In game description is Reactor Steam Generator
+method is normal
+recipe is
+   voltbuild:advanced_alloy, voltbuild:reactor_wiring, voltbuild:advanced_alloy, 
+   voltbuild:reactor_wiring, voltbuild:windmill, voltbuild:reactor_wiring, 
+   voltbuild:advanced_alloy, voltbuild:reactor_wiring, voltbuild:advanced_alloy
+
+
+output is voltbuild:hv_cable3_000000
+In game description is 3xIns. HV cable
+method is normal
+recipe is
+   voltbuild:reactor_wiring
+method is normal
+shapeless is true
+recipe is
+   voltbuild:hv_cable0_000000, voltbuild:rubber, voltbuild:rubber, 
+   voltbuild:rubber, "", ""
+method is normal
+shapeless is true
+recipe is
+   voltbuild:hv_cable1_000000, voltbuild:rubber, voltbuild:rubber
+method is normal
+shapeless is true
+recipe is
+   voltbuild:hv_cable2_000000, voltbuild:rubber, ""
+
+
+output is voltbuild:extractor
+In game description is Extractor
+method is normal
+recipe is
+   voltbuild:treetap, voltbuild:machine, voltbuild:treetap, 
+   voltbuild:treetap, voltbuild:circuit, voltbuild:treetap, 
+   default:brick, default:brick, default:brick
+
+
+output is voltbuild:advanced_machine
+In game description is Advanced machine
+method is normal
+recipe is
+   voltbuild:carbon_plate, voltbuild:advanced_alloy, voltbuild:machine, 
+   voltbuild:advanced_alloy, voltbuild:carbon_plate, ""
+method is normal
+recipe is
+   voltbuild:advanced_alloy, voltbuild:carbon_plate, voltbuild:machine, 
+   voltbuild:carbon_plate, voltbuild:advanced_alloy, ""
+
+
+output is voltbuild:gold_cable0_000000
+In game description is Uninsulated gold cable
+method is normal
+recipe is
+   default:gold_ingot, default:gold_ingot, default:gold_ingot
+
+
+output is voltbuild:batbox
+In game description is BatBox
+method is normal
+recipe is
+   default:wood, voltbuild:copper_cable1_000000, default:wood, 
+   voltbuild:re_battery, voltbuild:re_battery, voltbuild:re_battery, 
+   default:wood, default:wood, default:wood
+
+
+output is voltbuild:alunra_treetap
+In game description is Alunra Treetap
+method is normal
+recipe is
+   voltbuild:alunra_gem, voltbuild:alunra_gem, voltbuild:treetap, 
+   voltbuild:alunra_gem, voltbuild:alunra_gem, ""
+
+
+output is voltbuild:fan
+In game description is Fan
+method is normal
+recipe is
+   voltbuild:reactor_fan
+method is normal
+recipe is
+   voltbuild:refined_iron_ingot, voltbuild:refined_iron_ingot, voltbuild:refined_iron_ingot, 
+   voltbuild:windmill, voltbuild:batbox, voltbuild:refined_iron_ingot, 
+   voltbuild:refined_iron_ingot, voltbuild:refined_iron_ingot, ""
+
+
+output is voltbuild:hospital
+In game description is Hospital
+method is normal
+recipe is
+   voltbuild:medpack, voltbuild:ov_scanner, voltbuild:medpack, 
+   voltbuild:medpack, voltbuild:machine, voltbuild:medpack, 
+   voltbuild:extractor, voltbuild:circuit, voltbuild:compressor
+
+
+output is voltbuild:mobile_solar_panel
+In game description is Mobile Solar Panel
+method is normal
+recipe is
+   voltbuild:solar_panel, voltbuild:energy_crystal, voltbuild:alunra_gem, 
+   voltbuild:energy_crystal, voltbuild:alunra_gem, voltbuild:advanced_circuit, 
+   voltbuild:alunra_gem, "", ""
+
+
+output is voltbuild:glass_fiber_cable_000000
+In game description is Glass fiber cable
+method is normal
+recipe is
+   default:glass, mesecons:wire_00000000_off, default:glass, 
+   default:glass, default:diamond, default:glass, 
+   default:glass, mesecons:wire_00000000_off, default:glass
+method is normal
+recipe is
+   default:glass, default:glass, default:glass, 
+   mesecons:wire_00000000_off, default:diamond, mesecons:wire_00000000_off, 
+   default:glass, default:glass, default:glass
+
+
+output is voltbuild:combined_carbon_fibers
+In game description is Combined carbon fibers
+method is normal
+shapeless is true
+recipe is
+   voltbuild:carbon_fibers, voltbuild:carbon_fibers, ""
+
+
+output is voltbuild:energy_crystal
+In game description is Energy crystal
+method is normal
+recipe is
+   mesecons:wire_00000000_off, mesecons:wire_00000000_off, mesecons:wire_00000000_off, 
+   mesecons:wire_00000000_off, default:diamond, mesecons:wire_00000000_off, 
+   mesecons:wire_00000000_off, mesecons:wire_00000000_off, mesecons:wire_00000000_off
+
+
+output is voltbuild:mfe_unit
+In game description is MFE Unit
+method is normal
+recipe is
+   voltbuild:gold_cable2_000000, voltbuild:energy_crystal, voltbuild:gold_cable2_000000, 
+   voltbuild:energy_crystal, voltbuild:machine, voltbuild:energy_crystal, 
+   voltbuild:gold_cable2_000000, voltbuild:energy_crystal, voltbuild:gold_cable2_000000
+
+
+output is voltbuild:windmill
+In game description is Windmill
+method is normal
+recipe is
+   default:steel_ingot, default:steel_ingot, voltbuild:generator, 
+   default:steel_ingot, default:steel_ingot, ""
+
+
+output is voltbuild:shielded_reactor_wiring
+In game description is Shielded Reactor Wiring
+method is normal
+recipe is
+   voltbuild:radioactive_shielding, voltbuild:radioactive_shielding, voltbuild:reactor_wiring, 
+   voltbuild:radioactive_shielding, voltbuild:radioactive_shielding, ""
+
+
+output is voltbuild:scuba_gear
+In game description is Scuba Gear
+method is normal
+recipe is
+   default:steel_ingot, default:steel_ingot, voltbuild:rubber, 
+   default:steel_ingot, default:steel_ingot, default:mese_fragment, 
+   default:steel_ingot, "", ""
+
+
+output is voltbuild:gold_cable1_000000
+In game description is Insulated gold cable
+method is normal
+shapeless is true
+recipe is
+   voltbuild:gold_cable0_000000, voltbuild:rubber, ""
+method is normal
+recipe is
+   voltbuild:rubber, voltbuild:rubber, default:gold_ingot, 
+   voltbuild:rubber, voltbuild:rubber, ""
+
+
+output is voltbuild:machine
+In game description is Machine
+method is normal
+recipe is
+   voltbuild:refined_iron_ingot, voltbuild:refined_iron_ingot, voltbuild:refined_iron_ingot, 
+   voltbuild:refined_iron_ingot, voltbuild:refined_iron_ingot, voltbuild:refined_iron_ingot, 
+   voltbuild:refined_iron_ingot, voltbuild:refined_iron_ingot, ""
+
+
+output is voltbuild:overclock
+In game description is Overclock
+method is normal
+recipe is
+   default:bronze_ingot, voltbuild:hv_cable0_000000, default:bronze_ingot, 
+   voltbuild;energy_crystal, voltbuild:circuit, voltbuild:energy_crystal
+
+
+output is voltbuild:generator
+In game description is Generator
+method is normal
+recipe is
+   voltbuild:re_battery, 
+   voltbuild:machine, 
+   default:furnace
+method is normal
+recipe is
+   voltbuild:re_battery, voltbuild:refined_iron_ingot, voltbuild:refined_iron_ingot, 
+   voltbuild:refined_iron_ingot, voltbuild:iron_furnace, ""
+
+
+output is voltbuild:hv_cable0_000000
+In game description is Uninsulated HV cable
+method is normal
+recipe is
+   voltbuild:refined_iron_ingot, voltbuild:refined_iron_ingot, voltbuild:refined_iron_ingot
+
+
+output is voltbuild:tin_ingot
+In game description is Tin ingot
+method is cooking
+recipe is
+   voltbuild:tin_dust, "", ""
+method is cooking
+recipe is
+   voltbuild:tin_lump, "", ""
+method is normal
+recipe is
+   voltbuild:tin_block
+
+
+output is voltbuild:hv_cable1_000000
+In game description is Insulated HV cable
+method is normal
+shapeless is true
+recipe is
+   voltbuild:hv_cable0_000000, voltbuild:rubber, ""
+method is normal
+recipe is
+   voltbuild:rubber, voltbuild:rubber, voltbuild:refined_iron_ingot, 
+   voltbuild:rubber, voltbuild:rubber, ""
+
+
+output is voltbuild:lv_transformer
+In game description is LV Transformer
+method is normal
+recipe is
+   default:wood, voltbuild:copper_cable1_000000, default:wood, 
+   default:copper_ingot, default:copper_ingot, default:copper_ingot, 
+   default:wood, voltbuild:copper_cable1_000000, default:wood
+
+
+output is voltbuild:halt
+In game description is Halt
+method is normal
+recipe is
+   default:gold_ingot, voltbuild:splitter_cable_000000, default:gold_ingot, 
+   voltbuild:re_battery, voltbuild:circuit, voltbuild:re_battery
+
+
+output is voltbuild:medpack
+In game description is Medpack
+method is normal
+recipe is
+   default:glass, default:apple, default:glass, 
+   default:apple, default:apple, default:apple, 
+   default:glass, default:apple, default:glass
+
+
+output is voltbuild:rubber
+In game description is Rubber
+method is cooking
+recipe is
+   voltbuild:sticky_resin, "", ""
+
+
+output is voltbuild:circuit
+In game description is Electronic circuit
+method is normal
+recipe is
+   voltbuild:copper_cable1_000000, mesecons:wire_00000000_off, voltbuild:copper_cable1_000000, 
+   voltbuild:copper_cable1_000000, voltbuild:refined_iron_ingot, voltbuild:copper_cable1_000000, 
+   voltbuild:copper_cable1_000000, mesecons:wire_00000000_off, voltbuild:copper_cable1_000000
+method is normal
+recipe is
+   voltbuild:copper_cable1_000000, voltbuild:copper_cable1_000000, voltbuild:copper_cable1_000000, 
+   mesecons:wire_00000000_off, voltbuild:refined_iron_ingot, mesecons:wire_00000000_off, 
+   voltbuild:copper_cable1_000000, voltbuild:copper_cable1_000000, voltbuild:copper_cable1_000000
+
+
+output is voltbuild:treetap
+In game description is Treetap
+method is normal
+recipe is
+   default:wood, default:wood, default:wood, 
+   default:wood, default:wood, ""
+
+
+output is voltbuild:diamond_drill_discharged
+In game description is Diamond drill
+method is normal
+recipe is
+   default:diamond, default:diamond, voltbuild:mining_drill_discharged, 
+   default:diamond, "", ""
+method is normal
+recipe is
+   default:diamond, default:diamond, voltbuild:mining_drill, 
+   default:diamond, "", ""
+
+
+output is voltbuild:air_cell
+In game description is Air Cell
+method is air_compressing
+recipe is air
+
+output is mesecons:wire_00000000_off 32
+In game description is Mesecon
+method is extracting
+recipe is default:mese_crystal
+
+output is mesecons_materials:silicon
+In game description is Silicon
+method is extracting
+recipe is default:sand
+
+output is voltbuild:rubber
+In game description is Rubber
+method is extracting
+recipe is voltbuild:rubber_tree
+
+output is voltbuild:ignis_dust
+In game description is Ignis dust
+method is extracting
+recipe is voltbuild:bucket_water_with_ignis
+
+output is voltbuild:rubber
+In game description is Rubber
+method is extracting
+recipe is voltbuild:rubber_sapling
+
+output is voltbuild:rubber 3
+In game description is Rubber
+method is extracting
+recipe is voltbuild:sticky_resin
+
+output is voltbuild:iron_dust
+In game description is Iron dust
+method is grinding
+recipe is voltbuild:refined_iron_ingot
+
+output is voltbuild:gold_dust
+In game description is Gold dust
+method is grinding
+recipe is default:gold_ingot
+
+output is voltbuild:tin_dust
+In game description is Tin dust
+method is grinding
+recipe is moreores:tin_ingot
+
+output is voltbuild:copper_dust 2
+In game description is Copper dust
+method is grinding
+recipe is default:copper_lump
+
+output is voltbuild:coal_dust
+In game description is Coal dust
+method is grinding
+recipe is default:coal_lump
+
+output is voltbuild:bronze_dust
+In game description is Bronze dust
+method is grinding
+recipe is default:bronze_ingot
+
+output is voltbuild:tin_dust 2
+In game description is Tin dust
+method is grinding
+recipe is voltbuild:tin_lump
+
+output is voltbuild:iron_dust
+In game description is Iron dust
+method is grinding
+recipe is default:steel_ingot
+
+output is voltbuild:tin_dust
+In game description is Tin dust
+method is grinding
+recipe is voltbuild:tin_ingot
+
+output is voltbuild:gold_dust
+In game description is Gold dust
+method is grinding
+recipe is moreores:gold_ingot
+
+output is voltbuild:iron_dust 2
+In game description is Iron dust
+method is grinding
+recipe is default:iron_lump
+
+output is voltbuild:ignis_dust
+In game description is Ignis dust
+method is grinding
+recipe is voltbuild:ignis_gem
+
+output is voltbuild:silver_dust
+In game description is Silver dust
+method is grinding
+recipe is moreores:silver_ingot
+
+output is voltbuild:silver_dust 2
+In game description is Silver dust
+method is grinding
+recipe is moreores:silver_lump
+
+output is voltbuild:gold_dust 2
+In game description is Gold dust
+method is grinding
+recipe is moreores:gold_lump
+
+output is voltbuild:copper_dust 2
+In game description is Copper dust
+method is grinding
+recipe is moreores:copper_lump
+
+output is voltbuild:gold_dust 2
+In game description is Gold dust
+method is grinding
+recipe is default:gold_lump
+
+output is voltbuild:tin_dust 2
+In game description is Tin dust
+method is grinding
+recipe is moreores:tin_lump
+
+output is voltbuild:copper_dust
+In game description is Copper dust
+method is grinding
+recipe is moreores:copper_ingot
+
+output is voltbuild:bronze_dust
+In game description is Bronze dust
+method is grinding
+recipe is moreores:bronze_ingot
+
+output is voltbuild:copper_dust
+In game description is Copper dust
+method is grinding
+recipe is default:copper_ingot
+
+output is voltbuild:carbon_plate
+In game description is Carbon plate
+method is compressing
+recipe is voltbuild:combined_carbon_fibers
+
+output is voltbuild:ignis_gem
+In game description is Ignis gem
+method is compressing
+recipe is voltbuild:ignis_dust
+
+output is voltbuild:advanced_alloy
+In game description is Advanced alloy
+method is compressing
+recipe is voltbuild:mixed_metal_ingot
+
