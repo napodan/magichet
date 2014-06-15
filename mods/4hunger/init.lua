@@ -361,7 +361,7 @@ local function eatbar(item)
     end
     return res
 end
---[[
+
 -- time based events like: status changes, damage & distance calculation & applying damage
 minetest.register_globalstep(function(dtime)
    if save_time > max_save_time then
@@ -586,7 +586,7 @@ minetest.register_globalstep(function(dtime)
    end
 end)
 
-]]
+
 minetest.register_on_dignode(function(pos, oldnode, digger)
   if not digger then return end
   local pll = digger:get_player_name()

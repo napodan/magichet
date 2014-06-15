@@ -121,7 +121,8 @@ for zmy=0, 1 do
                 mesecons = {conductor={
                         state = mesecon.state.off,
                         onstate = "mesecons:wire_"..nodeid.."_on"
-                }}
+                }},
+                voltbuild = {single_use = 1, singleuse_energy = 10, charge_tier = 1},
         })
 
         minetest.register_node("mesecons:wire_"..nodeid.."_on", {
@@ -150,7 +151,8 @@ for zmy=0, 1 do
                 mesecons = {conductor={
                         state = mesecon.state.on,
                         offstate = "mesecons:wire_"..nodeid.."_off"
-                }}
+                }},
+                voltbuild = {single_use = 1, singleuse_energy = 10, charge_tier = 1},
         })
 end
 end
@@ -278,3 +280,4 @@ minetest.register_craft({
         output = "mesecons:wire_00000000_off 16",
         recipe = "default:mese_crystal",
 })
+

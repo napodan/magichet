@@ -1,5 +1,5 @@
 -- 4aiman's version of explorertools mod that changes the default behaviour for
--- all tools in all mods that loaded prior to this mod. License CC-BY-NC-ND.
+-- all tools in all mods that loaded prior to this mod. License GPLv3.
 
 --Initial version was written by Donald Hines and his son Jesse Hines and was
 --licensed as CC0. Say a good word about them to everyone you met ;)

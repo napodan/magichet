@@ -149,7 +149,7 @@ local drill_properties = {
                 local stack = itemstack:to_table()
                 local chr = charge.get_charge(stack)
                 local max_charge = get_item_field(stack.name, "max_charge")
-                nchr = math.max(0,chr-1)
+                local nchr = math.max(0,chr-1)
                 charge.set_charge(stack,nchr)
                 charge.set_wear(stack,nchr,max_charge)
                 return ItemStack(stack)
@@ -178,7 +178,7 @@ local diamond_drill = {
                 local stack = itemstack:to_table()
                 local chr = charge.get_charge(stack)
                 local max_charge = get_item_field(stack.name, "max_charge")
-                nchr = math.max(0,chr-2)
+                local nchr = math.max(0,chr-2)
                 charge.set_charge(stack,nchr)
                 charge.set_wear(stack,nchr,max_charge)
                 return ItemStack(stack)
@@ -303,13 +303,13 @@ local teleport_gloves = {
                         local above = vector.add(pointed_thing.under,(vector.new({x=0,y=1,z=0})))
                         if minetest.get_node(above).name == "air" then
                                 user:setpos(above)
-                                nchr = math.max(0,chr-cost)
+                                local nchr = math.max(0,chr-cost)
                                 charge.set_charge(stack,nchr)
                                 charge.set_wear(stack,nchr,max_charge)
                                 return ItemStack(stack)
                         else
                                 user:moveto(pointed_thing.above)
-                                nchr = math.max(0,chr-cost)
+                                local nchr = math.max(0,chr-cost)
                                 charge.set_charge(stack,nchr)
                                 charge.set_wear(stack,nchr,max_charge)
                                 return ItemStack(stack)
@@ -322,8 +322,3 @@ discharged_tgloves = voltbuild.deep_copy(teleport_gloves,{})
 discharged_tgloves.after_use=nil
 discharged_tgloves.on_place = nil
 minetest.register_tool("voltbuild:teleport_gloves_discharged",discharged_tgloves)
-
--- Add power to mesecons
-mcon = clone_node("mesecons:wire_00000000_off")
-mcon.voltbuild = {single_use = 1, singleuse_energy = 60}
-minetest.register_node(":mesecons:wire_00000000_off",mcon)

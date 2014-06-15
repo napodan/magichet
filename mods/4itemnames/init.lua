@@ -6,6 +6,7 @@
 -----------------------------
 
 -- update: added check for 4air mod (breath bar)
+-- update: added check for charged items
 
 local wield={}
 local huds={}
@@ -28,6 +29,7 @@ minetest.register_globalstep(function(dtime)
        local wstack = player:get_wielded_item():get_name()
        local shift = player:get_player_control()['sneak']
        local meta = player:get_wielded_item():get_metadata()
+       if tonumber(meta) == nil then meta='' end
        local desc
        if not shift then
           desc = get_desc(wstack)

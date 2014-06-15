@@ -24,14 +24,14 @@ minetest.register_tool("jetpack:jet", {
   inventory_image = "jetpack_jet_inv.png",
   wield_image = "jetpack_jet_inv.png",
         voltbuild = {max_charge = 30000,
-                max_speed = 60,
+                max_speed = 600,
                 charge_tier = 1},
         documentation = {summary="Electric jetpack.\n"..
                 "You can fly as high as 128 nodes above with this charged."},
         tool_capabilities =
                 {max_drop_level=0,
                 groupcaps={fleshy={times={}, uses=1, maxlevel=0}}},
-        groups = {armor=5, armor_use=100},
+        groups = {fleshy=5, metal=5, blast=-2, armor_use=100},
 })
 
 minetest.register_craft({
@@ -50,26 +50,34 @@ minetest.register_globalstep(function(dtime)
           local pos = player:getpos()
           local inv = player:get_inventory()
           local wstack = inv:get_stack("torso",1)
+          if wstack:is_empty() then return end
           local wstackn = wstack:get_name()
           local pll = player:get_player_name()
           pos.y = pos.y-1
           local node = minetest.registered_nodes[minetest.get_node(pos).name]
-          if wstack:get_wear()<65530 then
+          local stack = wstack:to_table()
+          local chr = charge.get_charge(stack)
+          local max_charge = get_item_field(stack.name, "max_charge")
+          if chr>5 then
               if isghost and not isghost[pll] then
                   if node and not node.walkable and wstackn=='jetpack:jet' and pos.y<128 then
                      if player:get_player_control().jump then
                           player:set_physics_override({gravity=-0.4,speed=1.2})
-                          wstack:add_wear(30)
-                          inv:set_stack("torso",1,wstack)
+                          local nchr = math.max(1,chr-5)
+                          charge.set_charge(stack,nchr)
+                          charge.set_wear(stack,nchr,max_charge)
+                          inv:set_stack("torso",1,stack)
                      else
                         player:set_physics_override({gravity=0.4,speed=1.2})
-                        wstack:add_wear(5)
-                        inv:set_stack("torso",1,wstack)
+                          local nchr = math.max(1,chr-2)
+                          charge.set_charge(stack,nchr)
+                          charge.set_wear(stack,nchr,max_charge)
+                          inv:set_stack("torso",1,stack)
                      end
-                  else
-                     player:set_physics_override({gravity=1,speed=1})
                   end
-            end
+              end
+          else
+              player:set_physics_override({gravity=1,speed=1})
           end
       end
 end)

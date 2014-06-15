@@ -35,43 +35,49 @@ armor.set_player_armor = function(self, player)
     local name = player:get_player_name()
     local player_inv = player:get_inventory()
     local armor_texture = "3d_armor_trans.png"
-    local armor_level = 0
+    local fleshy_level = 0
+    local metal_level = 0
+    local blast_level = 0
     local state = 0
-    local items = 0
     local textures = {}
     local elements = {}
     for i, v in ipairs(self.elements) do
         local stack = player_inv:get_stack(v, 1)
-        local level = stack:get_definition().groups["armor"]
+        local fleshy = stack:get_definition().groups["fleshy"]
+        local metal  = stack:get_definition().groups["metal"]
+        local blast  = stack:get_definition().groups["blast"]
         local item = stack:get_name()
         elements[i] = string.match(item, "%:.+_(.+)$")
-        if level then
+        if fleshy or metal or blast then
             table.insert(textures, item:gsub("%:", "_")..".png")
-            armor_level = armor_level + level
-            state = state + stack:get_wear()
-            items = items + 1
+            fleshy_level = fleshy_level + fleshy
+            metal_level  = metal_level  + metal
+            blast_level  = blast_level  + blast
+            -- state in %
+            state = state + (65535-stack:get_wear()/65535) -- * fleshy_level
         end
     end
---[[    if minetest.get_modpath("shields") then
-        armor_level = armor_level * 0.7
-    end
-]]
---[[
-    if elements[1] == elements[2] and
-        elements[1] == elements[3] and
-        elements[1] == elements[4] then
-        armor_level = armor_level * 1.1
-    end
-]]
+
     if #textures > 0 then
         armor_texture = table.concat(textures, "^")
     end
-    local armor_groups = {fleshy=100}
-    if armor_level > 0 then
-        -- is it o for MC?
-        armor_groups.level = math.floor(armor_level / 20)
-        armor_groups.fleshy = 100 - armor_level
+    local armor_groups = {fleshy=100, metal=100, blast=100}
+
+    if fleshy_level > 0 then
+        --armor_groups.level = math.floor(armor_level / 20)
+        -- damage can be consumed by 80%
+        fleshy_level= math.min(fleshy_level*state, 80)
+        armor_groups.fleshy = 100 - fleshy_level
     end
+    if metal_level > 0 then
+        metal_level= math.min(metal_level*state, 80)
+        armor_groups.metal = 100 - metal_level
+    end
+    if blast_level > 0 then
+        blast_level= math.min(blast_level*state, 80)
+        armor_groups.blast = 100 - blast_level
+    end
+
     -- here's the protection!
     player:set_armor_groups(armor_groups)
     self.textures[name].armor = armor_texture
@@ -89,11 +95,6 @@ armor.update_armor = function(self, player)
     end
     if self.player_hp[name] > hp then
         local inv = player:get_inventory()
-        --local armor_inv = minetest.get_inventory({type="detached", name=name.."_armor"})
-        --if not armor_inv then
-        --    return
-        --end
-        --local heal_max = 0
         local state = 0
         local items = 0
         print(minetest.serialize(self.elements))
@@ -101,11 +102,9 @@ armor.update_armor = function(self, player)
             local stack = inv:get_stack(v, 1)
             if stack:get_count() > 0 then
                 local use = stack:get_definition().groups["armor_use"] or 0
-                --local heal = stack:get_definition().groups["armor_heal"] or 0
                 local item = stack:get_name()
                 stack:add_wear(use)
                 inv:set_stack(v, 1, stack)
-                --player_inv:set_stack("armor_"..v, 1, stack)
                 state = state + stack:get_wear()
                 items = items + 1
                 if stack:get_count() == 0 then
@@ -115,14 +114,8 @@ armor.update_armor = function(self, player)
                     end
                     self:set_player_armor(player)
                 end
-               -- heal_max = heal_max + heal
             end
         end
-        -- Generic armor should NOT heal anyone
---        if heal_max > math.random(100) then
---            player:set_hp(self.player_hp[name])
---            return
---        end
     end
     self.player_hp[name] = hp
 end
@@ -176,7 +169,6 @@ end)
 
 minetest.register_on_joinplayer(function(player)
     default.player_set_model(player, "3d_armor_character.x")
---    inventory_plus.register_button(player,"armor", "Armor")
     local inv = player:get_inventory()
     local name = player:get_player_name()
     armor.pll_inv[name] = {[1]=inv:get_stack('helm',1):get_name(),

@@ -84,6 +84,10 @@ Game
 - make fall damage based on speed(?)
 - make mobs use different behaviour patterns
 + make mossy cobble drop normal cobble
+- damage groups...
+- make scuba gear a set of armour
+- remove teleportation gloves (or make thieves pay)
+- fix mining drill
 
 
 Legend
