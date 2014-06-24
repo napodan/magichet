@@ -50,7 +50,10 @@ minetest.register_globalstep(function(dtime)
           local pos = player:getpos()
           local inv = player:get_inventory()
           local wstack = inv:get_stack("torso",1)
-          if wstack:is_empty() then return end
+          if wstack:is_empty() then
+             player:set_physics_override({gravity=1,speed=1})
+             return
+          end
           local wstackn = wstack:get_name()
           local pll = player:get_player_name()
           pos.y = pos.y-1

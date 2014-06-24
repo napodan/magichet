@@ -191,7 +191,7 @@ minetest.register_on_joinplayer(function(player)
             "button[7.4,-0.0;0.8,0.5;sort_vert;||]"..
             "button[8.2,-0.0;0.8,0.5;sort_norm;Z]"..
             -- craft guide
-            "image_button[1,0;1,1;inventory_plus_zcg.png;zgc;]"            
+            "image_button[1,0;1,1;inventory_plus_zcg.png;zgc;]"
         )
 
         -- common lists
@@ -212,7 +212,7 @@ minetest.register_on_joinplayer(function(player)
     sinv:set_size("main", inv:get_size("main"))
 end)
 
--- Inv. tweak buttons
+-- Inv. tweak buttons & events
 default.sort_inv = function(player, formname, fields, pos)
     -- sort horizontally
     if fields.sort_horz then
@@ -315,9 +315,19 @@ default.sort_inv = function(player, formname, fields, pos)
       -- disable furnace interface if player has quitted
        if formname:find('default:furnace') then
           local pos = minetest.deserialize(string.split(formname,'_')[2])
-          print(minetest.pos_to_string(pos))
           meta = minetest.get_meta(pos)
-          meta:set_string("pll","")
+          local new_meta=''
+          local old_meta=string.split(meta:get_string('pll'),';')
+          local pll = player:get_player_name()
+          for _,name in ipairs(old_meta) do
+             if name~=pll then
+                -- add a separator if needed
+                if #new_meta>0 then new_meta=new_meta..';' end
+                --add name
+                new_meta=new_meta+name
+             end
+          end
+          meta:set_string("pll",new_meta)
           minetest.get_node_timer(pos):stop()
        end
 
@@ -344,15 +354,15 @@ default.sort_inv = function(player, formname, fields, pos)
 end
 
 minetest.register_on_player_receive_fields(function(player, formname, fields,pos)
-  if player and player:is_player() then     
-     if fields.zgc then 
+  if player and player:is_player() then
+     if fields.zgc then
         local pll = player:get_player_name()
-        minetest.show_formspec(pll, 'zgc_'..pll, zcg.formspec(pll)) 
-        return true 
+        minetest.show_formspec(pll, 'zgc_'..pll, zcg.formspec(pll))
+        return true
      end
      default.sort_inv(player,formname,fields,pos)
      return true
-  end  
+  end
 end)
 
 minetest.register_on_leaveplayer(function(player)

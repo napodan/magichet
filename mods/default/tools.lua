@@ -40,6 +40,10 @@ function get_groupcaps(uses, group, table)
             [default.dig.glowstone] = 0.45,
             [default.dig.lever] = 0.75,
             [default.dig.button] = 0.75,
+            [default.dig.immediate] = 0.1,
+        }, uses=uses},
+        fleshy = {times={
+            [default.dig.immediate] = 0.1,
         }, uses=uses},
     }
     if group and table then
@@ -464,7 +468,7 @@ minetest.register_tool("default:axe_stone", {
         ),
         full_punch_interval = 1,
         enchantability = 5,
-        damage_groups = {fleshy=1},
+        damage_groups = {fleshy=1, cutters=1},
     },
 })
 minetest.register_tool("default:axe_iron", {
@@ -486,7 +490,7 @@ minetest.register_tool("default:axe_iron", {
         ),
         full_punch_interval = 1,
         enchantability = 14,
-        damage_groups = {fleshy=1},
+        damage_groups = {fleshy=1, cutters=1},
     },
 })
 
@@ -511,6 +515,7 @@ minetest.register_tool("default:axe_bronze", {
         enchantability = 10,
         damage_groups = {fleshy=1},
     },
+    groups = {cutters=1},
 })
 minetest.register_tool("default:axe_mese", {
     description = "Mese Axe",
@@ -531,8 +536,9 @@ minetest.register_tool("default:axe_mese", {
         ),
         full_punch_interval = 1,
         enchantability = -1,
-        damage_groups = {fleshy=1},
+        damage_groups = {fleshy=1, cutters=1},
     },
+    groups = {cutters = 1},
 })
 minetest.register_tool("default:axe_diamond", {
     description = "Diamond Axe",
@@ -553,8 +559,9 @@ minetest.register_tool("default:axe_diamond", {
         ),
         full_punch_interval = 1,
         enchantability = 10,
-        damage_groups = {fleshy=1},
+        damage_groups = {fleshy=1, cutters=1},
     },
+    groups = {sharp = 1, cutters = 1},
 })
 minetest.register_tool("default:axe_gold", {
     description = "Gold Axe",
@@ -656,7 +663,8 @@ minetest.register_tool("default:sword_mese", {
         full_punch_interval = 1,
         enchantability = -1,
         damage_groups = {fleshy=7},
-    }
+    },
+    groups = {sharp = 1},
 })
 minetest.register_tool("default:sword_diamond", {
     description = "Diamond Sword",
@@ -671,7 +679,8 @@ minetest.register_tool("default:sword_diamond", {
         full_punch_interval = 1,
         enchantability = 10,
         damage_groups = {fleshy=8},
-    }
+    },
+    groups = {cutters=1},
 })
 minetest.register_tool("default:sword_gold", {
     description = "Gold Sword",

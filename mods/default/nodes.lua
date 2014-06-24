@@ -1,5 +1,11 @@
 -- mods/default/nodes.lua
--- edited to bring back bronze & MESE & apples
+-- edited by 4aiman to bring back bronze & MESE & apples, add workbenches,
+-- meshed chests etc
+
+global_timer=0
+minetest.register_globalstep(function(dtime)
+   global_timer=global_timer+dtime
+end)
 
 minetest.register_node("default:apple", {
     description = "Apple",
@@ -15,7 +21,7 @@ minetest.register_node("default:apple", {
         type = "fixed",
         fixed = {-0.2, -0.5, -0.2, 0.2, 0, 0.2}
     },
-    groups = {fleshy=3,dig_immediate=3,flammable=2,leafdecay=3,leafdecay_drop=1},
+    groups = {dig_immediate=2,flammable=2,leafdecay=3,leafdecay_drop=1},
     on_use = minetest.item_eat(1),
     sounds = default.node_sound_leaves_defaults(),
     after_place_node = function(pos, placer, itemstack)
@@ -815,7 +821,6 @@ local tdc = {
             local meta2 = meta
             local inv = meta:get_inventory()
                 for i=1,inv:get_size("main") do
-                    print(i)
                     local stack = inv:get_stack("main", i)
                     if not stack:is_empty() then
                         local p = {x=pos.x+math.random(0, 10)/10-0.5, y=pos.y, z=pos.z+math.random(0, 10)/10-0.5}
@@ -885,22 +890,12 @@ minetest.register_node("default:chest", {
         "default_chest_side.png", "default_chest_side.png", "default_chest_front.png"},
     paramtype2 = "facedir",
     -- temporary workover
-    wield_image = "default_chest_front.png",
-    drawtype = "nodebox",
+    wield_image = minetest.inventorycube("default_chest_top.png", "default_chest_side.png", "default_chest_front.png"),
+    drawtype = "normal",
+    visual_scale = 0.05,
     paramtype = "light",
     walkable = true,
-    node_box = {
-        type = "fixed",
-        fixed = {
-            {-0.005, -0.005, -0.005, 0.005, 0.005, 0.005}
-        },
-    },
-    selection_box = {
-        type = "fixed",
-        fixed = {
-            {-0.005, -0.005, -0.005, 0.005, 0.005, 0.005}
-        },
-    },
+
     groups = {choppy=default.dig.chest},
     legacy_facedir_simple = true,
     sounds = default.node_sound_wood_defaults(),
@@ -1039,6 +1034,7 @@ minetest.register_node("default:chest", {
         timer:start(1)
     end,
     on_timer = function(pos,el)
+       if global_timer<15 then return end
        local meta = minetest.get_meta(pos)
        local cover = false
        local node = minetest.get_node(pos)
@@ -1492,7 +1488,24 @@ minetest.register_node("default:furnace", {
              "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";gdst;5,1;2,2;]"
             -- print('showing GHOSTS formspec')
           end
-          meta:set_string("pll",pll)
+          -- add current user to a list of users
+          local old_meta=meta:get_string("pll")
+          local plls  = string.split(old_meta,';')
+          local exists = false
+          for _,name in ipairs(plls) do
+              if name==pll then
+                 exists = true
+                 break
+              end
+          end
+          if not exists then
+             if #old_meta>0 then
+                meta:set_string("pll",old_meta..';'..pll)
+             else
+                meta:set_string("pll",pll)
+             end
+          end
+          -- since inactive furnace is NOT updated, we need to show formspec manually
           minetest.show_formspec(pll, 'default:furnace_'..minetest.serialize(pos), formspec)
        end
     end,
@@ -1628,8 +1641,25 @@ minetest.register_node("default:furnace_active", {
              "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";gdst;5,1;2,2;]"
           --   print('showing GHOSTS formspec')
           end
-          minetest.show_formspec(pll, 'default:furnace_'..minetest.serialize(pos), formspec)
-          meta:set_string("pll",pll)
+          -- iterate through players and add current one if needed
+          -- add current user to a list of users
+          local old_meta=meta:get_string("pll")
+          local plls  = string.split(old_meta,';')
+          local exists = false
+          for _,name in ipairs(plls) do
+              if name==pll then
+                 exists = true
+                 break
+              end
+          end
+          if not exists then
+             if #old_meta>0 then
+                meta:set_string("pll",old_meta..';'..pll)
+             else
+                meta:set_string("pll",pll)
+             end
+          end
+          -- well done! on_timer will show a formspec now
           minetest.get_node_timer(pos):start(1)
        end
     end,
@@ -1652,7 +1682,10 @@ minetest.register_node("default:furnace_active", {
              "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";gdst;5,1;2,2;]"
             -- print('showing GHOSTS formspec')
           end
-          minetest.show_formspec(pll, 'default:furnace_'..minetest.serialize(pos), formspec)
+          local plls  = string.split(meta:get_string("pll"),';')
+          for _,name in ipairs(plls) do
+              minetest.show_formspec(name, 'default:furnace_'..minetest.serialize(pos), formspec)
+          end
          return true
     end,
     allow_metadata_inventory_put = function(pos, listname, index, stack, player)
@@ -1780,7 +1813,7 @@ minetest.register_abm({
                     -- take stuff from "src" list
                     inv:set_stack("src", 1, aftercooked.items[1])
                 else
-                    print("Could not insert '"..cooked.item:to_string().."'")
+                    print("There's no place in furnace output for '"..cooked.item:to_string().."'")
                 end
                 meta:set_string("src_time", 0)
             end
@@ -1808,11 +1841,13 @@ minetest.register_abm({
                 if inv:room_for_item("gdst", gcooked.item) then
                    -- print('-- Put result in "dst" list')
                     inv:add_item("gdst", gcooked.item)
+                    -- add 1 ecto to a dst slots if a ghost is cooking smth
+                    inv:add_item("gdst", "ghosts:ectoplasm")
                     --print('-- take stuff from "src" list')
                     --print(gaftercooked.items[1]:get_name())
                     inv:set_stack("gsrc", 1, gaftercooked.items[1])
                 else
-                    print("Could not insert ghostly '"..gcooked.item:to_string().."'")
+                    print("There's no place in furnace output for '"..cooked.item:to_string().."' (ghostly)")
                 end
                 meta:set_string("gsrc_time", 0)
             end
@@ -2140,7 +2175,7 @@ minetest.register_node("default:ice", {
     on_dig = function(pos, oldnode, oldmetadata, digger)
        minetest.set_node(pos, {name="default:water_source", param1=0,param2=0}, 2)
     end,
-    groups = {cracky=default.dig.ice},
+    groups = {cracky=default.dig.ice, slippery=90},
     sounds = default.node_sound_glass_defaults(),
 })
 
@@ -2208,6 +2243,7 @@ minetest.register_node("default:workbench", {
     on_construct = function(pos)
        local meta = minetest.get_meta(pos)
        meta:set_string("formspec",
+
             "size[9,8.2]"..
             "bgcolor[#bbbbbb;false]"..
             "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
@@ -2221,6 +2257,8 @@ minetest.register_node("default:workbench", {
             "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
             "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
             "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
+
+            "list[context;main;0,0;9,3;]"..
 
             "list[current_player;craft;3,0.5;3,3;]"..
             "list[current_player;craftpreview;7,1.5;1,1;]"..

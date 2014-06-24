@@ -80,6 +80,10 @@ default.dig = {
     furnace = 16,
     ice = 17,
     rail = 18,
+    immediate =19,
+
+    -- fleshy
+    immediate = 1,
 }
 
 -- Load files

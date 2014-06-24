@@ -62,18 +62,18 @@ function mesecon:rule2bit(findrule, allrules)
 	end
 	for m,metarule in ipairs( allrules) do
 	for _,    rule in ipairs(metarule ) do
-		if mesecon:cmpPos(findrule, rule) then
+		if mesecon:cmpPos(findrule, rule) and mesecon:cmpSpecial(findrule, rule) then
 			return m
 		end
 	end
 	end
 end
 
-function mesecon:rule2meta(findrule, allrules)
+function mesecon:rule2metaindex(findrule, allrules)
 	--get the metarule the rule is in, or allrules
 
 	if allrules[1].x then
-		return allrules
+		return nil
 	end
 
 	if not(findrule) then
@@ -82,11 +82,23 @@ function mesecon:rule2meta(findrule, allrules)
 
 	for m, metarule in ipairs( allrules) do
 	for _,     rule in ipairs(metarule ) do
-		if mesecon:cmpPos(findrule, rule) then
-			return metarule
+		if mesecon:cmpPos(findrule, rule) and mesecon:cmpSpecial(findrule, rule) then
+			return m
 		end
 	end
 	end
+end
+
+function mesecon:rule2meta(findrule, allrules)
+	local index = mesecon:rule2metaindex(findrule, allrules)
+	if index == nil then
+		if allrules[1].x then
+			return allrules
+		else
+			return {}
+		end
+	end
+	return allrules[index]
 end
 
 if convert_base then
@@ -141,7 +153,7 @@ function mesecon:set_bit(binary,bit,value)
 end
 
 function mesecon:invertRule(r)
-	return {x = -r.x, y = -r.y, z = -r.z}
+	return {x = -r.x, y = -r.y, z = -r.z, sx = r.sx, sy = r.sy, sz = r.sz}
 end
 
 function mesecon:addPosRule(p, r)
@@ -152,7 +164,12 @@ function mesecon:cmpPos(p1, p2)
 	return (p1.x == p2.x and p1.y == p2.y and p1.z == p2.z)
 end
 
+function mesecon:cmpSpecial(r1, r2)
+	return (r1.sx == r2.sx and r1.sy == r2.sy and r1.sz == r2.sz)
+end
+
 function mesecon:tablecopy(table) -- deep table copy
+	if type(table) ~= "table" then return table end -- no need to copy
 	local newtable = {}
 
 	for idx, item in pairs(table) do
@@ -164,4 +181,15 @@ function mesecon:tablecopy(table) -- deep table copy
 	end
 
 	return newtable
+end
+
+function mesecon:cmpAny(t1, t2)
+	if type(t1) ~= type(t2) then return false end
+	if type(t1) ~= "table" and type(t2) ~= "table" then return t1 == t2 end
+
+	for i, e in pairs(t1) do
+		if not mesecon:cmpAny(e, t2[i]) then return false end
+	end
+
+	return true
 end

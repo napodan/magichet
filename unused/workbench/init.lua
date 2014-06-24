@@ -1,2 +1,0 @@
-
-print('[OK] Workbench loaded')
