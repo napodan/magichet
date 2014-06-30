@@ -216,9 +216,9 @@ end)
 default.sort_inv = function(player, formname, fields, pos)
     -- sort horizontally
     if fields.sort_horz then
-       print(pll..' sorts inventory =')
        local inv = player:get_inventory()
        local pll = player:get_player_name()
+       print(pll..' sorts inventory =')
        local sinv = minetest.get_inventory({type="detached", name=pll..'_sort'})
        if inv and sinv then
           local width = default.player_get_inv_width(pll)
@@ -239,9 +239,9 @@ default.sort_inv = function(player, formname, fields, pos)
        end
    -- sort vertically
     elseif fields.sort_vert then
-       print(pll..' sorts inventory ||')
        local inv = player:get_inventory()
        local pll = player:get_player_name()
+       print(pll..' sorts inventory ||')
        local sinv = minetest.get_inventory({type="detached", name=pll..'_sort'})
        if inv and sinv then
           local width = default.player_get_inv_width(pll)
@@ -262,9 +262,9 @@ default.sort_inv = function(player, formname, fields, pos)
        end
     -- sort in "Z" shape
     elseif fields.sort_norm then
-       print(pll..' sorts inventory Z')
        local inv = player:get_inventory()
        local pll = player:get_player_name()
+       print(pll..' sorts inventory Z')
        local sinv = minetest.get_inventory({type="detached", name=pll..'_sort'})
        if inv and sinv then
           local width = default.player_get_inv_width(pll)

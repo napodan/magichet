@@ -2,6 +2,7 @@
 
 More Ores -- a Minetest mod that adds ores.
 Copyright (C) 2013  Calinou
+Changes by 4aiman, 2014.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

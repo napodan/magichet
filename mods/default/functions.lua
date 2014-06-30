@@ -1,5 +1,37 @@
 -- mods/default/functions.lua
 
+function find_base_pos(xx,yy,zz)
+    --local x = xx or 0
+    --local y = yy or 0
+    --local z = zz or 0
+    local pos = {x=xx,y=yy,z=zz}
+   -- minetest.forceload_block(pos)
+    local vm = minetest.get_voxel_manip()
+    local minp,maxp = vm:read_from_map({x=xx,y=-20,z=zz},{x=xx,y=yy+20,z=zz})
+    local data = vm:get_data()
+    local area = VoxelArea:new{MinEdge=minp, MaxEdge=maxp}
+    --print(minetest.pos_to_string(minp).. ' : ' ..minetest.pos_to_string(maxp))
+    local c_air = minetest.get_content_id("air")
+    local c_wat = minetest.get_content_id("default:water_source")
+    local c_lea = minetest.get_content_id("default:leaves")
+    local count = 0
+        for ny=minp.y,maxp.y do
+            local vi  = area:index(xx, ny, zz)
+            if data[vi] == c_air
+            or data[vi] == c_wat
+            or data[vi] == c_lea
+            then
+               count = count+1
+            end
+            if count>0 and count%4==0 then
+               pos.y = ny-count
+            end
+            if count > 10 then break end
+        end
+   -- minetest.forceload_free_block(pos)
+    return pos
+end
+
 --
 -- Sounds
 --

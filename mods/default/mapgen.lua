@@ -32,7 +32,7 @@ minetest.register_alias("mapgen_ice", "default:ice")
 --
 -- Ore generation
 --
-
+--[[
 -- sheets of ore above the ground
 -- sheets make mg_v7 explode (((
 minetest.register_ore({
@@ -152,7 +152,7 @@ minetest.register_ore({
     clust_num_ores = 27,
     clust_size     = 7,
     height_min     = -5005,
-    height_max     = -65,    
+    height_max     = -65,
 })
 
 
@@ -275,7 +275,7 @@ minetest.register_ore({
     height_max     = -60,
 })
 
--- diamonds still in extra ores, 'cause "smth strange" is for machinery 
+-- diamonds still in extra ores, 'cause "smth strange" is for machinery
 minetest.register_ore({
     ore_type       = "scatter",
     ore            = "default:stone_with_diamond",
@@ -319,7 +319,7 @@ minetest.register_ore({
     clust_num_ores = 6,
     clust_size     = 20,
     height_min     = -5000,
-    height_max     = -4001,    
+    height_max     = -4001,
 })
 
 
@@ -430,32 +430,32 @@ minetest.register_ore({
     height_max     = 0,
     height_min     = -20,
 })
-
+]]--
 
 function default.make_papyrus(pos, size)
-	for y=0,size-1 do
-		local p = {x=pos.x, y=pos.y+y, z=pos.z}
-		local nn = minetest.get_node(p).name
-		if minetest.registered_nodes[nn] and
-			minetest.registered_nodes[nn].buildable_to then
-			minetest.set_node(p, {name="default:papyrus"})
-		else
-			return
-		end
-	end
+    for y=0,size-1 do
+        local p = {x=pos.x, y=pos.y+y, z=pos.z}
+        local nn = minetest.get_node(p).name
+        if minetest.registered_nodes[nn] and
+            minetest.registered_nodes[nn].buildable_to then
+            minetest.set_node(p, {name="default:papyrus"})
+        else
+            return
+        end
+    end
 end
 
 function default.make_cactus(pos, size)
-	for y=0,size-1 do
-		local p = {x=pos.x, y=pos.y+y, z=pos.z}
-		local nn = minetest.get_node(p).name
-		if minetest.registered_nodes[nn] and
-			minetest.registered_nodes[nn].buildable_to then
-			minetest.set_node(p, {name="default:cactus"})
-		else
-			return
-		end
-	end
+    for y=0,size-1 do
+        local p = {x=pos.x, y=pos.y+y, z=pos.z}
+        local nn = minetest.get_node(p).name
+        if minetest.registered_nodes[nn] and
+            minetest.registered_nodes[nn].buildable_to then
+            minetest.set_node(p, {name="default:cactus"})
+        else
+            return
+        end
+    end
 end
 
 -- facedir: 0/1/2/3 (head node facedir value)
@@ -508,6 +508,6 @@ end
 
 minetest.register_on_generated(function(minp, maxp, seed)
     -- Generate nyan cats
-    generate_nyancats(seed, minp, maxp)
+   -- generate_nyancats(seed, minp, maxp)
 end)
 

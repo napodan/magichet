@@ -270,6 +270,7 @@ minetest.register_node("default:brick", {
 minetest.register_node("default:tree", {
     description = "Tree",
     tiles = {"default_tree_top.png", "default_tree_top.png", "default_tree.png"},
+    is_ground_content = true,
 
     groups = {tree=1,choppy=default.dig.tree,flammable=2},
     sounds = default.node_sound_wood_defaults(),
@@ -278,6 +279,7 @@ minetest.register_node("default:tree", {
 minetest.register_node("default:jungletree", {
     description = "Jungle Tree",
     tiles = {"default_jungletree_top.png", "default_jungletree_top.png", "default_jungletree.png"},
+    is_ground_content = true,
 
     groups = {tree=1,choppy=default.dig.tree,flammable=2},
     sounds = default.node_sound_wood_defaults(),
@@ -286,6 +288,7 @@ minetest.register_node("default:jungletree", {
 minetest.register_node("default:junglewood", {
     description = "Junglewood Planks",
     tiles = {"default_junglewood.png"},
+    is_ground_content = true,
 
     groups = {choppy=default.dig.wood,flammable=3,wood=1},
     sounds = default.node_sound_wood_defaults(),
@@ -473,6 +476,7 @@ minetest.register_node("default:sugar_cane", {
 minetest.register_node("default:bookshelf", {
     description = "Bookshelf",
     tiles = {"default_wood.png", "default_wood.png", "default_bookshelf.png"},
+    is_ground_content = true,
 
     groups = {choppy=default.dig.bookshelf,flammable=3},
     sounds = default.node_sound_wood_defaults(),
@@ -487,6 +491,7 @@ minetest.register_node("default:glass", {
     paramtype = "light",
     use_texture_alpha = true,
     drop = "",   -- no glass for ya!
+    is_ground_content = true,
 
     groups = {dig=default.dig.glass},
     sounds = default.node_sound_glass_defaults(),
@@ -509,6 +514,7 @@ minetest.register_node("default:fence", {
             {-0.2, -0.5, -0.2, 0.2, 1.0, 0.2},
         },
     },
+    is_ground_content = true,
 
     groups = {choppy=default.dig.fence,flammable=2},
     sounds = default.node_sound_wood_defaults(),
@@ -557,6 +563,7 @@ minetest.register_node("default:wood", {
     description = "Wooden Planks",
     tiles = {"default_wood.png"},
     groups = {choppy=default.dig.wood,flammable=3,wood=1},
+    is_ground_content = true,
 
     sounds = default.node_sound_wood_defaults(),
 })
@@ -697,6 +704,7 @@ minetest.register_node("default:lava_source", {
     damage_per_second = 3,
     post_effect_color = {a=192, r=255, g=64, b=0},
     groups = {lava=3, liquid=2, hot=3, igniter=1},
+    is_ground_content = true,
 })
 
 minetest.register_node("default:torch", {
@@ -711,6 +719,7 @@ minetest.register_node("default:torch", {
     paramtype = "light",
     paramtype2 = "wallmounted",
     sunlight_propagates = true,
+    is_ground_content = true,
     walkable = false,
     wield_light = 12,
     light_source = 12,
@@ -754,6 +763,7 @@ minetest.register_node("default:sign_wall", {
         --wall_bottom = <default>
         --wall_side = <default>
     },
+    is_ground_content = true,
 
     groups = {choppy=default.dig.sign,attached_node=1},
     legacy_wallmounted = true,
@@ -895,6 +905,7 @@ minetest.register_node("default:chest", {
     visual_scale = 0.05,
     paramtype = "light",
     walkable = true,
+    is_ground_content = true,
 
     groups = {choppy=default.dig.chest},
     legacy_facedir_simple = true,
@@ -1342,6 +1353,7 @@ minetest.register_node("default:chest_locked", {
     legacy_facedir_simple = true,
     is_ground_content = false,
     sounds = default.node_sound_wood_defaults(),
+    is_ground_content = true,
     after_place_node = function(pos, placer)
         local meta = minetest.get_meta(pos)
         meta:set_string("owner", placer:get_player_name() or "")
@@ -1453,6 +1465,7 @@ minetest.register_node("default:furnace", {
         "default_furnace_side.png", "default_furnace_side.png", "default_furnace_front.png"},
     paramtype2 = "facedir",
     groups = {cracky=default.dig.furnace},
+    is_ground_content = true,
 
     legacy_facedir_simple = true,
     sounds = default.node_sound_stone_defaults(),
@@ -1599,6 +1612,7 @@ minetest.register_node("default:furnace_active", {
             backface_culling=true,
             animation={type="vertical_frames", aspect_w=32, aspect_h=32, length=0.8}
         },},
+    is_ground_content = true,
     paramtype2 = "facedir",
     light_source = 13,
     drop = "default:furnace",
@@ -1948,7 +1962,10 @@ minetest.register_abm({
         if gfuellist then
             gfuel, gafterfuel = minetest.get_craft_result({method = "fuel", width = 1, items = gfuellist})
         end
-
+        -- try to fix furnace
+        if (not fuel) or (not gfuel)
+        or (not cooked) or (not gcooked)
+        then return end
 
         if fuel.time <= 0 then
             meta:set_string("infotext","Furnace out of fuel")
@@ -2240,6 +2257,7 @@ minetest.register_node("default:workbench", {
     tiles = {"workbench_top.png", "workbench_side.png"},
     groups = {choppy=default.dig.wood,flammable=3},
     sounds = default.node_sound_wood_defaults(),
+    is_ground_content = true,
     on_construct = function(pos)
        local meta = minetest.get_meta(pos)
        meta:set_string("formspec",

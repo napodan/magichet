@@ -519,7 +519,7 @@ minetest.register_decoration({
     decoration = "ethereal:fern",
 })
 
---[[ Snow
+-- Snow
 minetest.register_decoration({
     deco_type = "simple",
     place_on = {"ethereal:cold_dirt", "default:dirt_with_snow"},
@@ -527,7 +527,7 @@ minetest.register_decoration({
     fill_ratio = 0.85,
     biomes = {"snowy", "apline"},
     decoration = "default:snow",
-})]]--
+})
 
 -- Wild Onions
 minetest.register_decoration({
@@ -568,3 +568,4 @@ minetest.register_on_generated(function(minp, maxp, seed)
         end
     end
 end)
+
