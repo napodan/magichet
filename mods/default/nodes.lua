@@ -16,7 +16,7 @@ minetest.register_node("default:apple", {
     paramtype = "light",
     sunlight_propagates = true,
     walkable = false,
-    is_ground_content = true,
+    is_ground_content = false,
     selection_box = {
         type = "fixed",
         fixed = {-0.2, -0.5, -0.2, 0.2, 0, 0.2}
@@ -62,7 +62,6 @@ minetest.register_node("default:desert_stonebrick", {
 minetest.register_node("default:snow_brick", {
     description = "Snow Brick",
     tiles = {"default_snow_brick.png"},
-    is_ground_content = true,
     groups = {crumbly=default.dig.gravel,melts=2},
     drop = 'default:snow_brick',
     sounds = default.node_sound_dirt_defaults({
@@ -81,7 +80,6 @@ minetest.register_craft({
 minetest.register_node("default:desert_sand", {
     description = "Desert Sand",
     tiles = {"default_desert_sand.png"},
-    is_ground_content = true,
     groups = {crumbly=default.dig.sand, falling_node=1, sand=1},
     sounds = default.node_sound_sand_defaults(),
 })
@@ -107,7 +105,6 @@ minetest.register_node("default:stone_with_copper", {
 minetest.register_node("default:copperblock", {
     description = "Copper Block",
     tiles = {"default_copper_block.png"},
-    is_ground_content = true,
     groups = {cracky=default.dig.iron},
     sounds = default.node_sound_stone_defaults(),
 })
@@ -125,7 +122,6 @@ minetest.register_node("default:stone_with_mese", {
 minetest.register_node("default:bronzeblock", {
     description = "Bronze Block",
     tiles = {"default_bronze_block.png"},
-    is_ground_content = true,
     groups = {cracky=default.dig.ironblock},
     sounds = default.node_sound_stone_defaults(),
 })
@@ -177,7 +173,6 @@ minetest.register_node("default:stonebrick", {
 minetest.register_node("default:dirt_with_grass", {
     description = "Dirt with Grass",
     tiles = {"default_grass.png", "default_dirt.png", "default_dirt.png^default_grass_side.png"},
-    is_ground_content = true,
     groups = {crumbly=default.dig.dirt_with_grass,soil=1},
     drop = 'default:dirt',
     sounds = default.node_sound_dirt_defaults({
@@ -200,7 +195,6 @@ minetest.register_alias("dirt_with_snow", "default:dirt_with_snow")
 minetest.register_node("default:dirt", {
     description = "Dirt",
     tiles = {"default_dirt.png"},
-    is_ground_content = true,
     groups = {crumbly=default.dig.dirt,soil=1},
     sounds = default.node_sound_dirt_defaults(),
     drop = 'default:dirt 2',
@@ -209,7 +203,6 @@ minetest.register_node("default:dirt", {
 minetest.register_node("default:sand", {
     description = "Sand",
     tiles = {"default_sand.png"},
-    is_ground_content = true,
     groups = {crumbly=default.dig.sand, falling_node=1, sand=1},
     sounds = default.node_sound_sand_defaults(),
 })
@@ -217,7 +210,6 @@ minetest.register_node("default:sand", {
 minetest.register_node("default:gravel", {
     description = "Gravel",
     tiles = {"default_gravel.png"},
-    is_ground_content = true,
     drop = {
         max_items = 1,
         items = {
@@ -234,7 +226,6 @@ minetest.register_node("default:gravel", {
 minetest.register_node("default:sandstone", {
     description = "Sandstone",
     tiles = {"default_sandstone_top.png","default_sandstone_bottom.png","default_sandstone_side.png"},
-    is_ground_content = true,
     groups = {cracky=default.dig.sandstone},
     sounds = default.node_sound_stone_defaults(),
 })
@@ -242,7 +233,6 @@ minetest.register_node("default:sandstone", {
 minetest.register_node("default:sandstonebrick", {
     description = "Sandstone Brick",
     tiles = {"default_sandstone_brick.png"},
-    is_ground_content = true,
     groups = {cracky=2},
     sounds = default.node_sound_stone_defaults(),
 })
@@ -476,8 +466,6 @@ minetest.register_node("default:sugar_cane", {
 minetest.register_node("default:bookshelf", {
     description = "Bookshelf",
     tiles = {"default_wood.png", "default_wood.png", "default_bookshelf.png"},
-    is_ground_content = true,
-
     groups = {choppy=default.dig.bookshelf,flammable=3},
     sounds = default.node_sound_wood_defaults(),
 })
@@ -491,8 +479,6 @@ minetest.register_node("default:glass", {
     paramtype = "light",
     use_texture_alpha = true,
     drop = "",   -- no glass for ya!
-    is_ground_content = true,
-
     groups = {dig=default.dig.glass},
     sounds = default.node_sound_glass_defaults(),
 })
@@ -514,8 +500,6 @@ minetest.register_node("default:fence", {
             {-0.2, -0.5, -0.2, 0.2, 1.0, 0.2},
         },
     },
-    is_ground_content = true,
-
     groups = {choppy=default.dig.fence,flammable=2},
     sounds = default.node_sound_wood_defaults(),
 })
@@ -563,8 +547,6 @@ minetest.register_node("default:wood", {
     description = "Wooden Planks",
     tiles = {"default_wood.png"},
     groups = {choppy=default.dig.wood,flammable=3,wood=1},
-    is_ground_content = true,
-
     sounds = default.node_sound_wood_defaults(),
 })
 
@@ -719,7 +701,6 @@ minetest.register_node("default:torch", {
     paramtype = "light",
     paramtype2 = "wallmounted",
     sunlight_propagates = true,
-    is_ground_content = true,
     walkable = false,
     wield_light = 12,
     light_source = 12,
@@ -763,8 +744,6 @@ minetest.register_node("default:sign_wall", {
         --wall_bottom = <default>
         --wall_side = <default>
     },
-    is_ground_content = true,
-
     groups = {choppy=default.dig.sign,attached_node=1},
     legacy_wallmounted = true,
     sounds = default.node_sound_defaults(),
@@ -905,8 +884,6 @@ minetest.register_node("default:chest", {
     visual_scale = 0.05,
     paramtype = "light",
     walkable = true,
-    is_ground_content = true,
-
     groups = {choppy=default.dig.chest},
     legacy_facedir_simple = true,
     sounds = default.node_sound_wood_defaults(),
@@ -1351,9 +1328,7 @@ minetest.register_node("default:chest_locked", {
     paramtype2 = "facedir",
     groups = {choppy=2,oddly_breakable_by_hand=2},
     legacy_facedir_simple = true,
-    is_ground_content = false,
     sounds = default.node_sound_wood_defaults(),
-    is_ground_content = true,
     after_place_node = function(pos, placer)
         local meta = minetest.get_meta(pos)
         meta:set_string("owner", placer:get_player_name() or "")
@@ -1465,8 +1440,6 @@ minetest.register_node("default:furnace", {
         "default_furnace_side.png", "default_furnace_side.png", "default_furnace_front.png"},
     paramtype2 = "facedir",
     groups = {cracky=default.dig.furnace},
-    is_ground_content = true,
-
     legacy_facedir_simple = true,
     sounds = default.node_sound_stone_defaults(),
     on_construct = function(pos)
@@ -1492,14 +1465,12 @@ minetest.register_node("default:furnace", {
              "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";fuel;2,2.5;1,1;]"..
              "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";src;2,0.5;1,1;]"..
              "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";dst;5,1;2,2;]"
-           --  print('showing NORMAL formspec')
           else
             -- ghostly slots >:D
              formspec = formspec ..
              "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";gfuel;2,2.5;1,1;]"..
              "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";gsrc;2,0.5;1,1;]"..
              "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";gdst;5,1;2,2;]"
-            -- print('showing GHOSTS formspec')
           end
           -- add current user to a list of users
           local old_meta=meta:get_string("pll")
@@ -1612,7 +1583,6 @@ minetest.register_node("default:furnace_active", {
             backface_culling=true,
             animation={type="vertical_frames", aspect_w=32, aspect_h=32, length=0.8}
         },},
-    is_ground_content = true,
     paramtype2 = "facedir",
     light_source = 13,
     drop = "default:furnace",
@@ -1646,7 +1616,6 @@ minetest.register_node("default:furnace_active", {
              "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";fuel;2,2.5;1,1;]"..
              "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";src;2,0.5;1,1;]"..
              "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";dst;5,1;2,2;]"
-            -- print('showing NORMAL formspec')
           else
             -- ghostly slots >:D
              formspec = formspec ..
@@ -1687,14 +1656,12 @@ minetest.register_node("default:furnace_active", {
              "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";fuel;2,2.5;1,1;]"..
              "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";src;2,0.5;1,1;]"..
              "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";dst;5,1;2,2;]"
-            -- print('showing NORMAL formspec')
           else
             -- ghostly slots >:D
              formspec = formspec ..
              "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";gfuel;2,2.5;1,1;]"..
              "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";gsrc;2,0.5;1,1;]"..
              "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";gdst;5,1;2,2;]"
-            -- print('showing GHOSTS formspec')
           end
           local plls  = string.split(meta:get_string("pll"),';')
           for _,name in ipairs(plls) do
@@ -1760,8 +1727,6 @@ minetest.register_node("default:furnace_active", {
         end
     end,
         on_receive_fields = function(pos, formname, fields, sender)
-
---          print('act fur fields')
 
            if sender and sender:is_player() then
               default.sort_inv(sender,formname,fields,pos)
@@ -1851,14 +1816,10 @@ minetest.register_abm({
             meta:set_float("gsrc_totaltime", gcooked.time)
 
             if gcooked and gcooked.item and meta:get_float("gsrc_time") >= gcooked.time then
-                --print('-- check if there\'s room for output in "dst" list')
                 if inv:room_for_item("gdst", gcooked.item) then
-                   -- print('-- Put result in "dst" list')
                     inv:add_item("gdst", gcooked.item)
                     -- add 1 ecto to a dst slots if a ghost is cooking smth
                     inv:add_item("gdst", "ghosts:ectoplasm")
-                    --print('-- take stuff from "src" list')
-                    --print(gaftercooked.items[1]:get_name())
                     inv:set_stack("gsrc", 1, gaftercooked.items[1])
                 else
                     print("There's no place in furnace output for '"..cooked.item:to_string().."' (ghostly)")
@@ -1897,7 +1858,6 @@ minetest.register_abm({
             "list[current_player;main;0,4.2;9,3;9]"..
             "list[current_player;main;0,7.4;9,1;]")
             minetest.get_node_timer(pos):start(1,0.99)
-            --print('NORMAL burn have some fuel')
         end
         if meta:get_float("gfuel_time") < meta:get_float("gfuel_totaltime") then
             local gpercent = math.floor(meta:get_float("gfuel_time") / meta:get_float("gfuel_totaltime") * 100)
@@ -1928,7 +1888,6 @@ minetest.register_abm({
             "list[current_player;main;0,4.2;9,3;9]"..
             "list[current_player;main;0,7.4;9,1;]")
             minetest.get_node_timer(pos):start(1,0.99)
-            --print('GHOSTly burn have some fuel')
         end
         if meta:get_float("fuel_time") < meta:get_float("fuel_totaltime")
         or meta:get_float("gfuel_time") < meta:get_float("gfuel_totaltime")
@@ -1973,7 +1932,6 @@ minetest.register_abm({
             local node = minetest.get_node(pos)
             node.name = "default:furnace"
             minetest.swap_node(pos,node,2)
-            --print('NORMAL out of fuel')
         end
         if gfuel.time <= 0 then
             meta:set_string("infotext","Furnace out of fuel")
@@ -1981,9 +1939,7 @@ minetest.register_abm({
             local gnode = minetest.get_node(pos)
             gnode.name = "default:furnace"
             minetest.swap_node(pos,gnode,2)
-            --print('GHOSTly out of fuel')
         end
-        --if (fuel.time <= 0 and cooked.item:is_empty()) or (gfuel.time <= 0 and gcooked.item:is_empty()) then return end
        if (fuel.time <= 0 and gfuel.time <= 0 ) then return end
 
         if cooked.item:is_empty() then
@@ -1994,7 +1950,6 @@ minetest.register_abm({
                 node.name = "default:furnace"
                 minetest.swap_node(pos,node,2)
             end
-            --print('NORMAL out of items')
         end
         if gcooked.item:is_empty() then
             if gwas_active then
@@ -2004,7 +1959,6 @@ minetest.register_abm({
                 gnode.name = "default:furnace"
                 minetest.swap_node(pos,gnode,2)
             end
-            --print('GHOSTly out of items')
         end
         if cooked.item:is_empty() and gcooked.item:is_empty() then return end
 
@@ -2023,11 +1977,6 @@ minetest.register_abm({
 
             inv:set_stack("gfuel", 1, gafterfuel.items[1])
         end
-
-        --print("fuel_totaltime = " .. fuel.time)
-        --print("fuel_time = " .. 0)
-        --print("gfuel_totaltime = " .. gfuel.time)
-        --print("gfuel_time = " .. 0)
     end,
 
 })
@@ -2035,8 +1984,6 @@ minetest.register_abm({
 minetest.register_node("default:cobble", {
     description = "Cobblestone",
     tiles = {"default_cobble.png"},
-    is_ground_content = true,
-
     groups = {cracky=default.dig.cobble, stone=2},
     sounds = default.node_sound_stone_defaults(),
 })
@@ -2044,7 +1991,6 @@ minetest.register_node("default:cobble", {
 minetest.register_node("default:mossycobble", {
     description = "Mossy Cobblestone",
     tiles = {"default_mossycobble.png"},
-    is_ground_content = true,
     drop = 'default:cobble',
     groups = {cracky=default.dig.cobble},
     sounds = default.node_sound_stone_defaults(),
@@ -2080,8 +2026,6 @@ minetest.register_node("default:diamondblock", {
 minetest.register_node("default:obsidian", {
     description = "Obsidian",
     tiles = {"default_obsidian.png"},
-    is_ground_content = true,
-
     sounds = default.node_sound_stone_defaults(),
     groups = {cracky=default.dig.obsidian},
 })
@@ -2237,7 +2181,6 @@ minetest.register_node("default:snowblock", {
     description = "Snow Block",
     tiles = {"default_snow.png"},
     is_ground_content = true,
-
     groups = {crumbly=default.dig.sand,cracky=default.dig.sandstone,snappy=default.dig.wool, oddly_breakable_by_hand=3},
     sounds = default.node_sound_dirt_defaults({
         footstep = {name="default_grass_footstep", gain=0.4},
@@ -2257,7 +2200,6 @@ minetest.register_node("default:workbench", {
     tiles = {"workbench_top.png", "workbench_side.png"},
     groups = {choppy=default.dig.wood,flammable=3},
     sounds = default.node_sound_wood_defaults(),
-    is_ground_content = true,
     on_construct = function(pos)
        local meta = minetest.get_meta(pos)
        meta:set_string("formspec",
@@ -2314,3 +2256,12 @@ minetest.register_alias("default:papyrus","default:sugar_cane")
 minetest.register_alias("default:coal_lump","default:coal")
 minetest.register_alias("default:fence_wood","default:fence")
 minetest.register_alias("default:sign_wall","default:sign")
+
+-- make all nodes w/o is_ground_content unaffected by mapgen
+minetest.after(0,function(dtime)
+    for cou,def in pairs(minetest.registered_nodes) do
+        if not def.is_ground_content then
+           minetest.override_item(def.name, {is_ground_content=false,})
+        end
+    end
+end)

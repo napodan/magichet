@@ -1,2 +1,4 @@
-This mod changes the default map generation: it changes the way ores are placed, add new biomes and villages.
-Note: do NOT use it in an already generated world!!!
+This mod adds villages to ANY mapgen.
+(c) 4aiman, Nore 2014.
+Credits: Many thanks to Nore for his "mg" mod!
+Note: you CAN use it in an already generated world!!!

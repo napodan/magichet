@@ -178,9 +178,9 @@ Efficienty is calculated based on material and % of "finishness" of a structure.
 
 #####Example:
 
-	If a structure is 90% finished and is made of mese then you'll be
-	reincarnated with the probability of 90% and every item you had before your
-	death will be decreased in count or durability left.
+        If a structure is 90% finished and is made of mese then you'll be
+        reincarnated with the probability of 90% and every item you had before your
+        death will be decreased in count or durability left.
 
 So, it's in your best interest to reincarnate in some finished structure made
 of diamond blocks.
@@ -237,7 +237,7 @@ or her life. This, however, won't give you any directions, just the distance.
 Eventually there will be clerics and black mages that can either heal or kill
 you with magic. Maybe chat commands would be a way to cadt some spells.
 
-Being beta there's a lot of debug comands too. I'm not going to remove 
+Being beta there's a lot of debug comands too. I'm not going to remove
 them until some certain point deeper in the development.
 
 ###II-5 Awards
@@ -314,7 +314,7 @@ But maybe there ARE some cases when redistribution would help? ;)
 
 ###II-8 Vehicles
 
-Boats, cars, jetpacks, helicopters and even UFOs! All are subject to be 
+Boats, cars, jetpacks, helicopters and even UFOs! All are subject to be
 included. Find recipes on your own ;)
 
 ###II-10 Industry
@@ -324,7 +324,7 @@ Well, something like that is INBUILT in this game. That was made so one would
 decide whether he's techie or "highly-spirited".
 
 However, there are some new things - feel free to find which ;)
-Some of BuildCraft features are also to be introduced. 
+Some of BuildCraft features are also to be introduced.
 
 
 ###II-9 Inventory tools
@@ -340,7 +340,7 @@ you lack those.
 ###II-10 Mobs
 
 Some MC-like mobs are avaiilable: chickens, cows, sheeps and pigs.
-There are also MT-only mobs: Oerkki, DungeonMaster, Stone, Sand and Dirt 
+There are also MT-only mobs: Oerkki, DungeonMaster, Stone, Sand and Dirt
 Monsters, Rats, Tree Monster.
 
 All the above are subject to be shaped and balanced.
@@ -354,7 +354,7 @@ Farming is rather inferior ATM. Currently there are: wheat, pumpkins,
 carrots, potatos, strawberries, onions, cotton. Melons are the subject
 to be added, as well as other MC-like crops.
 
-Fertilizer can be crafted too. 
+Fertilizer can be crafted too.
 
 
 
@@ -406,6 +406,7 @@ Anyway, there quite a lot of them and the list is being changed and if we are to
 **xyz** for sethome, xpane and other mods<br />
 **metalstache** for specialties mod<br />
 **Kilarin** and his son for explorer tools concept<br />
+**sfan5**, **Anthony Zhang** (Uberi/Temperest), **Brett O'Donnell** (cornernote) for awesome worldedit functionality<br />
 
 ...and many others not listed here - tell me if you want someone's name to take
 it's rightful place in the list above.
@@ -418,8 +419,8 @@ VI - License
 ------------
 
 **Beta** is here!
-All stuff in /mods has become GPLv3 if that's possible. 
-If it isn't for some mod - that is the subject to be replaced by my own 
+All stuff in /mods has become GPLv3 if that's possible.
+If it isn't for some mod - that is the subject to be replaced by my own
 somewhat similar mod written/rewritten from scratch.
 
 That means that:

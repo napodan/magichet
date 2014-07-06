@@ -1,6 +1,17 @@
 Most recent changes
 ===================
-####*"The "Villages Update":
+
+####"The Sleepy Update":
+    + new fixes to villages generation
+    + "remember" al generated villages (per world)
+    + colourful beds
+    + exposed player data through default.*
+    + "new-style" sorting buttons in pll inv (like everywhere else)
+    + new approach to player physics: now easy-stackable!
+    ~ removed strange portions of code @ *player_join*\'s
+
+####"The "Villages Update":
+
     = restructured TODOs (-,~,+)
     + small fixes to furnaces
     + made some nodes invulnerable to mapgen v7
@@ -25,6 +36,8 @@ TODOs
 
 Engine (not publicly available yet)
 ------
+    + nearly disabled fall damage (50+ nodes)
+    + new speed-dependent FOV
     + forbid console_key to close the console
     + make "Return" to close the console
     - move console to the bottom of the screen
@@ -33,6 +46,11 @@ Engine (not publicly available yet)
 
 Game
 ----
+    - remove func duplicates
+    - generate rubber trees with LVM
+    - beds in villages
+    - rnd loot in chests (villages, dungeons)
+    - merge as many globalstep loops as possible
     - fix "SetNode ERROR" spamming the console
     - edit "scm" files
     - proper on_blast for every node (!)

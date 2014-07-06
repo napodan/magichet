@@ -151,9 +151,10 @@ local  tform = "size[9,9.5]"..   -- funny, considering I'm a Pascal programmer )
             "bgcolor[#bbbbbb;false]"..
             "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
 
-            "button[6.6,-0.0;0.8,0.5;sort_horz;=]"..
-            "button[7.4,-0.0;0.8,0.5;sort_vert;||]"..
-            "button[8.2,-0.0;0.8,0.5;sort_norm;Z]" ..
+            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
+            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
+            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
+            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
 
                "image_button[1,2;1,1;enchantment_reload.png;refresh;;false;false;enchantment_reload2.png]"..
                "label[0.25,0;Item to enchant]"..
@@ -997,6 +998,9 @@ end)
 --
 -- Anyway, this thing keeps track of applied chants. So every moment ingame we
 -- are able to check pchants[pll] and act accordinggly
+
+local last_gravity = {}
+
 minetest.register_globalstep(function(dtime)
     local players = minetest.get_connected_players()
     for j,player in ipairs(players) do
@@ -1015,29 +1019,17 @@ minetest.register_globalstep(function(dtime)
             end -- to turn on/off effects
             -- set this to nill when need to update chants!
         end
---[[
-        if not minetest.get_item_group(itemname, 'armor_use')
-        or not minetest.registered_tools[itemname]
-        then
-           return
-        end
-]]--
 
---        local grav = false
-
-        if  not pchants["Antigravity 1"][pll]
+        if last_gravity[pll]
+        and not pchants["Antigravity 1"][pll]
         and not pchants["Antigravity 2"][pll]
         and not pchants["Antigravity 3"][pll]
         and not pchants["Antigravity 4"][pll]
         and not pchants["Antigravity 5"][pll]
-        and not itemname=='jetpack:jet'
         then
-            -- if it's not antigravity then set gravity modifier to 1
-            if isghost and isghost[pll] then
-                player:set_physics_override({ gravity = 1*ggm,})
-            else
-                player:set_physics_override({ gravity = 1,})
-            end
+            local ph = default.player_physics[pll]
+            default.ph_override(player, {jump = ph.jump - last_gravity[pll]})
+            last_gravity[pll] = nil
         end
 
         local real_leechers = 0
@@ -1045,22 +1037,17 @@ minetest.register_globalstep(function(dtime)
             -- update boons only if there was a change!
             if pchants[boon] and not pchants[boon][pll] then
                if boon:find('Antigravity') then
-                   print(player.grav)
-          --        grav = true
-                  local lv = string.match(boon,"%d+")
-                  if not itemname=='jetpack:jet' then
-                  if isghost[pll] then
-                     player:set_physics_override({ gravity = 1-math.max((ggm+0.1*tonumber(lv)),0.9) ,})
-                  else
-                     player:set_physics_override({ gravity = 1-math.max((0.1*tonumber(lv)),0.9),})
+                  if not last_gravity[pll] then
+                    local lv = string.match(boon,"%d+")
+                    local ph = default.player_physics[pll]
+                    default.ph_override(player, {jump = ph.jump + 0.25*tonumber(lv)})
+                    last_gravity[pll] = 0.25*tonumber(lv)
                   end
-                  end
-
                elseif boon:find('Aqualung') then
                   local air = player:get_breath()
                   if air <10 then
                      local lv = string.match(boon,"%d+")
-                     local do_breath = ((lv/50) > math.random())
+                     local do_breath = ((lv/10) > math.random())
                      if do_breath then player:set_breath(air+1) end
                   end
 
@@ -1087,97 +1074,73 @@ minetest.register_globalstep(function(dtime)
                   pchants[boon][pll] = true
             end
 
-              -- print(leech_timers[pll])
-              -- print(boon)
                -- leeching on statuses!
                local boontp = string.sub(boon,1,-3)
                local boonlv = tonumber(string.sub(boon,-1))
-
                if boonlv>2 then
-                  --boonlv = boonlv-2
-
-               local pos = player:getpos()
-               local controls = player:get_player_control()
-
-               -- if player holds down right mouse button and aux1 then distribute the effect
-               if pos and controls.RMB and controls.aux1 then
-                  local leechers = minetest.get_objects_inside_radius(pos, boonlv+2)
-
-                  -- track seeding time!
-                  if not leech_timers[pll]
-                  then leech_timers[pll] = dtime
-                  else leech_timers[pll] = leech_timers[pll] + dtime
-                  end
-
-                -- update leechers count once per second
-                  if leech_timers[pll]>1 then
-                      leech_timers[pll] = 0
-                      for num,leecher in pairs(leechers) do
-                        if leecher:is_player() then
-                         local lname = leecher:get_player_name()
-                           if lname ~= pll then
-                              real_leechers = real_leechers +1
-                              -- minetest.chat_send_all(lname..' leeches '..pll .. ' on ' .. boon)
-
-                              -- grant leecher the very same effect but 2 levels lower
-                              pchants[boontp..' '..tostring(boonlv-2)][lname] = true
-                           end
+                  local pos = player:getpos()
+                  local controls = player:get_player_control()
+                  -- if player holds down right mouse button and aux1 then distribute the effect
+                  if pos and controls.RMB and controls.aux1 then
+                     local leechers = minetest.get_objects_inside_radius(pos, boonlv+2)
+                     -- track seeding time!
+                     if not leech_timers[pll]
+                     then leech_timers[pll] = dtime
+                     else leech_timers[pll] = leech_timers[pll] + dtime
+                     end
+                     -- update leechers count once per second
+                     if leech_timers[pll]>1 then
+                        leech_timers[pll] = 0
+                        for num,leecher in pairs(leechers) do
+                            if leecher:is_player() then
+                               local lname = leecher:get_player_name()
+                               if lname ~= pll then
+                                  real_leechers = real_leechers +1
+                                  -- grant leecher the very same effect but 2 levels lower
+                                  pchants[boontp..' '..tostring(boonlv-2)][lname] = true
+                               end
+                            end
+                           -- add wear
                         end
-                       -- add wear
-                      end
-                      minetest.chat_send_all(real_leechers)
-                      -- regardless of material wear the tool
-                      wstack:add_wear(400*real_leechers)
-
-                      player:set_wielded_item(wstack)--player:inv:set_stack("itm", 1, stack)
+                        minetest.chat_send_all(real_leechers)
+                        -- regardless of material wear the tool
+                        wstack:add_wear(400*real_leechers)
+                        player:set_wielded_item(wstack)--player:inv:set_stack("itm", 1, stack)
+                     end
                   end
                end
         end
 
-
-        end
-
-
 -- remove boons
         for j,boon in pairs(pchants) do
-
             local boontp = string.sub(j,1,-3)
             local boonlv = tonumber(string.sub(j,-1))
-           -- print(enplhuds[pll][boontp])
             if (enplhuds[pll][boontp] and not pchants[j][pll])then
             player:hud_remove(enplhuds[pll][boontp])
             enplhuds[pll][boontp]=nil
             end
         end
 
-
 -- add them
-      --  hudtime = hudtime+dtime
-      --  if hudtime>hudtimemax then
-      --  hudtime = 0
         local numhud = 0
         for j,boon in ipairs(boons) do
-              local boontp = string.sub(boon,1,-3)
-              local boonlv = tonumber(string.sub(boon,-1))
-              if pchants[boon] and pchants[boon][pll] and not enplhuds[pll][boontp] then
-                 numhud = numhud +1
-                  -- if not enplhuds[pll] then enplhuds[pll]={} end
-                  yy = numhud
-                  if yy>7 then yy = yy-7 end
-                  if yy>7 then yy = yy-7 end
-                  if yy>7 then yy = yy-7 end
-                  enplhuds[pll][boontp] = player:hud_add({
-                                                          hud_elem_type = "image",
-                                                          position = {x=0, y=0.20},
-                                                          offset = {x=10+40*math.floor((numhud-1)/7), y=yy*40},
-                                                          alignment = {x=1, y=1},
-                                                          scale = {x=1, y=1},
-                                                          --number = 0xFFFFFF ,
-                                                          text = "enchantment_".. string.gsub(boontp, ' ', '_') ..".png^enchantment_".. boonlv ..".png^",
-                                                        })
-              end
+            local boontp = string.sub(boon,1,-3)
+            local boonlv = tonumber(string.sub(boon,-1))
+            if pchants[boon] and pchants[boon][pll] and not enplhuds[pll][boontp] then
+               numhud = numhud +1
+               -- if not enplhuds[pll] then enplhuds[pll]={} end
+               yy = numhud
+               while yy>7 do yy = yy-7 end
+               enplhuds[pll][boontp] = player:hud_add({
+                                                       hud_elem_type = "image",
+                                                       position = {x=0, y=0.20},
+                                                       offset = {x=10+40*math.floor((numhud-1)/7), y=yy*40},
+                                                       alignment = {x=1, y=1},
+                                                       scale = {x=1, y=1},
+                                                       text = "enchantment_".. string.gsub(boontp, ' ', '_') ..".png^enchantment_".. boonlv ..".png^",
+                                                      })
+           end
         end
-------------------------------------------------------------------------------------
         wielded_chant[pll] = itemname
     end
 end)

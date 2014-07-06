@@ -1,7 +1,7 @@
 buildings = {
         {sizex= 7,      sizez= 7,       yoff= 0,        ysize= 9,       scm="house", orients={2}},
-        {sizex= 9,      sizez= 9,       yoff= 0,        ysize= 2,       scm="wheat_field"},
-        {sizex= 9,      sizez= 9,       yoff= 0,        ysize= 2,       scm="cotton_field"},
+        {sizex= 9,      sizez= 9,       yoff=-1,        ysize= 3,       scm="wheat_field"},
+        {sizex= 9,      sizez= 9,       yoff=-1,        ysize= 3,       scm="cotton_field"},
         {sizex= 3,      sizez= 3,       yoff= 1,        ysize= 4,       scm="lamp", weight=1/5, no_rotate=true},
         {sizex= 4,      sizez= 4,       yoff=-5,        ysize=11,       scm="well", no_rotate=true, pervillage=1},
         {sizex= 7,      sizez= 7,       yoff= 0,        ysize=11,       scm="fountain", weight=1/4, pervillage=3},
@@ -38,7 +38,7 @@ for i = 1, 200 do
         rair2[i] = rair
 end
 local road_scm = {rstone2, rgravel2, rair2, rair2, rair2, rair2, rair2, rair2}
-buildings["road"] = {yoff = -1, ysize = 8, scm = road_scm}
+buildings["road"] = {yoff = -2, ysize = 8, scm = road_scm}
 
 local rwall = {{minetest.get_content_id("default:stonebrick")}}
 local wall = {}

@@ -43,35 +43,54 @@ minetest.register_craft({
   },
 })
 
+local need_to_stop = {}
 
 minetest.register_globalstep(function(dtime)
       local players=minetest.get_connected_players()
       for i,player in ipairs(players) do
+          local pll = player:get_player_name()
           local pos = player:getpos()
           local inv = player:get_inventory()
           local wstack = inv:get_stack("torso",1)
-          if wstack:is_empty() then
-             player:set_physics_override({gravity=1,speed=1})
-             return
-          end
           local wstackn = wstack:get_name()
-          local pll = player:get_player_name()
+          if wstack:is_empty() or wstackn~='jetpack:jet' then
+              --print('no pack')
+              if need_to_stop[pll] then
+                 local ph = default.player_physics[pll]
+                 default.ph_override(player, {gravity=1,speed=ph.speed/1.2})
+              need_to_stop[pll] = nil
+              end
+              return
+          end
           pos.y = pos.y-1
           local node = minetest.registered_nodes[minetest.get_node(pos).name]
           local stack = wstack:to_table()
           local chr = charge.get_charge(stack)
           local max_charge = get_item_field(stack.name, "max_charge")
-          if chr>5 then
+          if chr>10 then
               if isghost and not isghost[pll] then
                   if node and not node.walkable and wstackn=='jetpack:jet' and pos.y<128 then
                      if player:get_player_control().jump then
-                          player:set_physics_override({gravity=-0.4,speed=1.2})
+                          if not need_to_stop[pll] then
+                             local ph = default.player_physics[pll]
+                             default.ph_override(player, {gravity=-0.4,speed=(ph.speed or 1) * 1.2})
+                             need_to_stop[pll] = true
+                          else
+                             default.ph_override(player, {gravity=-0.4})
+                          end
                           local nchr = math.max(1,chr-5)
                           charge.set_charge(stack,nchr)
                           charge.set_wear(stack,nchr,max_charge)
                           inv:set_stack("torso",1,stack)
                      else
-                        player:set_physics_override({gravity=0.4,speed=1.2})
+                          --print('lessened gravity')
+                          if not need_to_stop[pll] then
+                             local ph = default.player_physics[pll]
+                             default.ph_override(player, {gravity=0.4,speed=(ph.speed or 1) * 1.2})
+                             need_to_stop[pll] = true
+                          else
+                             default.ph_override(player, {gravity=0.4})
+                          end
                           local nchr = math.max(1,chr-2)
                           charge.set_charge(stack,nchr)
                           charge.set_wear(stack,nchr,max_charge)
@@ -80,7 +99,10 @@ minetest.register_globalstep(function(dtime)
                   end
               end
           else
-              player:set_physics_override({gravity=1,speed=1})
+              if need_to_stop[pll] then
+              default.ph_override(player, {gravity=1,speed=ph.speed/1.2})
+              need_to_stop[pll] = nil
+              end
           end
       end
 end)

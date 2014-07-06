@@ -222,7 +222,7 @@ minetest.register_biome({
 
 --= Register Biome Decoration (Schematics)
 
--- Banana Tree
+--[[ Banana Tree
 minetest.register_decoration({
     deco_type = "schematic",
     place_on = "ethereal:grove_dirt",
@@ -569,3 +569,4 @@ minetest.register_on_generated(function(minp, maxp, seed)
     end
 end)
 
+]]--

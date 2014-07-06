@@ -32,9 +32,8 @@ minetest.register_alias("mapgen_ice", "default:ice")
 --
 -- Ore generation
 --
---[[
+
 -- sheets of ore above the ground
--- sheets make mg_v7 explode (((
 minetest.register_ore({
     ore_type       = "scatter",
     ore            = "default:stone_with_coal",
@@ -430,7 +429,7 @@ minetest.register_ore({
     height_max     = 0,
     height_min     = -20,
 })
-]]--
+
 
 function default.make_papyrus(pos, size)
     for y=0,size-1 do

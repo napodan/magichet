@@ -3,7 +3,7 @@ local stmr = 0
 
 -- init aeons tables
 local aeons = {['vanilla']={},              --     -64.....256
-               ['extra nodes']={},          --   -1000.....256
+               ['extra nodes']={},          --   -1000.....256 build a mesecon-driven gate (2x2) or create and place over 100 mesecons
                ['something strange']={},    --   -2000.....256
                ['ancient civilization']={}, --   -5000.....256
                ['hell is underneath']={},   --   -8000.....256
@@ -55,10 +55,10 @@ end
 function find_a_pos()
     local pos = {x=0,y=0,z=0}
     if global_spawnpoint then
-       pos.x = global_spawnpoint.x    
+       pos.x = global_spawnpoint.x
        pos.y = global_spawnpoint.y
-       pos.z = global_spawnpoint.z    
-    end       
+       pos.z = global_spawnpoint.z
+    end
     local vm = minetest.get_voxel_manip()
     local minp,maxp = vm:read_from_map({x=pos.x,y=0,z=pos.z},{x=pos.x,y=100,z=pos.z})
     local data = vm:get_data()
@@ -83,7 +83,7 @@ end
 -- teleport to spawn if tried to acces inaccessible :)
 local stepp = 0
 minetest.register_globalstep(function(dtime)
-   
+
    -- save data every save_timer seconds
    stmr = stmr + dtime
    if stmr > save_timer then
@@ -97,9 +97,9 @@ minetest.register_globalstep(function(dtime)
          output:write(o1 .. "\n")
          output:write("aeons = minetest.deserialize('" .. o2 .. "')\n")
          io.close(output)
-      end                    
+      end
    end
-   
+
    stepp=stepp+dtime
    if stepp>0.5 then
       stepp=0
@@ -107,7 +107,7 @@ minetest.register_globalstep(function(dtime)
       for i,player in ipairs(players) do
           local pos = player:getpos()
           if pos then
-              local y = pos.y              
+              local y = pos.y
               local tp = nil
 
               if (not (y>-8000 and y<-5000)) and y<  -61 and not aeons['extra nodes'][pll]          then tp = 'extra nodes' end
@@ -145,7 +145,7 @@ minetest.register_globalstep(function(dtime)
 
                  -- teleport if nothing prevents from it
                  local spawn = find_a_pos()
-                 player:setpos({x=spawn.x,   y=spawn.y, z=spawn.z})                 
+                 player:setpos({x=spawn.x,   y=spawn.y, z=spawn.z})
 
               end
           end

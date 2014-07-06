@@ -86,6 +86,7 @@ state            = {}  -- -1=being idle, 0=walking, 1=sprinting, 2=swimming, 3=j
                        -- breaking a block=9, regenerating the last 2 HPs=10
 hungerhud        = {}  -- hunger huds IDs
 hungerhudb       = {}  -- hunger huds' bgs IDs
+need_to_update_ph = {}
 --eating           = {}  -- are you chewing?
 --eat_timer        = {}  -- and... for how long you have been doing this?
 
@@ -96,7 +97,7 @@ local ebr = 0.025     -- digging anything               +
 local ejp = 0.2       -- jumping                        +
 local eat = 0.3       -- attacking                      -
 local edm = 0.3       -- getting hurt                   +
-local ef1 = 0.5       -- food poison                    -
+local ef1 = 0.5       -- food poison                    +
 local ef2 = 1.5       -- food poison                    -
 local esj = 0.8       -- jumping while sprinting        +
 local erg = 3.0       -- regenerating the last 2 HP     +
@@ -363,6 +364,7 @@ local function eatbar(item)
 end
 
 -- time based events like: status changes, damage & distance calculation & applying damage
+minetest.after(0, function(dtime)
 minetest.register_globalstep(function(dtime)
    if save_time > max_save_time then
       save_time=0
@@ -373,6 +375,7 @@ minetest.register_globalstep(function(dtime)
    local players = minetest.get_connected_players()
    for i,player in ipairs(players) do
        local pll = player:get_player_name()
+       --print(minetest.serialize(default.player_physics[pll]))
        local pos = player:getpos()
        local hp  = player:get_hp()
        local control = player:get_player_control()
@@ -435,54 +438,34 @@ minetest.register_globalstep(function(dtime)
        local dist = distance(oldpos[pll],pos) -- walked distance;
 
        -- "sprint" mod's code below
-        if player:get_player_control().up == true and sprinting[pll] == nil then
-            minetest.after(0.10, function()
-                if player:get_player_control().up == false then
-                    minetest.after(0.10, function()
-                        if player:get_player_control().up == true then
-                            if not isghost or not isghost[pll] then  -- support for my ghosts mod
-                                player:set_physics_override({
-                                                speed = 1.7, -- multiplier to default value
-                                                jump = 1.0, -- multiplier to default value
-                                                gravity = 1.0, -- multiplier to default value
-                                                sneak = true, -- whether player can sneak
-                                                sneak_glitch = false, -- whether player can use the sneak glitch
-                                               })
-                            else
-                                player:set_physics_override({
-                                                speed = 1, -- multiplier to default value
-                                                jump = 1.1, -- multiplier to default value
-                                                gravity = 0.2, -- multiplier to default value
-                                                sneak = false, -- whether player can sneak
-                                                sneak_glitch = true, -- whether player can use the sneak glitch
-                                               })
-                            end
+        if player:get_player_control().up == true and sprinting[pll] == nil and not need_to_update_ph[pll] then
+            minetest.after(0.20, function()
+                if not player:get_player_control().up then
+                    minetest.after(0.20, function()
+                        if player:get_player_control().up and not need_to_update_ph[pll] then
+                           local ph = default.player_physics[pll]
+                                default.ph_override(player,{
+                                                            speed = ph.speed * 2,
+                                                            jump =  ph.jump * 1.1,
+                                                           })
+                                need_to_update_ph[pll] = true
                             sprinting[pll] = true
+                            print('4hunger on sprint +')
                         end
                     end)
                 end
             end)
-        elseif player:get_player_control().up == false and sprinting[pll] == true then
-            minetest.after(0.1, function()
-                if player:get_player_control().up == false then
+        elseif not player:get_player_control().up and need_to_update_ph[pll] and sprinting[pll] then
+            minetest.after(0.2, function()
+                if not player:get_player_control().up and need_to_update_ph[pll] then
                     sprinting[pll] = nil
-                    if not isghost or not isghost[pll] then
-                        player:set_physics_override({
-                                        speed = 1.0, -- multiplier to default value
-                                        jump = 1.0, -- multiplier to default value
-                                        gravity = 1.0, -- multiplier to default value
-                                        sneak = true, -- whether player can sneak
-                                        sneak_glitch = false, -- whether player can use the sneak glitch
-                                       })
-                    else
-                        player:set_physics_override({
-                                        speed = 0.5, -- multiplier to default value
-                                        jump = 1.05, -- multiplier to default value
-                                        gravity = 0.1, -- multiplier to default value
-                                        sneak = false, -- whether player can sneak
-                                        sneak_glitch = true, -- whether player can use the sneak glitch
-                                       })
-                    end
+                    local ph = default.player_physics[pll]
+                    default.ph_override(player,{
+                                                 speed = ph.speed / 2,
+                                                 jump = ph.jump / 1.1,
+                                                })
+                    need_to_update_ph[pll] = false
+                    print('4hunger on sprint -')
                 end
             end)
         end
@@ -584,6 +567,7 @@ minetest.register_globalstep(function(dtime)
           player:hud_change(hungerhud[pll],"number",food_level[pll])
        end
    end
+end)
 end)
 
 

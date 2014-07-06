@@ -7,7 +7,7 @@ function find_base_pos(xx,yy,zz)
     local pos = {x=xx,y=yy,z=zz}
    -- minetest.forceload_block(pos)
     local vm = minetest.get_voxel_manip()
-    local minp,maxp = vm:read_from_map({x=xx,y=-20,z=zz},{x=xx,y=yy+20,z=zz})
+    local minp,maxp = vm:read_from_map({x=xx,y=-10,z=zz},{x=xx,y=yy+40,z=zz})
     local data = vm:get_data()
     local area = VoxelArea:new{MinEdge=minp, MaxEdge=maxp}
     --print(minetest.pos_to_string(minp).. ' : ' ..minetest.pos_to_string(maxp))

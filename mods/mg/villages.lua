@@ -30,11 +30,15 @@ function village_at_point(minp, noise1)
 
 
         local size = pr:next(20, 40)
-        local height = pr:next(5,20)
+        local height = pr:next(-5,50)
         local pp = find_base_pos(x,height,z)
+        local cnt = 1
         while pp.y<0 do
-           height = pr:next(5,20)
+           --print(pp.y)
+           height = pr:next(-5,50)
            pp = find_base_pos(x,height,z)
+           cnt=cnt+1
+           if cnt>4 then return 0,0,0,0 end
         end
     --    print('Here\'s "village at point" pos:'..minetest.pos_to_string(pp))
         height = pp.y
@@ -258,7 +262,7 @@ local function generate_bpos(vx, vz, vs, vh, pr, vnoise)
         return l
 end
 
-local function generate_building(pos, minp, maxp, data, a, pr, extranodes)
+local function generate_building(pos, minp, maxp, data, a, pr, extranodes, stop)
        local oldpos = {}
        oldpos.x = pos.x
        oldpos.y = pos.y
@@ -288,20 +292,21 @@ local function generate_building(pos, minp, maxp, data, a, pr, extranodes)
         -- do NOT spawn a building if the base_pos is too far...
         local abss = math.abs(pos.y-oldpos.y)
         if abss>10 then return end
-        print('spawning ' .. building ..' at ' .. minetest.pos_to_string(pos) .. '; diff = '..abss)
+        --print('spawning ' .. building ..' at ' .. minetest.pos_to_string(pos) .. '; diff = '..abss)
+        if stop then return end
         local t
-        if building~='well' and building~='road' and building~='unknown building' then
+        if building~='well' and building~='road' --[[and building~='unknown building']]  then
 
-           for x = -2, pos.bsizex+1 do
-               for z = -2, pos.bsizez+1 do
+           for x = -1, pos.bsizex+0 do
+               for z = -1, pos.bsizez+0 do
                    ax, ayy, az = pos.x+x, pos.y-1, pos.z+z
                    while (data[a:index(ax, ayy, az)] == c_water
                    or data[a:index(ax, ayy, az)] == c_air
                    or data[a:index(ax, ayy, az)] == c_ignore)
                    do
                       ayy=ayy-1
-                      -- don't search after 20 nodes below
-                      if ayy+20<pos.y-1 then break end
+                      -- don't search after 10 nodes below
+                      if ayy+10<pos.y-1 then break end
                    end
 
                    local filler = data[a:index(ax, ayy, az)]
@@ -313,13 +318,13 @@ local function generate_building(pos, minp, maxp, data, a, pr, extranodes)
 
                for y = 1, binfo.ysize+1 do
                        ax, ay, az = pos.x+x, pos.y+y+binfo.yoff, pos.z+z
---                       if (math.abs(x)==1 or math.abs(z)==1) then
-  --                        if y==1 then data[a:index(ax, ay, az)] = c_cobble end
+                      -- if (math.abs(x)==1 or math.abs(z)==1) then
+                        --  if y==1 then data[a:index(ax, ay, az)] = c_cobble end
     --                      if y==2 then data[a:index(ax, ay, az)] = c_torch end
                           --table.insert(extranodes, {node={name="default:torch", param1=0, param2=0}, meta=nil, pos={x=ax, y=ay, z=az}}})
-      --                 else
+                      -- else
                           data[a:index(ax, ay, az)] = c_air
-        --               end
+                      -- end
                    end
                end
            end
@@ -333,6 +338,8 @@ local function generate_building(pos, minp, maxp, data, a, pr, extranodes)
                desert = true
             --  print('desert')
            end
+
+        local bed = false
         for x = 0, pos.bsizex-1 do
         for z = 0, pos.bsizez-1 do
         for y = 0, binfo.ysize-1 do
@@ -343,9 +350,9 @@ local function generate_building(pos, minp, maxp, data, a, pr, extranodes)
                --if (ax >= minp.x and ax <= maxp.x) and (ay >= minp.y and ay <= maxp.y) and (az >= minp.z and az <= maxp.z) then
                         t = scm[y+1][x+1][z+1]
                         if type(t) == "table" then
-                             --[[   if ay< 5 then
+--                                if ay< 5 then
                                   if desert then
-                                     if t.node.name=='default:wood' then t.node.name = 'default:desert_cobble' end
+                                     if t.node.name=='default:wood' then t.node.name = 'desert_uses:desert_cobble' end
                                      if t.node.name=='default:tree' then t.node.name = 'default:desert_stone' end
                                      if t.node.name=='stairs:stair_wood'  then t.node.name = 'stairs:stair_desert_stone' end
                                      if t.node.name=='stairs:slab_wood'  then t.node.name = 'stairs:slab_desert_stone' end
@@ -355,18 +362,19 @@ local function generate_building(pos, minp, maxp, data, a, pr, extranodes)
                                      if t.node.name=='stairs:stair_wood'  then t.node.name = 'stairs:stair_stone' end
                                      if t.node.name=='stairs:slab_wood'  then t.node.name = 'stairs:slab_stone' end
                                   end
-                                end
-]]
+
+                                --end
+
                                 table.insert(extranodes, {node=t.node, meta=t.meta, pos={x=ax, y=ay, z=az},})
                         else
                             if t ~= c_ignore then
-                                --if t == c_wood then
-                                 --  if desert then
-                                   --   t = c_desert_cobble
-                                  -- else
-                                  --    t = c_cobble
-                                  -- end
-                               -- end
+                                if t == c_wood then
+                                   if desert then
+                                      t = c_desert_cobble
+                                   else
+                                      t = c_cobble
+                                   end
+                                end
                                 data[a:index(ax, ay, az)] = t
                            end
                         end
@@ -403,7 +411,7 @@ function generate_village(vx, vz, vs, vh, minp, maxp, data, a, vnoise, to_grow)
         local seed = get_bseed({x=vx, z=vz})
         local pr_village = PseudoRandom(seed)
         local bpos = generate_bpos(vx, vz, vs, vh, pr_village, vnoise)
-        if maxp.y<5 then generate_walls(bpos, data, a, minp, maxp, vh, vx, vz, vs, vnoise) end
+        --if maxp.y<5 then generate_walls(bpos, data, a, minp, maxp, vh, vx, vz, vs, vnoise) end
         local pr = PseudoRandom(seed)
         for _, g in ipairs(to_grow) do
                 if pos_far_buildings(g.x, g.z, bpos) then
@@ -426,6 +434,8 @@ function generate_village(vx, vz, vs, vh, minp, maxp, data, a, vnoise, to_grow)
                   -- print(minetest.serialize(pos))
                    table.insert(generated,pos)
                    generate_building(pos, minp, maxp, data, a, pr_village, extranodes)
+              --  else
+                --   generate_building(pos, minp, maxp, data, a, pr_village, extranodes, true)
                 end
         end
         return extranodes

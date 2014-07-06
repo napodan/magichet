@@ -22,46 +22,48 @@ local function get_desc(item)
     return ""
 end
 
-minetest.register_globalstep(function(dtime)
-   local players = minetest.get_connected_players()
-   for i,player in ipairs(players) do
-       local pll = player:get_player_name()
-       local wstack = player:get_wielded_item():get_name()
-       local shift = player:get_player_control()['sneak']
-       local meta = player:get_wielded_item():get_metadata()
-       if tonumber(meta) == nil then meta='' end
-       local desc
-       if not shift then
-          desc = get_desc(wstack)
-          if #meta>0 then desc = desc .. ' ('.. meta ..')' end
-       else
-          desc = wstack
-       end
-       if dtimes[pll] then dtimes[pll]=dtimes[pll]+dtime else dtimes[pll]=0 end
-       if dtimes[pll]>dlimit then
-          if huds[pll] then player:hud_remove(huds[pll]) end
-          dtimes[pll]=dlimit+1
-       end
-       if wstack ~= wield[pll] then
-           wield[pll]=wstack
-           dtimes[pll]=0
-           if huds[pll]
-           then --hud_change(huds[pll], 'text', desc) doesn't work for me :`(
-                player:hud_remove(huds[pll])
-           end
-           local off = {x=0, y=-80}
-           if airhudmod then off.y=off.y-20 end
-           huds[pll] = player:hud_add({
-                                          hud_elem_type = "text",
-                                          position = {x=0.5, y=1},
-                                          offset = off,
-                                          alignment = {x=0, y=0},
-                                          number = 0xFFFFFF ,
-                                          text = desc,
-                                         })
-       end
+minetest.after(2, function(dtime)
+       minetest.register_globalstep(function(dtime)
+          local players = minetest.get_connected_players()
+          for i,player in ipairs(players) do
+              local pll = player:get_player_name()
+              local wstack = player:get_wielded_item():get_name()
+              local shift = player:get_player_control()['sneak']
+              local meta = player:get_wielded_item():get_metadata()
+              if tonumber(meta) == nil then meta='' end
+              local desc
+              if not shift then
+                 desc = get_desc(wstack)
+                 if #meta>0 then desc = desc .. ' ('.. meta ..')' end
+              else
+                 desc = wstack
+              end
+              if dtimes[pll] then dtimes[pll]=dtimes[pll]+dtime else dtimes[pll]=0 end
+              if dtimes[pll]>dlimit then
+                 if huds[pll] then player:hud_remove(huds[pll]) end
+                 dtimes[pll]=dlimit+1
+              end
+              if wstack ~= wield[pll] then
+                  wield[pll]=wstack
+                  dtimes[pll]=0
+                  if huds[pll]
+                  then --hud_change(huds[pll], 'text', desc) doesn't work for me :`(
+                       player:hud_remove(huds[pll])
+                  end
+                  local off = {x=0, y=-80}
+                  if airhudmod then off.y=off.y-20 end
+                  huds[pll] = player:hud_add({
+                                                 hud_elem_type = "text",
+                                                 position = {x=0.5, y=1},
+                                                 offset = off,
+                                                 alignment = {x=0, y=0},
+                                                 number = 0xFFFFFF ,
+                                                 text = desc,
+                                                })
+              end
 
-   end
+          end
+       end)
 end)
 
 print('[OK] 4itemnames loaded')

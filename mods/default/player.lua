@@ -81,19 +81,35 @@ default.player_register_model("character.x", {
     },
 })
 
-
 -- Player stats and animations
-local player_model = {}
-local player_textures = {}
-local player_anim = {}
-local player_sneak = {}
+default.player_model = {}
+default.player_textures = {}
+default.player_anim = {}
+default.player_sneak = {}
+default.player_sleep = {}
+-- contains only multipliers for default 1 1 1
+default.player_physics = {}
+-- would add speed, grav & jump
+default.player_status = {}
+default.player_vw = {}
+default.player_lpos = {}
+
+-- overrides physics of a player and STORES the values
+function default.ph_override(player, ph)
+   local pll = player:get_player_name()
+   for k,v in pairs(ph) do
+       default.player_physics[pll][k] = v
+   end
+   player:set_physics_override(default.player_physics[pll])
+   print(minetest.serialize(default.player_physics[pll]))
+end
 
 function default.player_get_animation(player)
     local name = player:get_player_name()
     return {
-        model = player_model[name],
-        textures = player_textures[name],
-        animation = player_anim[name],
+        model = default.player_model[name],
+        textures = default.player_textures[name],
+        animation = default.player_anim[name],
     }
 end
 
@@ -102,12 +118,12 @@ function default.player_set_model(player, model_name)
     local name = player:get_player_name()
     local model = models[model_name]
     if model then
-        if player_model[name] == model_name then
+        if default.player_model[name] == model_name then
             return
         end
         player:set_properties({
             mesh = model_name,
-            textures = player_textures[name] or model.textures,
+            textures = default.player_textures[name] or model.textures,
             visual = "mesh",
             visual_size = model.visual_size or {x=1, y=1},
         })
@@ -118,26 +134,26 @@ function default.player_set_model(player, model_name)
             visual = "upright_sprite",
         })
     end
-    player_model[name] = model_name
+    default.player_model[name] = model_name
 end
 
 function default.player_set_textures(player, textures)
     local name = player:get_player_name()
-    player_textures[name] = textures
+    default.player_textures[name] = textures
     player:set_properties({textures = textures,})
 end
 
 function default.player_set_animation(player, anim_name, speed)
     local name = player:get_player_name()
-    if player_anim[name] == anim_name then
+    if default.player_anim[name] == anim_name then
         return
     end
-    local model = player_model[name] and models[player_model[name]]
+    local model = default.player_model[name] and models[default.player_model[name]]
     if not (model and model.animations[anim_name]) then
         return
     end
     local anim = model.animations[anim_name]
-    player_anim[name] = anim_name
+    default.player_anim[name] = anim_name
     player:set_animation(anim, speed or model.animation_speed, animation_blend)
 end
 
@@ -159,6 +175,16 @@ end
 minetest.register_on_joinplayer(function(player)
     local inv = player:get_inventory()
     local pll = player:get_player_name()
+    default.player_physics[pll] = {}
+    default.ph_override(player,{speed = 1, gravity = 1, jump = 1, sneak = true, sneak_glitch = false})
+
+    default.player_vw[pll] = 0
+    default.player_lpos[pll] = player:getpos()
+    default.player_lpos[pll].y = default.player_lpos[pll].y -1
+
+    default.player_status[pll] = {fall = 0,}
+    -- default status is NO statuses at all
+    default.player_status[pll] = {}
 
     default.player_set_model(player, "character.x")
     default.player_set_inv_width(pll,9)
@@ -169,14 +195,9 @@ minetest.register_on_joinplayer(function(player)
             "size[9,8.5;true]"..
             "bgcolor[#bbbbbb;false]"..
             "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
-            --"size[9,12.5;]"..
-            --"list[detached:"..pll.."_sort;main;0,9.0;9,4]"..
 
-            --"bgcolor[#aa000000;true]"..
-            --"background[0,0;9.5,8.5;workbench_bg2.png;autoclip]"..
             "list[current_player;craft;5,1.0;2,1;1]"..
             "list[current_player;craft;5,2.0;2,1;4]"..
-
             "list[current_player;craftpreview;8,1.5;1,1;]"..
 
             "list[current_player;helm;0,0;1,1;]"..
@@ -187,9 +208,11 @@ minetest.register_on_joinplayer(function(player)
             "list[current_player;main;0,4.5;9,3;9]"..
             "list[current_player;main;0,7.7;9,1;]"..
 
-            "button[6.6,-0.0;0.8,0.5;sort_horz;=]"..
-            "button[7.4,-0.0;0.8,0.5;sort_vert;||]"..
-            "button[8.2,-0.0;0.8,0.5;sort_norm;Z]"..
+
+            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
+            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
+            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
+            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
             -- craft guide
             "image_button[1,0;1,1;inventory_plus_zcg.png;zgc;]"
         )
@@ -367,26 +390,73 @@ end)
 
 minetest.register_on_leaveplayer(function(player)
     local name = player:get_player_name()
-    player_model[name] = nil
-    player_anim[name] = nil
-    player_textures[name] = nil
+    default.player_model[name] = nil
+    default.player_anim[name] = nil
+    default.player_textures[name] = nil
 end)
 
 -- Localize for better performance.
 local player_set_animation = default.player_set_animation
 
+-- distance finder
+function default.distance(pos1,pos2)
+    if not pos1 or not pos2 then
+       return 0
+    end
+    return math.abs(pos1.y - pos2.y)
+end
+
 -- Check each player and apply animations
 minetest.register_globalstep(function(dtime)
     for _, player in pairs(minetest.get_connected_players()) do
-        local name = player:get_player_name()
-        local model_name = player_model[name]
+        local pll = player:get_player_name()
+        local posn = player:getpos()
+        local poso = default.player_lpos[pll]
+        posn.y = posn.y-0.5
+        local node1,node2 = minetest.get_node(poso).name, minetest.get_node(posn).name
+
+        if node1 == 'air' then
+            if node2 == 'air' then
+               if poso.y>posn.y then
+                  default.player_vw[pll] = default.player_vw[pll]+default.distance(poso, posn)
+               end
+            else
+               local wn = 0
+               local below = {x=posn.x, y=posn.y, z=posn.z}
+               while minetest.get_node(below).name:find('water') do
+                     below.y=below.y-1
+                     wn = wn+1
+               end
+                  if default.player_vw[pll]>3+wn*10+(default.player_status[pll].fall or 0) then
+                     player:set_hp(player:get_hp()- math.floor(default.player_vw[pll])+3)
+                  end
+                  print('felt down from ' .. default.player_vw[pll] .. ' nodes.')
+                  default.player_vw[pll] = 0
+
+            end
+        else
+            default.player_vw[pll] = 0
+        end
+        default.player_lpos[pll] = posn
+
+        local model_name = default.player_model[pll]
         local model = model_name and models[model_name]
         if model then
             local controls = player:get_player_control()
             local walking = false
             local animation_speed_mod = model.animation_speed or 30
 
-                        if isghost and isghost[name] then animation_speed_mod = animation_speed_mod / 2 end
+                        if isghost and isghost[pll] then animation_speed_mod = animation_speed_mod / 2 end
+
+             if default.player_sleep[pll] then
+               if controls.RMB then
+                  player_set_animation(player, "walk", 30)
+               else
+                  player_set_animation(player, "lay")
+                  print('should lie now')
+                  controls = {}
+               end
+            end
 
             -- Determine if the player is walking
             if controls.up or controls.down or controls.left or controls.right then
@@ -396,7 +466,7 @@ minetest.register_globalstep(function(dtime)
 
             -- Determine if the player is sneaking, and reduce animation speed if so
             if controls.sneak then
-                                if isghost and isghost[name] then animation_speed_mod = animation_speed_mod / 3
+                                if isghost and isghost[pll] then animation_speed_mod = animation_speed_mod / 3
                                 else
                 animation_speed_mod = animation_speed_mod / 2
                                 end
@@ -406,20 +476,22 @@ minetest.register_globalstep(function(dtime)
             if player:get_hp() == 0 then
                 player_set_animation(player, "lay")
             elseif walking then
-                if player_sneak[name] ~= controls.sneak then
-                    player_anim[name] = nil
-                    player_sneak[name] = controls.sneak
+                if default.player_sneak[pll] ~= controls.sneak then
+                    default.player_anim[pll] = nil
+                    default.player_sneak[pll] = controls.sneak
                 end
                 if controls.LMB then
-                                        if isghost and isghost[name] then player_set_animation(player, "mine")
-                                        else
-                    player_set_animation(player, "walk_mine", animation_speed_mod)
-                                        end
+                   if isghost and isghost[pll] then
+                        player_set_animation(player, "mine")
+                   else
+                        player_set_animation(player, "walk_mine", animation_speed_mod)
+                   end
                 else
-                                        if isghost and isghost[name] then player_set_animation(player, "stand")
-                                        else
-                    player_set_animation(player, "walk", animation_speed_mod)
-                                        end
+                    if isghost and isghost[pll] then
+                         player_set_animation(player, "stand")
+                    else
+                        player_set_animation(player, "walk", animation_speed_mod)
+                    end
                 end
             elseif controls.LMB then
                 player_set_animation(player, "mine")

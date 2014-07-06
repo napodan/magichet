@@ -14,7 +14,7 @@ minetest.register_abm({
 
 -- If Crystal Spike, Crystal Dirt or Snow near Water, change Water to Ice
 minetest.register_abm({
-    nodenames = {"ethereal:crystal_spike", "ethereal:crystal_topped_dirt", "default:snow", "default:snowblock", "default:ice"},
+    nodenames = {"ethereal:crystal_spike", "ethereal:crystal_topped_dirt", "default:snow", "default:snowblock"},
     neighbors = {"default:water_source"},
     interval = 10,
     chance = 2,
@@ -34,7 +34,7 @@ minetest.register_abm({
 
 -- If Heat Source near Ice, melt into Water Source
 minetest.register_abm({
-    nodenames = {"default:ice"},
+    nodenames = {"default:ice", 'default:snow'},
     neighbors = {"default:lava_source", "default:lava_flowing", "default:torch", "default:furnace_active"},
     interval = 5,
     chance = 2,

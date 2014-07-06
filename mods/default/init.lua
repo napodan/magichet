@@ -4,8 +4,8 @@
 -- The API documentation in here was moved into doc/lua_api.txt
 
 WATER_ALPHA = 80
-WATER_VISC = 1
-LAVA_VISC = 7
+WATER_VISC = 4
+LAVA_VISC = 1
 LIGHT_MAX = 15
 
 -- Definitions made by this mod that other mods can use too
