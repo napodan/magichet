@@ -1174,7 +1174,7 @@ minetest.register_on_dignode(function(pos, oldnode, digger)
     end
     local nodedug = string.split(oldnode.name, ":")
     if #nodedug ~= 2 then
-        print(oldnode.name.." is in wrong format!")
+        print("Naming conventions ignored: '"..oldnode.name.."'")
         return
     end
     local mod=nodedug[1]

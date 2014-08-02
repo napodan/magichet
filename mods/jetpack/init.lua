@@ -71,6 +71,7 @@ minetest.register_globalstep(function(dtime)
               if isghost and not isghost[pll] then
                   if node and not node.walkable and wstackn=='jetpack:jet' and pos.y<128 then
                      if player:get_player_control().jump then
+                        default.player_vw[pll] = 0 
                           if not need_to_stop[pll] then
                              local ph = default.player_physics[pll]
                              default.ph_override(player, {gravity=-0.4,speed=(ph.speed or 1) * 1.2})

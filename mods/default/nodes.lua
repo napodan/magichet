@@ -3,8 +3,9 @@
 -- meshed chests etc
 
 global_timer=0
-minetest.register_globalstep(function(dtime)
-   global_timer=global_timer+dtime
+minetest.after(15,function(dtime)
+   global_timer=20
+   print('15 sec has passed, be ready for the lags')
 end)
 
 minetest.register_node("default:apple", {
@@ -2217,8 +2218,6 @@ minetest.register_node("default:workbench", {
             "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
             "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
             "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
-
-            "list[context;main;0,0;9,3;]"..
 
             "list[current_player;craft;3,0.5;3,3;]"..
             "list[current_player;craftpreview;7,1.5;1,1;]"..

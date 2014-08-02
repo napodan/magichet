@@ -84,20 +84,30 @@ armor.set_player_armor = function(self, player)
     self:update_player_visuals(player)
 end
 
+armor.nowear = {}
+
 armor.update_armor = function(self, player)
+    if no_wear then return end
     if not player then
         return
     end
-    local name = player:get_player_name()
+    local pll = player:get_player_name()
     local hp = player:get_hp() or 0
-    if hp == 0 or hp == self.player_hp[name] then
+    if hp == 0 or hp == self.player_hp[pll] then
         return
     end
-    if self.player_hp[name] > hp then
+
+    -- disable armour wear in some cases
+    if armor.nowear[pll] then
+       armor.nowear[pll] = nil
+       return
+    end
+
+    if self.player_hp[pll] > hp then
         local inv = player:get_inventory()
         local state = 0
         local items = 0
-        print(minetest.serialize(self.elements))
+        --print(minetest.serialize(self.elements))
         for _,v in ipairs(self.elements) do
             local stack = inv:get_stack(v, 1)
             if stack:get_count() > 0 then
@@ -117,7 +127,7 @@ armor.update_armor = function(self, player)
             end
         end
     end
-    self.player_hp[name] = hp
+    self.player_hp[pll] = hp
 end
 
 -- Register Player Model
@@ -170,21 +180,21 @@ end)
 minetest.register_on_joinplayer(function(player)
     default.player_set_model(player, "3d_armor_character.x")
     local inv = player:get_inventory()
-    local name = player:get_player_name()
-    armor.pll_inv[name] = {[1]=inv:get_stack('helm',1):get_name(),
-                           [2]=inv:get_stack('torso',1):get_name(),
-                           [3]=inv:get_stack('pants',1):get_name(),
-                           [4]=inv:get_stack('boots',1):get_name()}
-    armor.player_hp[name] = 0
-    armor.textures[name] = {
+    local pll = player:get_player_name()
+    armor.pll_inv[pll] = {[1]=inv:get_stack('helm',1):get_name(),
+                          [2]=inv:get_stack('torso',1):get_name(),
+                          [3]=inv:get_stack('pants',1):get_name(),
+                          [4]=inv:get_stack('boots',1):get_name()}
+    armor.player_hp[pll] = 0
+    armor.textures[pll] = {
         skin = armor.default_skin,
         armor = "3d_armor_trans.png",
         wielditem = "3d_armor_trans.png",
     }
     if minetest.get_modpath("skins") then
-        local skin = skins.skins[name]
+        local skin = skins.skins[pll]
         if skin and skins.get_type(skin) == skins.type.MODEL then
-            armor.textures[name].skin = skin..".png"
+            armor.textures[pll].skin = skin..".png"
         end
     end
     if minetest.get_modpath("player_textures") then
@@ -192,10 +202,11 @@ minetest.register_on_joinplayer(function(player)
         local f = io.open(filename..".png")
         if f then
             f:close()
-            armor.textures[name].skin = "player_"..name..".png"
+            armor.textures[pll].skin = "player_"..name..".png"
         end
     end
     minetest.after(0, function(player)
+        armor.nowear[pll]=false
         armor:set_player_armor(player)
     end, player)
 end)
@@ -204,7 +215,9 @@ minetest.register_globalstep(function(dtime)
     time = time + dtime
     if time > update_time then
         for _,player in ipairs(minetest.get_connected_players()) do
-            armor:update_armor(player)
+            if not armor.nowear[pll] then
+               armor:update_armor(player)
+            end
         end
         time = 0
     end

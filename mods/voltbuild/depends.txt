@@ -3,4 +3,4 @@ mesecons
 bucket
 moreores
 ethereal
-mg
+villages

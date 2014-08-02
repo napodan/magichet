@@ -8,7 +8,7 @@ end
 
 function import_scm(scm)
 	local c_ignore = minetest.get_content_id("ignore")
-	local f, err = io.open(minetest.get_modpath("mg").."/schems/"..scm..".we", "r")
+	local f, err = io.open(minetest.get_modpath("villages").."/schems/"..scm..".we", "r")
 	if not f then
 		error("Could not open schematic '" .. scm .. ".we': " .. err)
 	end
@@ -29,6 +29,7 @@ function import_scm(scm)
 	end
 	table.insert(nodes, minetest.deserialize("return " .. value:sub(startpos1)))
 	scm = {}
+        local c_air = minetest.get_content_id("air")
 	local maxx, maxy, maxz = -1, -1, -1
 	for i = 1, #nodes do
 		local ent = nodes[i]
@@ -58,7 +59,7 @@ function import_scm(scm)
 		end
 		local paramtype2 = minetest.registered_nodes[ent.name] and minetest.registered_nodes[ent.name].paramtype2
 		if ent.name == "mg:ignore" or not paramtype2 then
-				scm[ent.y][ent.x][ent.z] = c_ignore
+				scm[ent.y][ent.x][ent.z] = c_air
 		elseif paramtype2 ~= "facedir" and paramtype2 ~= "wallmounted" and numk(ent.meta.fields) == 0 and numk(ent.meta.inventory) == 0 then
 			scm[ent.y][ent.x][ent.z] = minetest.get_content_id(ent.name)
 		else
@@ -69,7 +70,7 @@ function import_scm(scm)
 			end
 		end
 	end
-	local c_air = minetest.get_content_id("air")
+	
 	for x = 1, maxx do
 		for y = 1, maxy do
 			for z = 1, maxz do

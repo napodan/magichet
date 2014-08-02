@@ -235,8 +235,8 @@ function minetest.node_dig(pos, oldnode, digger)
 
     local pll = digger:get_player_name()
     if pll == builder then
-        print(pll)
-        print(builder)
+       -- print(pll)
+       -- print(builder)
         specialties.changeXP(pll, "builder", -1)
         return pos, oldnode, digger
     end

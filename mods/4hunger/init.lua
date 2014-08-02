@@ -417,6 +417,7 @@ minetest.register_globalstep(function(dtime)
               player:hud_change(hungerhud[pll] ,"text",'hunger_tile.png')
          else
             if hp>1 and math.random()<0.1 then
+               armor.nowear[pll] = true
                player:set_hp(hp-1)
                hp=hp-1
             end
@@ -450,7 +451,7 @@ minetest.register_globalstep(function(dtime)
                                                            })
                                 need_to_update_ph[pll] = true
                             sprinting[pll] = true
-                            print('4hunger on sprint +')
+                           -- print('4hunger on sprint +')
                         end
                     end)
                 end
@@ -465,7 +466,7 @@ minetest.register_globalstep(function(dtime)
                                                  jump = ph.jump / 1.1,
                                                 })
                     need_to_update_ph[pll] = false
-                    print('4hunger on sprint -')
+                   -- print('4hunger on sprint -')
                 end
             end)
         end
@@ -513,6 +514,7 @@ minetest.register_globalstep(function(dtime)
          if food_level[pll]>17 and food_level[pll]<=max_drumsticks then if hp>0 then player:set_hp(hp+1) end
          elseif food_level[pll]==0 then
              if hp>1 then
+                armor.nowear[pll] = true
                 player:set_hp(hp-1)
                 hp = hp-1
              end

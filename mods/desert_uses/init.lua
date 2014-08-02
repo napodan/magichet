@@ -278,7 +278,7 @@ minetest.register_abm({
                     -- take stuff from "src" list
                     inv:set_stack("src", 1, aftercooked.items[1])
                 else
-                    print("Could not insert '"..cooked.item:to_string().."'")
+                    print("No space for '"..cooked.item:to_string().."' in output")
                 end
                 meta:set_string("src_time", 0)
             end

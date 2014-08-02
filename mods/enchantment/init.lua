@@ -89,6 +89,8 @@ local glm = 100
 -- List of words used to create names of spells (55 total):
 local words = {'ain ', 'young ', 'sprites ', 'unatas ', 'kafuzi ', 'cropi ', 'yaicy ', 'damen ', 'curen ', 'dimen ', 'shineish ', 'wata ', 'gas ', 'terra ', 'oilus ', 'cod ', 'wot ', 'thir ', 'per ', 'offput ', 'sniff ', 'lessened ', 'strat ', 'longing ', 'pressur ', 'miggle ', 'createn ', 'anuet ', 'chrispene ', 'secrait ', 'lgpl ', 'freedom ', 'areal ', 'on ', 'backing ', 'outers ', 'circle ', 'node ', 'miss ', 'misty ', 'boxy ', 'psycho ', 'strength ', 'begg ', 'paying ', 'holys ', 'simpliest ', 'fleshy ', 'humani ', 'kindofth ', 'monts ', 'alienoid ', 'unlive ', 'olden ', 'letus '}
 
+local words_rus = {'айн ', 'ломод ', 'спрайтус ', 'юнатус ', 'кафузи ', 'кропи ', 'июйси ', 'дамен ', 'кюрэн ', 'димэн ', 'блестич ', 'оата ', 'гас ', 'терра ', 'ойлус ', 'код ', 'вот ', 'фир ', 'пер ', 'внеклад ', 'хлюп ', 'деменцен ', 'страт ', 'долген ', 'давит ', 'миггл ', 'вогранен ', 'анует ', 'криспене ', 'секрайт ', 'мплг ', 'свобода ', 'место ', 'вкл ', 'спином ', 'внешки ', 'круг ', 'узел ', 'мимо ', 'дымно ', 'квадратно ', 'псюхо ', 'сила ', 'просить ', 'плата ', 'свято ', 'просто ', 'мясо ', 'чело ', 'типато ', 'мсяцы ', 'ксеном ', 'нежить ', 'старче ', 'годус '}
+
 -- List of magick textures. Add yours to have shelves spawn them. x16 prefered.
 local glyphs = {'enchantment_glyph1.png','enchantment_glyph2.png','enchantment_glyph3.png','enchantment_glyph4.png','enchantment_glyph5.png'}
 
@@ -133,7 +135,7 @@ end
 
 -- Func used for searching the bookshelves
 -- Unlike MC's one this doesnt care if there's anything between the shelf and
--- the table
+-- the table, only 'bout the gap itself
 local function shelves_near(pos)
     local minp = {x=pos.x-1, y=pos.y-1, z=pos.z-1}
     local maxp = {x=pos.x+1, y=pos.y+1, z=pos.z+1}
@@ -330,7 +332,7 @@ end
 -- would change ATK or dig_times...
 
 local mte = {
-                ['Rampart'] = {
+                ['Rampart'] = { -- break the armour faster
                            [0] = 10,
                            [1] = {  1,  21},
                            [2] = { 12,  32},
@@ -354,7 +356,7 @@ local mte = {
                            [4] = { 23,  33},
                            [5] = { 29,  65},
                       },
-                ['Unexplode'] = {
+                ['Unexplode'] = { -- extra protection from explosions
                            [0] = 2,
                            [1] = {  5,  17},
                            [2] = { 13,  25},
@@ -362,7 +364,7 @@ local mte = {
                            [4] = { 29,  41},
                            [5] = { 37,  49},
                       },
-                ['Sniperbane'] = {
+                ['Sniperbane'] = { -- extra protection against projectiles
                            [0] = 5,
                            [1] = {  3,  18},
                            [2] = {  9,  24},
@@ -383,7 +385,7 @@ local mte = {
                             -- only 1 level to normalize digging time
                            [1] = {  1,  41},
                       },]]
-                ['Spikes'] = {
+                ['Spikes'] = { -- theoretically should damege and knockback the attacker
                            [0] = 1,
                            [1] = { 10,  60},
                            [2] = { 30,  80},
@@ -392,7 +394,7 @@ local mte = {
                            [5] = { 90, 140},
                       },
                 -- from here on go enchantments for tools
-                ['Casualty'] = {
+                ['Casualty'] = { -- extra damage to peaceful mobs
                            [0] = 10,
                            [1] = {  1,  21},
                            [2] = { 12,  32},
@@ -400,7 +402,7 @@ local mte = {
                            [4] = { 34,  54},
                            [5] = { 45,  65},
                       },
-                ['Undertaker'] = {
+                ['Undertaker'] = { -- extra damage to the undead
                            [0] = 5,
                            [1] = {  5,  25},
                            [2] = { 13,  33},
@@ -408,7 +410,7 @@ local mte = {
                            [4] = { 29,  49},
                            [5] = { 37,  57},
                       },
-                ['Bane of monsters'] = {
+                ['Bane of monsters'] = { -- extra damage to dirt/sand/rock/whatever monsters
                            [0] = 5,
                            [1] = {  5,  25},
                            [2] = { 13,  33},
@@ -489,27 +491,33 @@ end
 
 -- Func to select enchantements
 local function select_enchantment(item, level, points)
---print(level)
---print(points)
+   -- finallist is empty = no boons
     local finallist = {}
+    
+   -- if there's no points, there will be no enchantement
     if not points then return finallist end
+    
+   -- get the names of all possible chants 
     local list2 = {}
     for en,chant in pairs(mte) do
         for i,levels in ipairs(chant) do
-        -- i contains pos in the table
-        -- levels contains a table of min and max level
             if points >= levels[1] and points <=levels[2] then
                for j=1, chant[0] do table.insert(list2,en .. ' ' .. i) end
             end
         end
     end
+    
+   -- the number of chants
     local eeeee = 1
-    ::new_spell::                 -- I LOVE labels!!!
-    local ch = random_elem(list2) -- delete last 2 chars
+    
+   -- get random chant from the full list         
+    local ch = random_elem(list2) 
+   -- and insert it in the final list of chants 
     table.insert(finallist, ch)
+   -- calculate the chances of continuation
     local chance = math.random() <= ((points+1)/50)
-
-    if chance then
+   -- if we're lucky, then...
+    while chance==true do
        eeeee = eeeee +1
        local y = finallist[#finallist]
        if not y then return finallist end
@@ -520,10 +528,15 @@ local function select_enchantment(item, level, points)
            end
        end
        points = points/2
-       goto new_spell
-    else
-        return finallist
-    end
+      -- get random chant from the full list         
+       ch = random_elem(list2) 
+      -- and insert it in the final list of chants 
+       table.insert(finallist, ch)
+      -- calculate the chances of continuation
+       chance = math.random() <= ((points+1)/50)       
+      -- if we're lucky, then repeat
+    end  
+    
     return finallist
 end
 
@@ -773,16 +786,11 @@ minetest.register_node("enchantment:table", {
         meta:set_string("formspec", empty_formspec())
         --minetest.get_node_timer(pos):start(0)
     end,
-    -- keep it here only 'cause I'll forget this and won't have an Internet
-    -- connection by the time I'll be in need of this
-    on_timer=function(pos,elapsed)
---       if pos then print(shelves_near(pos))
---       end
---       return true
-    end,
 
     on_receive_fields = function(pos, formname, fields, sender)
-       default.sort_inv(sender,formname,fields)
+       if sender and sender:is_player() then
+          default.sort_inv(sender,formname,fields)
+       end
        local meta=minetest.get_meta(pos)
        local inv = meta:get_inventory()
        local stack = inv:get_stack('itm', 1)
@@ -848,11 +856,58 @@ minetest.register_node("enchantment:table", {
        local item = inv:get_stack('itm', 1):get_name()
        meta:set_string("formspec", make_ench_list(sender,pos,item))
     end,
-        on_receive_fields = function(pos, formname, fields, sender)
-           if sender and sender:is_player() then
-              default.sort_inv(sender,formname,fields)
-           end
-        end,
+
+    after_place_node  = function(pos, placer, itemstack, pointed_thing) 
+       for i=-2,2 do
+           for j=-2,2 do
+               for k=-2,2 do
+                   local pp = {x=i+pos.x, y=j+pos.y, z=k+pos.z}
+                   local nn = minetest.get_node(pp).name
+                   if nn=='default:bookshelf'                    
+                   and (i%2==0 or j%2==0 or k%2==0) then
+                      minetest.get_node_timer(pp):start(1)
+                   end
+               end
+            end
+       end
+       minetest.get_node_timer(pos):start(5)
+    end,
+
+    after_dig_node = function(pos, oldnode, oldmetadata, digger)
+       for i=-2,2 do
+           for j=-2,2 do
+               for k=-2,2 do
+                   local pp = {x=i+pos.x, y=j+pos.y, z=k+pos.z}
+                   local nn = minetest.get_node(pp).name
+                   if nn=='default:bookshelf' 
+                   and not minetest.find_node_near(pp, 2, 'enchantment:table')
+                   and (i%2==0 or j%2==0 or k%2==0) then
+                      minetest.get_node_timer(pp):stop()
+                   end
+               end
+            end
+       end
+    end,
+    
+    on_timer = function(pos, elapsed)
+       for i=-2,2 do
+           for j=-2,2 do
+               for k=-2,2 do
+                   local pp = {x=i+pos.x, y=j+pos.y, z=k+pos.z}
+                   local nn = minetest.get_node(pp).name
+                   if nn=='default:bookshelf'                    
+                   and (i%2==0 or j%2==0 or k%2==0) then
+                       local timer = minetest.get_node_timer(pp)
+                       if not timer:is_started()
+                       then timer:start(1)
+                       end
+                   end
+               end
+            end
+       end       
+       return true
+    end,
+        
 })
 -- Enchantment table's craft
 if ghosts then
@@ -924,34 +979,8 @@ minetest.register_node(":default:bookshelf", {
        if spid then minetest.delete_particlespawner(spid) end
        return true
     end,
+       --removed after_place & timer:start() to save CPU time     
 
-    after_place_node = function(pos, placer)
-       local meta=minetest.get_meta(pos)
-       local spid = meta:get_int("spawner")
-       if spid~=0 then minetest.delete_particlespawner(spid) end
-           local en = minetest.find_node_near(pos,2, "enchantment:table") and (not minetest.find_node_near(pos,1, "enchantment:table"))
-           if en then
-               local dir = vector.direction(pos, minetest.find_node_near(pos,2, "enchantment:table"))
-               spid = minetest.add_particlespawner(
-                                                            15,
-                                                            0,
-                                                            {x=pos.x-1.3, y=pos.y-1.3, z=pos.z-1.3},
-                                                            {x=pos.x+1.3, y=pos.y+1.3, z=pos.z+1.3},
-                                                            {x=-0.1, y=-0.1, z=-0.1},
-                                                            {x= 0.1, y= 0.1, z= 0.1},
-                                                            {x=-0.1, y=-0.1, z=-0.1},
-                                                            dir,
-                                                            1,
-                                                            1,
-                                                            0.5,
-                                                            1,
-                                                            false,
-                                                            random_elem(glyphs)
-                                                        )
-                meta:set_int("spawner",spid)
-           end
-              minetest.get_node_timer(pos):start(1)
-    end
 })
 
 minetest.register_chatcommand("gbxp", {
@@ -1249,7 +1278,7 @@ function minetest.node_dig(pos, oldnode, digger)
 
    if type(drops)=='table' then
       if #drops>1 then
-         print('ToDo: enchant multidrop')
+         print('[Enchantment] ToDo: enchant multidrop')
          ndig(pos, oldnode, digger)
          return pos, oldnode, digger
       elseif #drops==1 then
@@ -1341,3 +1370,45 @@ function minetest.node_dig(pos, oldnode, digger)
 end
 
 print('[OK] Enchantment (beta) loaded')
+
+--[[
+
+local function select_enchantment(item, level, points)
+--print(level)
+--print(points)
+    local finallist = {}
+    if not points then return finallist end
+    local list2 = {}
+    for en,chant in pairs(mte) do
+        for i,levels in ipairs(chant) do
+        -- i contains pos in the table
+        -- levels contains a table of min and max level
+            if points >= levels[1] and points <=levels[2] then
+               for j=1, chant[0] do table.insert(list2,en .. ' ' .. i) end
+            end
+        end
+    end
+    local eeeee = 1
+    ::new_spell::                 -- I LOVE labels!!!
+    local ch = random_elem(list2) -- delete last 2 chars
+    table.insert(finallist, ch)
+    local chance = math.random() <= ((points+1)/50)
+
+    if chance then
+       eeeee = eeeee +1
+       local y = finallist[#finallist]
+       if not y then return finallist end
+       local nm = y:sub(1,-3)
+       for e=#list2, 1, -1 do
+           if list2[e]:find(nm) then
+              table.remove(list2,e)
+           end
+       end
+       points = points/2
+       goto new_spell
+    else
+        return finallist
+    end
+    return finallist
+end
+]]--

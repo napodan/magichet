@@ -1,6 +1,23 @@
 Most recent changes
 ===================
 
+####"The Small Fixes Update":
+    + fix armour wearing when damage is dealt by hunger/poison
+    + optimize bookshelves + enchantment_table performance
+    + remove label/goto from the "enchantment" mod (Lua 5.1 comp.)
+    + add some new graphics
+    + fix player's physics while going_to/in bed
+    + wake up by pressing "jump" button/key
+    + fix fall damage while flying with jetpack
+    + disable fall damage for ghosts
+    + random loot in chests in villages
+    + add Russian version of the words used to make-up chants names
+    + fix generation of basements for houses in villages    
+    + remove "mg:ignore" from the we files
+    + mg renamed to villages
+    + fix worms spawning, no more "as mob" option
+    + Russian version of the README.md
+
 ####"The Sleepy Update":
     + new fixes to villages generation
     + "remember" al generated villages (per world)
@@ -46,13 +63,13 @@ Engine (not publicly available yet)
 
 Game
 ----
+    - fix enchantment sharing vs explorer tools (shift?) (!)
     - remove func duplicates
     - generate rubber trees with LVM
-    - beds in villages
-    - rnd loot in chests (villages, dungeons)
+    ~ rnd loot in chests (villages, dungeons)
+    ~ global loot rarity values
     - merge as many globalstep loops as possible
     - fix "SetNode ERROR" spamming the console
-    - edit "scm" files
     - proper on_blast for every node (!)
     - proper IC2 recipes (?)
     - make bamboo replace water
@@ -71,7 +88,7 @@ Game
     - make furnaces break down after mass CO(2) production
     - make use of that param while performing dangerous activities
     - fix cake's recipe
-    - tweak vesels
+    - tweak vessels
     - make reincarnator to be usable w/o ghost blocks, but add some downside
     - fix default:chest wielt_image to be 3d
     - make armour HUD
@@ -80,6 +97,7 @@ Game
     - make fall damage based on speed(?)
     - make mobs use different behaviour patterns
     - fix stairs & slabs (groups, 6dir)
+    ~ edit "scm" files
     ~ different meshes for "ghostly_blocks"
     ~ delete optional dependencies to speedup the game a little (!)
     ~ Translate into Russian
@@ -90,6 +108,7 @@ Game
     ~ remove notices of violation if that didn't happen (allow_ functions)
     ~ shrink inventory for ghosts if it's not the first death
     + add villages
+    + beds in villages
     + replace 8x4 grid by 9x4 within all mods which are to include (!)
     + make all leaves and other handle_with_caution nodes to drop NOTHING (!)
     + change stone to desert_stone in fiery biomes

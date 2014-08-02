@@ -12,7 +12,7 @@ awards = {}
 local rus
 local locale = os.setlocale(nil, 'collate')
 if (locale:find('Russian') ~= nil) or (locale:find('ru_RU') ~= nil) then rus=true else rus = false end
-local mess = {rus = {"Новое достижение:"," Открыл достижение ","awards: Показывает список достижений", "А достижений-то особых и нет!", " открыл следующие достижения:"},
+local mess = {rus = {"Новое достижение:"," открыл(а) достижение ","awards: Показывает список достижений", "А достижений-то особых и нет!", " открыл следующие достижения:"},
               eng = {"New achievent:"," got achievment ","awards: lists your achievemnts list in unhandy form...", "You haven't do smth special yet!", " unlocked following:"},
               }
 --rus=false
@@ -279,8 +279,8 @@ function awards.give_achievement(name,award)
         end
 
         -- record this in the log
-                if rus then print(name..mess.rus[2]..title..".")
-                else  print(name..mess.eng[2]..title..".")
+                if rus then print(name..mess.rus[2].." '"..title.."'.")
+                else  print(name..mess.eng[2].." '"..title.."'.")
                 end
 
         -- save playertable

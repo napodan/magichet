@@ -240,8 +240,6 @@ end
 -- GETTING WORMS
 -----------------------------------------------------------------------------------------------
 -- get worms from digging in dirt:
-if NEW_WORM_SOURCE == false then
-
 local dirts = {['default:dirt']=2,['ethereal:green_dirt_top']=1}
 
 minetest.register_on_dignode(function(pos, oldnode, digger)
@@ -252,22 +250,15 @@ if not digger or not digger:get_inventory() then return end
             local tool_in_use = digger:get_wielded_item():get_name()
             if tool_in_use == "" or tool_in_use == "default:dirt" then
             local poss = {x = pos.x+math.random(-0.5,0.5), y = pos.y+0.5, z = pos.z+math.random(-0.5,0.5)}
-                if WORM_IS_MOB == true then
-                    for i=1, dirts[oldnode.name] do
-                        local poss = {x = pos.x+math.random(-0.5,0.5), y = pos.y+0.5, z = pos.z+math.random(-0.5,0.5)}
-                        minetest.add_entity(poss, "fishing:bait_worm_entity")
-                    end
-                else
                     -- drop worms instead of automatically ading to the pl:inv
                     for i=1, dirts[oldnode.name] do
                         local poss = {x = pos.x+math.random(-0.5,0.5), y = pos.y+0.5, z = pos.z+math.random(-0.5,0.5)}
-                        minetest.item_drop("fishing:bait_worm", digger, poss)
+                        minetest.item_drop(ItemStack("fishing:bait_worm"), digger, poss)
                     end
-                end
             end
         end
-    end)
-end
+ end)
+
 
 minetest.register_globalstep(function(dtime)
    local players = minetest.get_connected_players()

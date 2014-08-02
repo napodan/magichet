@@ -40,7 +40,7 @@ function village_at_point(minp, noise1)
            cnt=cnt+1
            if cnt>4 then return 0,0,0,0 end
         end
-    --    print('Here\'s "village at point" pos:'..minetest.pos_to_string(pp))
+        print('A new village has spawned at '..minetest.pos_to_string(pp))
         height = pp.y
         return x,z,size,height
 end
@@ -275,7 +275,7 @@ local function generate_building(pos, minp, maxp, data, a, pr, extranodes, stop)
           pp = find_base_pos(pos.x,pos.y-20,pos.z)
        end
           pos.x = pp.x
-          pos.y = pp.y
+          pos.y = pp.y +1
           pos.z = pp.z
 
 
@@ -310,10 +310,11 @@ local function generate_building(pos, minp, maxp, data, a, pr, extranodes, stop)
                    end
 
                    local filler = data[a:index(ax, ayy, az)]
-                   if filler==c_ignore then filler = c_cobble end
+                   if not filler or filler==c_ignore then filler = c_cobble end
                    for ayy = ayy, pos.y-1 do
-                      data[a:index(ax, ayy, az)] = filler
-                      ayy=ayy-1
+                      -- data can't be set for some reason while set_node always do the job
+                      --data[a:index(ax, ayy, az)] = filler
+                      minetest.set_node({x=ax, y=ayy, z=az},{name=minetest.get_name_from_content_id(filler)},2)                      
                    end
 
                for y = 1, binfo.ysize+1 do
@@ -425,7 +426,7 @@ function generate_village(vx, vz, vs, vh, minp, maxp, data, a, vnoise, to_grow)
                 local found
                 for i=1,#generated do
                     if pos.x==generated[i].x and pos.z==generated[i].z then
-                       print('already one at ' .. minetest.pos_to_string(pos))
+                       --print('already one at ' .. minetest.pos_to_string(pos))
                        found = true
                        break
                     end

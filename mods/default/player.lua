@@ -101,7 +101,7 @@ function default.ph_override(player, ph)
        default.player_physics[pll][k] = v
    end
    player:set_physics_override(default.player_physics[pll])
-   print(minetest.serialize(default.player_physics[pll]))
+--   print(minetest.serialize(default.player_physics[pll]))
 end
 
 function default.player_get_animation(player)
@@ -417,8 +417,11 @@ minetest.register_globalstep(function(dtime)
 
         if node1 == 'air' then
             if node2 == 'air' then
-               if poso.y>posn.y then
+               if poso.y>posn.y                
+               then
                   default.player_vw[pll] = default.player_vw[pll]+default.distance(poso, posn)
+               else
+                  default.player_vw[pll] = 0 
                end
             else
                local wn = 0
@@ -427,10 +430,18 @@ minetest.register_globalstep(function(dtime)
                      below.y=below.y-1
                      wn = wn+1
                end
-                  if default.player_vw[pll]>3+wn*10+(default.player_status[pll].fall or 0) then
+               local gr
+               local ph = default.player_physics[pll]
+               if ph then
+                  gr = 1/default.player_physics[pll].gravity
+               end
+               local fall_tolerance = 3+wn*10+(default.player_status[pll].fall or gr or 0)
+                  -- if not a ghost and fell from some high place..
+                  if default.player_vw[pll]>fall_tolerance and not isghost[pll] then
                      player:set_hp(player:get_hp()- math.floor(default.player_vw[pll])+3)
                   end
-                  print('felt down from ' .. default.player_vw[pll] .. ' nodes.')
+                  --print('felt down from ' .. default.player_vw[pll] .. ' nodes.')  
+                  -- ToDo: need to disable fall damage in the engine
                   default.player_vw[pll] = 0
 
             end
@@ -446,57 +457,66 @@ minetest.register_globalstep(function(dtime)
             local walking = false
             local animation_speed_mod = model.animation_speed or 30
 
-                        if isghost and isghost[pll] then animation_speed_mod = animation_speed_mod / 2 end
-
-             if default.player_sleep[pll] then
-               if controls.RMB then
+            if default.player_sleep[pll] then
+               if controls.jump and not controls.RMB then
+                  beds.remove_from_bed(player)
                   player_set_animation(player, "walk", 30)
+                  local ph = default.player_physics[pll]
+                  default.ph_override(player,{speed = 1, jump = 1})
+                  default.player_sleep[pll] = nil
+                  --print('walk')
                else
-                  player_set_animation(player, "lay")
-                  print('should lie now')
-                  controls = {}
+                  player_set_animation(player, "lay", 0)
+                  local ph = default.player_physics[pll]
+                  default.ph_override(player,{speed = 0, jump = 0})
+                  --print('sleep')
+                  controls = nil
                end
             end
 
-            -- Determine if the player is walking
-            if controls.up or controls.down or controls.left or controls.right then
+            if controls then
+               -- slow down if pll is a ghost
+               if isghost and isghost[pll] then animation_speed_mod = animation_speed_mod / 2 end
 
-                walking = true
-            end
+               -- Determine if the player is walking
+               if controls.up or controls.down or controls.left or controls.right then
+                  walking = true
+               end
 
-            -- Determine if the player is sneaking, and reduce animation speed if so
-            if controls.sneak then
-                                if isghost and isghost[pll] then animation_speed_mod = animation_speed_mod / 3
-                                else
-                animation_speed_mod = animation_speed_mod / 2
-                                end
-            end
-
-            -- Apply animations based on what the player is doing
-            if player:get_hp() == 0 then
-                player_set_animation(player, "lay")
-            elseif walking then
-                if default.player_sneak[pll] ~= controls.sneak then
-                    default.player_anim[pll] = nil
-                    default.player_sneak[pll] = controls.sneak
-                end
-                if controls.LMB then
-                   if isghost and isghost[pll] then
-                        player_set_animation(player, "mine")
-                   else
-                        player_set_animation(player, "walk_mine", animation_speed_mod)
+                -- Determine if the player is sneaking, and reduce animation speed if so
+                if controls.sneak then
+                   if isghost and isghost[pll]
+                   then animation_speed_mod = animation_speed_mod / 3
+                   else animation_speed_mod = animation_speed_mod / 2
                    end
-                else
-                    if isghost and isghost[pll] then
-                         player_set_animation(player, "stand")
-                    else
-                        player_set_animation(player, "walk", animation_speed_mod)
-                    end
                 end
-            elseif controls.LMB then
-                player_set_animation(player, "mine")
-            else
-                player_set_animation(player, "stand", animation_speed_mod)
+
+                -- Apply animations based on what the player is doing
+                if player:get_hp() == 0 then
+                    player_set_animation(player, "lay")
+                elseif walking then
+                    if default.player_sneak[pll] ~= controls.sneak then
+                        default.player_anim[pll] = nil
+                        default.player_sneak[pll] = controls.sneak
+                    end
+                    if controls.LMB then
+                       if isghost and isghost[pll] then
+                            player_set_animation(player, "mine")
+                       else
+                            player_set_animation(player, "walk_mine", animation_speed_mod)
+                       end
+                    else
+                        if isghost and isghost[pll] then
+                             player_set_animation(player, "stand")
+                        else
+                            player_set_animation(player, "walk", animation_speed_mod)
+                        end
+                    end
+                elseif controls.LMB then
+                    player_set_animation(player, "mine")
+                else
+                    player_set_animation(player, "stand", animation_speed_mod)
+                end
             end
         end
     end

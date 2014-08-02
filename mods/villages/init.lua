@@ -42,7 +42,7 @@ local function load_villages()
    if input then
       io.close(input)
       dofile(minetest.get_worldpath().."/villages.lua")
-      print(minetest.serialize(vvvg))
+   --   print(minetest.serialize(vvvg))
    else
       save_villages()
    end
@@ -171,6 +171,23 @@ local function copytable(t)
         return t2
 end
 
+local loot = {}
+local all_items = minetest.registered_items
+-- fill the "loot" table conserning the rarity of the items
+for i=1,#all_items do
+   if all_items.rarity then
+      for j=1,all_items[i].rarity do
+          table.insert(loot,all_items[i].name)
+      end
+   else
+       table.insert(loot,all_items[i].name)
+   end
+end
+
+-- Func to get random element from a table
+local function random_elem(array)
+   return array[math.random(#array)]
+end
 
 local function mg_generate(minp, maxp, emin, emax, vm)
         local a = VoxelArea:new{
@@ -232,38 +249,35 @@ local function mg_generate(minp, maxp, emin, emax, vm)
         local bed = false
         for _, n in pairs(to_add) do
             if minetest.get_content_id(n.node.name) ~= c_ignore then
-                minetest.set_node(n.pos, n.node)
-                if n.meta ~= nil then
-                        meta = minetest.get_meta(n.pos)
-                        if n.meta.formspec then n.meta.formspec = nil end
-                        --meta:from_table(n.meta)
-                        if n.node.name == "default:chest" then
-                                local inv = meta:get_inventory()
-                                local items = inv:get_list("main")
-                                if items then
-                                        for i=1, inv:get_size("main") do
-                                                inv:set_stack("main", i, ItemStack(""))
-                                        end
-                                        local numitems = pr:next(3, 20)
-                                        for i=1,numitems do
-                                                local ii = pr:next(1, #items)
-                                                local prob = items[ii]:get_count() % 2 ^ 8
-                                                local stacksz = math.floor(items[ii]:get_count() / 2 ^ 8)
-                                                if pr:next(0, prob) == 0 and stacksz>0 then
-                                                        stk = ItemStack({name=items[ii]:get_name(), count=pr:next(1, stacksz), wear=items[ii]:get_count(), metadata=items[ii]:get_metadata()})
-                                                        local ind = pr:next(1, inv:get_size("main"))
-                                                        while not inv:get_stack("main",ind):is_empty() do
-                                                                ind = pr:next(1, inv:get_size("main"))
-                                                        end
-                                                        inv:set_stack("main", ind, stk)
-                                                end
-                                        end
-                                end
-                        end
+               minetest.set_node(n.pos, n.node)
+               if n.meta ~= nil then
+                  meta = minetest.get_meta(n.pos)
+                  if n.meta.formspec then n.meta.formspec = nil end
+                  if n.node.name == "default:chest" then
+                     local inv = meta:get_inventory()
+                     local items = inv:get_list("main")
+                     -- every chest may contain up to numitems items
+                     local numitems = pr:next(3, 20)
+                     for i=1,numitems do
+                         local itemname = random_elem(loot)
+                         local wear = math.random()*65000 -- never get a new item
+                         local stack = ItemStack(itemname)
+                         stack:set_wear(wear)
+                         if stack:get_wear() == 0 then
+                            -- never get more than 50 items
+                            stack:set_count(math.random(1,50))
+                         end
+                         local size = inv:get_size("main")
+                         local ind = pr:next(1, size)
+                         while not inv:get_stack("main",ind):is_empty() do
+                               ind = pr:next(1, size)
+                            end
+                         inv:set_stack("main", ind, stack)
+                     end
+                  end
                 end
-           end
+            end
         end
-
 end
 
 minetest.register_on_generated(function(minp, maxp, seed)

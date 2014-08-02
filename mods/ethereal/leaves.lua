@@ -40,7 +40,7 @@ minetest.register_node(":"..name, {
             or minetest.get_item_group(wielded, tool)>0
             then
                dropped = true
-               minetest.chat_send_all('wielded: '.. wielded ..', tool/group: '..tool)
+               --minetest.chat_send_all('wielded: '.. wielded ..', tool/group: '..tool)
                break
             end
         end

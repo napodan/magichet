@@ -222,7 +222,7 @@ minetest.register_biome({
 
 --= Register Biome Decoration (Schematics)
 
---[[ Banana Tree
+-- Banana Tree
 minetest.register_decoration({
     deco_type = "schematic",
     place_on = "ethereal:grove_dirt",
@@ -408,7 +408,7 @@ minetest.register_decoration({
     flags = "place_center_x, place_center_z",
 })
 
---= Smaller Plant Decoration
+--[[= Smaller Plant Decoration
 
 -- Dry Shrubs on Dry Dirt
 minetest.register_decoration({
@@ -467,7 +467,7 @@ minetest.register_decoration({
         fill_ratio = 0.05,
         biomes = {"grayness", "snowy"},
         decoration = "ethereal:snowygrass",
-})
+})]]
 
 -- Cactus
 minetest.register_decoration({
@@ -479,7 +479,7 @@ minetest.register_decoration({
     decoration = "default:cactus",
 })
 
--- Small Mushroom
+--[[ Small Mushroom
 minetest.register_decoration({
     deco_type = "simple",
     place_on = "ethereal:mushroom_dirt",
@@ -497,18 +497,57 @@ minetest.register_decoration({
     fill_ratio = 0.18,
     biomes = {"junglee", "jumble"},
     decoration = "default:junglegrass",
-})
+})]]
 
--- Grass
+-- Grass 1
 minetest.register_decoration({
     deco_type = "simple",
     place_on = {"ethereal:green_dirt_top", "ethereal:jungle_dirt", "ethereal:prairie_dirt", "ethereal:grove_dirt"},
-    sidelen = 16,
-    fill_ratio = 0.40, -- was 0.50
+    sidelen = 4,
+    fill_ratio = 0.10, -- was 0.50
     biomes = {"grassy", "grassytwo", "jumble", "junglee", "prairie", "grove"},
     decoration = "default:grass_5",
+    height = 1,
+    height_max = 0,
 })
 
+-- Grass 2
+minetest.register_decoration({
+    deco_type = "simple",
+    place_on = {"ethereal:green_dirt_top", "ethereal:jungle_dirt", "ethereal:prairie_dirt", "ethereal:grove_dirt"},
+    sidelen = 4,
+    fill_ratio = 0.10, -- was 0.50
+    biomes = {"grassy", "grassytwo", "jumble", "junglee", "prairie", "grove"},
+    decoration = "default:grass_4",
+    height = 1,
+    height_max = 0,
+})
+
+-- Grass 3
+minetest.register_decoration({
+    deco_type = "simple",
+    place_on = {"ethereal:green_dirt_top", "ethereal:jungle_dirt", "ethereal:prairie_dirt", "ethereal:grove_dirt"},
+    sidelen = 4,
+    fill_ratio = 0.10, -- was 0.50
+    biomes = {"grassy", "grassytwo", "jumble", "junglee", "prairie", "grove"},
+    decoration = "default:grass_3",
+    height = 1,
+    height_max = 0,
+})
+
+-- Grass 4
+minetest.register_decoration({
+    deco_type = "simple",
+    place_on = {"ethereal:green_dirt_top", "ethereal:jungle_dirt", "ethereal:prairie_dirt", "ethereal:grove_dirt"},
+    sidelen = 4,
+    fill_ratio = 0.10, -- was 0.50
+    biomes = {"grassy", "grassytwo", "jumble", "junglee", "prairie", "grove"},
+    decoration = "default:grass_1",
+    height = 1,
+    height_max = 0,
+})
+
+--[[
 -- Ferns
 minetest.register_decoration({
     deco_type = "simple",
@@ -537,7 +576,7 @@ minetest.register_decoration({
     fill_ratio = 0.35,
     biomes = {"grassy", "grassytwo", "jumble", "prairie"},
     decoration = "ethereal:wild_onion_4",
-})
+})]]
 
 --= Specific Plant Placements
 
@@ -568,5 +607,3 @@ minetest.register_on_generated(function(minp, maxp, seed)
         end
     end
 end)
-
-]]--

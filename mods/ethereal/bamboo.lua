@@ -68,7 +68,7 @@ minetest.register_biome({
 
 -- Register Biome Decoration
 
--- Bamboo Stalks
+--[[ Bamboo Stalks
 minetest.register_decoration({
     deco_type = "schematic",
     place_on = "ethereal:bamboo_dirt",
@@ -77,14 +77,14 @@ minetest.register_decoration({
     biomes = {"bamboo"},
     schematic = minetest.get_modpath("ethereal").."/schematics/bamboo.mts",
     flags = "place_center_x, place_center_z",
-})
+})]]
 
 -- Bamboo Sprouts
 minetest.register_decoration({
     deco_type = "simple",
     place_on = "ethereal:bamboo_dirt",
     sidelen = 16,
-    fill_ratio = 0.025,
+    fill_ratio = 0.125,
     biomes = {"bamboo"},
     decoration = "ethereal:bamboo_sprout",
 })
@@ -94,9 +94,9 @@ minetest.register_decoration({
     deco_type = "simple",
     place_on = "ethereal:bamboo_dirt",
     sidelen = 16,
-    fill_ratio = 0.40,
+    fill_ratio = 0.10,
     biomes = {"bamboo"},
-    decoration = "default:grass_3",
+    decoration = "default:grass_1",
 })
 
 -- Bamboo Flooring

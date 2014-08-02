@@ -21,7 +21,7 @@ beds.remove_from_bed = function(player)
         if players_in_bed[playername] then
                 local meta = minetest.get_meta(players_in_bed[playername])
                 meta:set_string("player", "")
-                players_in_bed[player] = nil
+                players_in_bed[player] = nil                
                 player:setpos(beds.beds_player_spawns[playername])
         end
 end
@@ -89,7 +89,7 @@ for i in ipairs(beds_list) do
                                         if player then
                                                 beds.remove_from_bed(player)
                                                 player_set_animation(player, "walk", 30)
-                                                default.player_sleep[player] = false
+                                                default.player_sleep[player] = nil
                                         end
                                 end
                         end
@@ -122,11 +122,7 @@ for i in ipairs(beds_list) do
                         local meta = minetest.get_meta(pos)
                         local bedplayer = meta:get_string("player")
 
-                        if pll == bedplayer then
-                                beds.remove_from_bed(clicker)
-                                default.player_sleep[pll] = false
-
-                        elseif bedplayer == "" then
+                        if bedplayer == "" then
 
                                 -- Save the spawn position before we move the player into
                                 -- the bed.
@@ -137,6 +133,7 @@ for i in ipairs(beds_list) do
                                         file:close()
                                 end
 
+                                local origpos = {x=pos.x, y=pos.y+0.5, z=pos.z}
                                 meta:set_string("player", pll)
                                 players_in_bed[pll] = vector.new(pos)
                                 local param2 = node.param2
@@ -153,8 +150,8 @@ for i in ipairs(beds_list) do
                                         pos.x = pos.x-1
                                         clicker:set_look_yaw(1.5*math.pi)
                                 end
-                                pos.y = pos.y - 0.5
-                                clicker:setpos(pos)
+                                --pos.y = pos.y - 0.5
+                                clicker:setpos(origpos)
                                 default.player_sleep[pll] = true
                         end
                 end

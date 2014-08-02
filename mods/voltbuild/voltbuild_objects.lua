@@ -329,7 +329,7 @@ function voltbuild.generation_abm (pos, node, active_object_count, active_object
         local image = minetest.registered_nodes[node.name]["voltbuild"]["energy_type_image"]
         -- do NOT generate electricity from torches and alikes
         lightpos={x=pos.x,y=pos.y+1,z=pos.z}
-        if node.name=="voltbuild:solar_panel" and minetest.get_node_light(lightpos)<LIGHT_MAX then print(minetest.get_node_light(lightpos)..'/'..LIGHT_MAX) return end
+       -- if node.name=="voltbuild:solar_panel" and minetest.get_node_light(lightpos)<LIGHT_MAX then print(minetest.get_node_light(lightpos)..'/'..LIGHT_MAX) return end
         local state = true
         if voltbuild.debug then
                 assert(packet_size,"ERROR: "..node.name.."\'s psize was not set in definition!")

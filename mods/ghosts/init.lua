@@ -439,7 +439,7 @@ minetest.register_node("ghosts:reincarnator", {
     end,
 
     on_receive_fields = function(pos, formname, fields, sender)
-      print(dump(fields))
+    --  print(dump(fields))
         --print("Sign at "..minetest.pos_to_string(pos).." got "..dump(fields))
        local meta = minetest.get_meta(pos)
        if fields.g_chk then --charge it!
@@ -482,7 +482,7 @@ minetest.register_node("ghosts:reincarnator", {
                   count = count-gb
                   meta:set_string("stored",tostring(count))
                   g_blocks_count[pll] = nil
-                  --minetest.debug(pll .. ' used Reincarnator...')
+                  minetest.debug(pll .. ' used reincarnator...')
                   ghosts[pll]=nil
                   isghost[pll]=nil
                   if upd_physics[pll] then
@@ -492,7 +492,7 @@ minetest.register_node("ghosts:reincarnator", {
                                                 gravity = ph.gravity / ghost_gravity_modifier,
                                              })
                   upd_physics[pll]=false
-                  print('ghosts on use reincarnator')
+                --  print('ghosts on use reincarnator')
                   end
                   --skins back!!!
                   if skins then
@@ -778,7 +778,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
                                                 gravity = ph.gravity * ghost_gravity_modifier,
                                              })
                   upd_physics[pll]=true
-                  print('ghosts on become a ghost')
+               --   print('ghosts on become a ghost')
                 end
                g_changed = true
                else
@@ -796,7 +796,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
            if beds.beds_player_spawns[pll] then
               player:setpos(beds.beds_player_spawns[pll])
            end
-           print('reincarnation at '..minetest.pos_to_string(player:getpos()) .. '; bed at '.. minetest.pos_to_string(beds.beds_player_spawns[pll]) .. '; deathpos is '.. minetest.pos_to_string(bdeathpos[pll]))
+          -- print('reincarnation at '..minetest.pos_to_string(player:getpos()) .. '; bed at '.. minetest.pos_to_string(beds.beds_player_spawns[pll]) .. '; deathpos is '.. minetest.pos_to_string(bdeathpos[pll]))
 
          -- clear up your stuff and onto your reincarnation, Muah-ha-ha-haaaa he-hee hoooo...
                   local pos = bdeathpos[pll]
@@ -841,7 +841,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
                                                 gravity = ph.gravity / ghost_gravity_modifier,
                                              })
                   upd_physics[pll]=false
-                  print('ghosts on reincarnation set ph')
+                 -- print('ghosts on reincarnation set ph')
                 end
               if skins then
                  if ghosts_skin[pll]
@@ -899,7 +899,7 @@ minetest.register_on_joinplayer(function(player)
                                              gravity = ph.gravity * ghost_gravity_modifier,
                                            }
                                   )
-                                  print('ghosts on join set ph')
+                           --       print('ghosts on join set ph')
             g_changed = true
             -- update skin
             if skins then

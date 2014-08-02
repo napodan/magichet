@@ -52,7 +52,7 @@ function try_to_grow(pos,node)
             return false
         end
         if minetest.get_node_light(pos) < light_req then
-           print('light is '.. tostring(minetest.get_node_light(pos)) .. " instead of " .. tostring(light_req) )
+          -- print('light is '.. tostring(minetest.get_node_light(pos)) .. " instead of " .. tostring(light_req) )
             return false
         end
 
