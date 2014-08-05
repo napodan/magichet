@@ -549,7 +549,7 @@ minetest.register_node("ghosts:reincarnator", {
 
 local gbus = true
 
-minetest.after(3, function()
+minetest.after(0, function()
  minetest.register_globalstep(function(dtime)
    local players  = minetest.get_connected_players()
    if #players == 0 then return end

@@ -4,8 +4,8 @@ minetest.register_on_joinplayer(function(player)
   if player then
      local pll = player:get_player_name()
      air_hud[pll] = 0
-     minetest.after(0.5, function()
-     -- add hunger hud background
+     minetest.after(0, function()
+     -- add hunger hud background     
      air_hud[pll]=player:hud_add({
         hud_elem_type = "statbar",
         position = {x=0.5,y=1},
@@ -21,7 +21,7 @@ minetest.register_on_joinplayer(function(player)
   end
 end)
 
-minetest.after(2.5, function()
+minetest.after(0.1, function()
       minetest.register_globalstep(function(dtime)
         local players = minetest.get_connected_players()
         for i,player in ipairs(players) do

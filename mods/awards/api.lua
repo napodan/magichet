@@ -215,7 +215,8 @@ function awards.give_achievement(name,award)
         elseif Use_Hud == true then
            local player = minetest.get_player_by_name(name)
            if player then
-         local hudbg=player:hud_add({
+           minetest.after(0,function(dtime)
+           local hudbg=player:hud_add({
                        hud_elem_type = "image",
                 position = {x=1, y=0.1},
                 offset = {x=-20, y=0},
@@ -224,7 +225,8 @@ function awards.give_achievement(name,award)
                 number = 0xFFFFFF ,
                        name = "award_bg",
                        text = background,
-                     })         local hudbg2=player:hud_add({
+                     })
+           local hudbg2=player:hud_add({
                        hud_elem_type = "image",
                 position = {x=1, y=0.1},
                 offset = {x=-20, y=0},
@@ -260,8 +262,10 @@ function awards.give_achievement(name,award)
                 number = 0xFFFFFF ,
                 text = title,
             })
+           end)
            minetest.after(10,function()
-              player:hud_remove(hudbg)              player:hud_remove(hudbg2)
+              player:hud_remove(hudbg)              
+              player:hud_remove(hudbg2)
               player:hud_remove(hudic)
               player:hud_remove(hudtxt)
               player:hud_remove(hudtxt2)

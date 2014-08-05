@@ -302,7 +302,7 @@ minetest.register_on_joinplayer(function(player)
      --
      if not timers[pll] then timers[pll] = -1 end
 
-     minetest.after(0.5, function()
+     minetest.after(0, function()
      -- add hunger hud background
      hungerhudb[pll]=player:hud_add({
         hud_elem_type = "statbar",

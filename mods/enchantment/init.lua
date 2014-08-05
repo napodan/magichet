@@ -1030,6 +1030,7 @@ end)
 
 local last_gravity = {}
 
+minetest.after(0,function(dtime)
 minetest.register_globalstep(function(dtime)
     local players = minetest.get_connected_players()
     for j,player in ipairs(players) do
@@ -1172,6 +1173,7 @@ minetest.register_globalstep(function(dtime)
         end
         wielded_chant[pll] = itemname
     end
+end)
 end)
 
 minetest.register_on_dignode(function(pos, oldnode, digger)

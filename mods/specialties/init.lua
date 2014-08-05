@@ -46,6 +46,7 @@ minetest.register_chatcommand("spec", {
     end,
 })
 minetest.register_on_joinplayer(function(player)
+    minetest.after(0,function(dtime)
     player:get_inventory():set_size("pick", 1)
     player:get_inventory():set_size("axe", 1)
     player:get_inventory():set_size("shovel", 1)
@@ -91,6 +92,7 @@ minetest.register_on_joinplayer(function(player)
         end
     end,
     name)
+   end)
 end)
 local function show_formspec(name, specialty)
     minetest.show_formspec(name, "specialties:spec", get_specialInfo(name, specialty))
