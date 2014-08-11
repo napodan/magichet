@@ -22,7 +22,7 @@ local function get_desc(item)
     return ""
 end
 
-minetest.after(0, function(dtime)
+minetest.after(2, function(dtime)
        minetest.register_globalstep(function(dtime)
           local players = minetest.get_connected_players()
           for i,player in ipairs(players) do
@@ -46,11 +46,12 @@ minetest.after(0, function(dtime)
               if wstack ~= wield[pll] then
                   wield[pll]=wstack
                   dtimes[pll]=0
-                  if huds[pll]
-                  then 
-                       hud_change(huds[pll], 'text', desc) --doesn't work for me :`(
-                       --player:hud_remove(huds[pll])
-                  else
+                 -- if huds[pll]
+                 -- then 
+                      -- player:hud_change(huds[pll], 'text', desc) --doesn't work for me :`(                      
+                       player:hud_remove(huds[pll])
+                       huds[pll] = nil
+                 -- else
                   local off = {x=0, y=-80}
                   if airhudmod then off.y=off.y-20 end
                   huds[pll] = player:hud_add({
@@ -60,8 +61,8 @@ minetest.after(0, function(dtime)
                                                  alignment = {x=0, y=0},
                                                  number = 0xFFFFFF ,
                                                  text = desc,
-                                                })
-                  end
+                                                })               
+                 -- end
               end
 
           end

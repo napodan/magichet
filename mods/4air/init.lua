@@ -15,7 +15,7 @@ minetest.register_on_joinplayer(function(player)
         alignment = {x=-1,y=-1},
         offset = {x=12, y=-80},
      })
-     player:hud_set_flags({breathbar = false})
+     player:hud_set_flags({breathbar = false, healthbar = true})
 
      end)
   end
