@@ -5,7 +5,6 @@
 global_timer=0
 minetest.after(15,function(dtime)
    global_timer=20
-   print('15 sec has passed, be ready for the lags')
 end)
 
 minetest.register_node("default:apple", {
@@ -70,12 +69,24 @@ minetest.register_node("default:snow_brick", {
     }),
 })
 
-minetest.register_craft({
-    output = 'snow:snow_brick',
-    recipe = {
-        {'default:snowblock', 'default:snowblock'},
-        {'default:snowblock', 'default:snowblock'},
-    },
+minetest.register_node("default:cobweb", {
+       description = "Cobweb",
+       drawtype = "plantlike",
+       visual_scale = 1.1,
+       tiles = {"cobweb.png"},
+       inventory_image = "cobweb.png",
+       paramtype = "light",
+       sunlight_propagates = true,
+       liquid_viscosity = 14,
+       liquidtype = "source",
+       liquid_alternative_flowing = "cobweb:cobweb",
+       liquid_alternative_source = "cobweb:cobweb",
+       liquid_renewable = false,
+       liquid_range = 0,
+       collisionbox = {-0.5,-1.5,-0.5, 0.5,0.5,0.5},
+       walkable = false,
+       groups = {snappy=1},
+       drop = "farming:string",
 })
 
 minetest.register_node("default:desert_sand", {
@@ -300,13 +311,8 @@ minetest.register_node("default:jungleleaves", {
         if math.random(1, 20) == 1 then
             nn = "default:junglesapling"
         end
-        if minetest.setting_getbool("creative_mode") then
-            local inv = digger:get_inventory()
-            if not inv:contains_item("main", ItemStack(nn)) then
-                inv:add_item("main", ItemStack(nn))
-            end
-        else
-            if digger:get_wielded_item():get_name() == "default:shears" or nn ~= "default:jungleleaves" then
+           local wielded = digger:get_wielded_item():get_name()
+           if wielded == "default:shears" or nn ~= "default:jungleleaves" or minetest.get_item_group(wielded, 'sharp')>0 then
                 local obj = minetest.add_item(pos, nn)
                 if obj ~= nil then
                     obj:get_luaentity().collect = true
@@ -321,7 +327,6 @@ minetest.register_node("default:jungleleaves", {
                     obj:setvelocity({x=1/x, y=obj:getvelocity().y, z=1/z})
                 end
             end
-        end
     end,
     after_place_node = function(pos, placer, itemstack)
         minetest.set_node(pos, {name="default:jungleleaves", param2=1})
@@ -383,18 +388,13 @@ minetest.register_node("default:leaves", {
     after_dig_node = function(pos, oldnode, oldmetadata, digger)
         local nn = "default:leaves"
         if math.random(1, 30) == 1 then
-            nn = "default:appleapple"
+            nn = "default:apple"
         end
         if math.random(1, 20) == 1 then
             nn = "default:sapling"
         end
-        if minetest.setting_getbool("creative_mode") then
-            local inv = digger:get_inventory()
-            if not inv:contains_item("main", ItemStack(nn)) then
-                inv:add_item("main", ItemStack(nn))
-            end
-        else
-            if digger:get_wielded_item():get_name() == "default:shears" or nn ~= "default:leaves" then
+           local wielded = digger:get_wielded_item():get_name()
+           if wielded == "default:shears" or nn ~= "default:leaves" or minetest.get_item_group(wielded, 'sharp')>0 then
                 local obj = minetest.add_item(pos, nn)
                 if obj ~= nil then
                     obj:get_luaentity().collect = true
@@ -409,7 +409,6 @@ minetest.register_node("default:leaves", {
                     obj:setvelocity({x=1/x, y=obj:getvelocity().y, z=1/z})
                 end
             end
-        end
     end,
     after_place_node = function(pos, placer, itemstack)
         minetest.set_node(pos, {name="default:leaves", param2=1})
@@ -473,8 +472,9 @@ minetest.register_node("default:bookshelf", {
 
 minetest.register_node("default:glass", {
     description = "Glass",
-    drawtype = "glasslike",
-    tiles = {"default_glass.png"},
+--    drawtype = "glasslike",
+    drawtype = "glasslike_framed",
+    tiles = {"default_glass.png","default_glass_details.png"},
     inventory_image = minetest.inventorycube("default_glass.png"),
     sunlight_propagates = true,
     paramtype = "light",
@@ -590,6 +590,28 @@ minetest.register_node("default:water_flowing", {
     liquid_viscosity = WATER_VISC,
     post_effect_color = {a=64, r=100, g=100, b=200},
     groups = {water=3, liquid=3, puts_out_fire=1, not_in_creative_inventory=1},
+    after_place_node = function(pos, placer, itemstack, pointed_thing)
+        local timer = minetest.get_node_timer(pos)
+        timer:start(1)
+    end,
+    on_timer = function(pos,el)
+        pos.y = pos.y-2
+        if minetest.get_node(pos).name=='air' then
+            pos.y = pos.y+1
+            minetest.after(math.random(),function(dtime)
+                local rx,rz = math.random(),math.random()
+                local s = {x=pos.x+rx-0.5, y=pos.y-0.5, z=pos.z+rz-0.5}
+                minetest.add_particle(s,
+                                      {x=0,z=0,y=0.1},
+                                      {x=0, y=-9.8, z=0},
+                                      1,
+                                      1,
+                                      false,
+                                      "default_water_drop.png")
+                end)
+        end
+       return true
+    end,
 })
 
 minetest.register_node("default:water_source", {
@@ -621,6 +643,28 @@ minetest.register_node("default:water_source", {
     liquid_viscosity = WATER_VISC,
     post_effect_color = {a=64, r=100, g=100, b=200},
     groups = {water=3, liquid=3, puts_out_fire=1},
+    after_place_node = function(pos, placer, itemstack, pointed_thing)
+        local timer = minetest.get_node_timer(pos)
+        timer:start(1)
+    end,
+    on_timer = function(pos,el)
+        pos.y = pos.y-2
+        if minetest.get_node(pos).name=='air' then
+            pos.y = pos.y+1
+            minetest.after(math.random(),function(dtime)
+                local rx,rz = math.random(),math.random()
+                local s = {x=pos.x+rx-0.5, y=pos.y-0.5, z=pos.z+rz-0.5}
+                minetest.add_particle(s,
+                                      {x=0,z=0,y=0.1},
+                                      {x=0, y=-9.8, z=0},
+                                      0.5,
+                                      1,
+                                      false,
+                                      "default_water_drop.png")
+                end)
+        end
+       return true
+    end,
 })
 
 minetest.register_node("default:lava_flowing", {
@@ -652,9 +696,37 @@ minetest.register_node("default:lava_flowing", {
     liquid_alternative_source = "default:lava_source",
     liquid_viscosity = LAVA_VISC,
     liquid_renewable = false,
-    damage_per_second = 4,
+    --damage_per_second = 4,
     post_effect_color = {a=192, r=255, g=64, b=0},
     groups = {lava=3, liquid=2, hot=3, igniter=1, not_in_creative_inventory=1},
+    after_place_node = function(pos, placer, itemstack, pointed_thing)
+    local timer = minetest.get_node_timer(pos)
+        timer:start(1)
+    end,
+    on_timer = function(pos,el)
+        pos.y = pos.y-2
+        if minetest.get_node(pos).name=='air' then
+            pos.y = pos.y+1
+            minetest.after(math.random(),function(dtime)
+                local rx,rz = math.random(),math.random()
+                local s = {x=pos.x+rx-0.5, y=pos.y-0.5, z=pos.z+rz-0.5}
+                minetest.add_particle(s,
+                                      {x=0,z=0,y=0.1},
+                                      {x=0, y=-9.8, z=0},
+                                      1,
+                                      1,
+                                      false,
+                                      "default_lava_drop.png")
+                end)
+        end
+       for _,obj in pairs(minetest.get_objects_inside_radius(pos,1)) do
+          if obj:is_player() then
+             obj:set_hp(obj:get_hp()- default.statuses[obj:get_player_name()].lava_damage-4)
+             -- env. damage is calculated @adbs:init.lua
+          end
+       end
+       return true
+    end,
 })
 
 minetest.register_node("default:lava_source", {
@@ -684,10 +756,38 @@ minetest.register_node("default:lava_source", {
     liquid_alternative_source = "default:lava_source",
     liquid_viscosity = LAVA_VISC,
     liquid_renewable = false,
-    damage_per_second = 3,
+    --damage_per_second = 3,
     post_effect_color = {a=192, r=255, g=64, b=0},
     groups = {lava=3, liquid=2, hot=3, igniter=1},
     is_ground_content = true,
+    after_place_node = function(pos, placer, itemstack, pointed_thing)
+        local timer = minetest.get_node_timer(pos)
+        timer:start(1)
+    end,
+    on_timer = function(pos,el)
+        pos.y = pos.y-2
+        if minetest.get_node(pos).name=='air' then
+            pos.y = pos.y+1
+            minetest.after(math.random(),function(dtime)
+                local rx,rz = math.random(),math.random()
+                local s = {x=pos.x+rx-0.5, y=pos.y-0.5, z=pos.z+rz-0.5}
+                minetest.add_particle(s,
+                                      {x=0,z=0,y=0.1},
+                                      {x=0, y=-9.8, z=0},
+                                      1,
+                                      1,
+                                      false,
+                                      "default_lava_drop.png")
+                end)
+        end
+       for _,obj in pairs(minetest.get_objects_inside_radius(pos,1)) do
+          if obj:is_player() then
+             obj:set_hp(obj:get_hp()- default.statuses[obj:get_player_name()].lava_damage-3)
+             -- env. damage for entities is calculated @adbs:init.lua
+          end
+       end
+       return true
+    end,
 })
 
 minetest.register_node("default:torch", {
@@ -765,61 +865,18 @@ minetest.register_node("default:sign_wall", {
     end,
 })
 
-local function get_chest_neighborpos(pos, param2, side)
-    if side == "right" then
-        if param2 == 0 then
-            return {x=pos.x-1, y=pos.y, z=pos.z}
-        elseif param2 == 1 then
-            return {x=pos.x, y=pos.y, z=pos.z+1}
-        elseif param2 == 2 then
-            return {x=pos.x+1, y=pos.y, z=pos.z}
-        elseif param2 == 3 then
-            return {x=pos.x, y=pos.y, z=pos.z-1}
-        end
-    else
-        if param2 == 0 then
-            return {x=pos.x+1, y=pos.y, z=pos.z}
-        elseif param2 == 1 then
-            return {x=pos.x, y=pos.y, z=pos.z-1}
-        elseif param2 == 2 then
-            return {x=pos.x-1, y=pos.y, z=pos.z}
-        elseif param2 == 3 then
-            return {x=pos.x, y=pos.y, z=pos.z+1}
-        end
-    end
-end
-
 -- 3d chest!
 local tdc = {
     --hp =1,
     physical = true,
-    collisionbox = {-0.5,-0.5,-0.5, 0.5,0.5,0.5},
     visual = "mesh",
-    visual_size = {x=5, y=5, z=5},
+    visual_size = {x=4.95, y=4.95, z=4.95},
     mesh = "chest_proto.x",
     --mesh = "character.x",
     textures = {"default_chest3d.png"},
     makes_footstep_sound = true,
-    groups = {choppy=default.dig.wood},
-    on_punch = function(self, hitter)
-       if self.object:get_hp()<=0 then
-          local pos = self.object:getpos()
-          local node = minetest.get_node(pos)
-          local digger = hitter
+    groups = {choppy=default.dig.wood, punch_operable = 1, immortal = 1},
 
-            local meta = minetest.get_meta(pos)
-            local meta2 = meta
-            local inv = meta:get_inventory()
-                for i=1,inv:get_size("main") do
-                    local stack = inv:get_stack("main", i)
-                    if not stack:is_empty() then
-                        local p = {x=pos.x+math.random(0, 10)/10-0.5, y=pos.y, z=pos.z+math.random(0, 10)/10-0.5}
-                        minetest.add_item(p, stack)
-                    end
-                end
-            minetest.remove_node(pos)
-       end
-    end,
     on_activate = function(self, staticdata, dtime_s)
         if staticdata then
             local tmp = minetest.deserialize(staticdata)
@@ -848,124 +905,57 @@ local tdc = {
     end,
     on_step = function(self, dtime)
        local pos = self.object:getpos()
-       if minetest.get_node(pos).name ~='default:chest' then
+       local nn = minetest.get_node(pos).name
+       if  nn~='default:chest'
+       and nn~='default:chest_locked'
+       and nn~='default:shared_chest'
+       and nn~='default:wormhole_chest' then
           self.object:remove()
           return
        end
     end,
-    on_rightclick = function (self, clicker)
-       local pos = self.object:getpos()
-       local meta = minetest.get_meta(pos)
-       local name = 'default:3dchest'
-       local pll = clicker:get_player_name()
-
-
-       local formspec = meta:get_string('formspec')
-      -- print(formspec)
-      -- print(minetest.get_node(pos).name .. ' at ' .. minetest.pos_to_string(pos))
-       self.object:set_animation({x=10,y=25}, 60, 0)
-       minetest.after(0.1,function(dtime)
-           self.object:set_animation({x=25,y=25}, 20, 0)
-       end)
-       minetest.sound_play('chestopen', {pos = pos, gain = 0.3, max_hear_distance = 5})
-       minetest.show_formspec(pll, name..'_'..minetest.serialize(pos), formspec)
-    end,
 }
 
-minetest.register_entity('default:3dchest', tdc)
+local tdc2 = default.deepcopy(tdc)
+local tdc3 = default.deepcopy(tdc)
+local tdc4 = default.deepcopy(tdc)
+tdc2.textures = {"default_chest3d_locked.png"}
+tdc3.textures = {"default_chest3d_shared.png"}
+tdc4.textures = {"default_chest3d_wormhole.png"}
+
+minetest.register_entity('default:3dchest', tdc)                        -- normal
+minetest.register_entity('default:3dchest2', tdc2)                      -- locked
+minetest.register_entity('default:3dchest3', tdc3)                      -- shared
+minetest.register_entity('default:3dchest4', tdc4)                      -- wormhole
 
 minetest.register_node("default:chest", {
     description = "Chest",
     tiles = {"default_chest_top.png", "default_chest_top.png", "default_chest_side.png",
         "default_chest_side.png", "default_chest_side.png", "default_chest_front.png"},
     paramtype2 = "facedir",
-    -- temporary workover
-    wield_image = minetest.inventorycube("default_chest_top.png", "default_chest_side.png", "default_chest_front.png"),
-    drawtype = "normal",
-    visual_scale = 0.05,
+    -- temporary workaround
+    wield_image = "default_chest_front.png", --minetest.inventorycube("default_chest_top.png", "default_chest_side.png", "default_chest_front.png"),
+    inventory_image = minetest.inventorycube("default_chest_top.png", "default_chest_front.png", "default_chest_side.png"),
+    drawtype = "nodebox",
+    node_box = {
+        type = "fixed",
+        fixed = {-0.01, -0.01, -0.01, 0.01, 0.01, 0.01},
+    },
+    selection_box = {
+        type = "fixed",
+        fixed = {
+            {-0.501, -0.501, -0.501, 0.501, 0.501, 0.501},
+        }
+    },
     paramtype = "light",
-    walkable = true,
+    walkable = false,
     groups = {choppy=default.dig.chest},
     legacy_facedir_simple = true,
     sounds = default.node_sound_wood_defaults(),
     on_construct = function(pos)
         local param2 = minetest.get_node(pos).param2
         local meta = minetest.get_meta(pos)
-      --[[  if minetest.get_node(get_chest_neighborpos(pos, param2, "right")).name == "default:chest" then
-            minetest.set_node(pos, {name="default:chest_right",param2=param2})
-            local p = get_chest_neighborpos(pos, param2, "right")
-            meta:set_string("formspec",
-            "size[9,10.2]"..
-            "bgcolor[#bbbbbb;false]"..
-            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
-
-            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
-            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
-            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
-            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;z;true;true]"..
-
-            "list[nodemeta:"..p.x..","..p.y..","..p.z..";main;0,3;9,3;]"..
-            "list[context;main;0,0;9,3;]"..
-
-            "list[current_player;main;0,6.2;9,3;9]"..
-            "list[current_player;main;0,9.4;9,1;]")            meta:set_string("infotext", "Large Chest")
-            minetest.swap_node(p, {name="default:chest_left", param2=param2})
-            local m = minetest.get_meta(p)
-            m:set_string("formspec",
-            "size[9,10.2]"..
-            "bgcolor[#bbbbbb;false]"..
-            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
-
-            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
-            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
-            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
-            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
-
-            "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";main;0,0;9,3;]"..
-            "list[context;main;0,3;9,3;]"..
-
-            "list[current_player;main;0,6.2;9,3;9]"..
-            "list[current_player;main;0,9.4;9,1;]")
-            m:set_string("infotext", "Large Chest")
-        elseif minetest.get_node(get_chest_neighborpos(pos, param2, "left")).name == "default:chest" then
-            minetest.set_node(pos, {name="default:chest_left",param2=param2})
-            local p = get_chest_neighborpos(pos, param2, "left")
-            meta:set_string("formspec",
-            "size[9,10.2]"..
-            "bgcolor[#bbbbbb;false]"..
-            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
-
-            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
-            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
-            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
-            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
-
-            "list[nodemeta:"..p.x..","..p.y..","..p.z..";main;0,3;9,3;]"..
-            "list[context;main;0,0;9,3;]"..
-
-            "list[current_player;main;0,6.2;9,3;9]"..
-            "list[current_player;main;0,9.4;9,1;]")
-            meta:set_string("infotext", "Large Chest")
-            minetest.swap_node(p, {name="default:chest_right", param2=param2})
-            local m = minetest.get_meta(p)
-            m:set_string("formspec",
-            "size[9,10.2]"..
-            "bgcolor[#bbbbbb;false]"..
-            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
-
-            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
-            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
-            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
-            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
-
-            "list[nodemeta:"..pos.x..","..pos.y..","..pos.z..";main;0,0;9,3;]"..
-            "list[context;main;0,3;9,3;]"..
-
-            "list[current_player;main;0,6.2;9,3;9]"..
-            "list[current_player;main;0,9.4;9,1;]")
-            m:set_string("infotext", "Large Chest")
-        else]]--
-            meta:set_string("formspec",
+            meta:set_string("formspect",
             "size[9,7.2]"..
             "bgcolor[#bbbbbb;false]"..
             "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
@@ -985,7 +975,7 @@ minetest.register_node("default:chest", {
     end,
     after_place_node = function(pos, placer, itemstack, pointed_thing)
             local m = minetest.get_meta(pos)
-            local ent = minetest.env:add_entity(pos,'default:3dchest')
+            local ent = minetest.add_entity(pos,'default:3dchest')
             if ent then
                 local ent2 = ent:get_luaentity()
                 ent:set_animation({x=1,y=1}, 20, 0)
@@ -1023,7 +1013,7 @@ minetest.register_node("default:chest", {
         timer:start(1)
     end,
     on_timer = function(pos,el)
-       if global_timer<15 then return end
+       if global_timer<15 then return true end
        local meta = minetest.get_meta(pos)
        local cover = false
        local node = minetest.get_node(pos)
@@ -1082,222 +1072,37 @@ minetest.register_node("default:chest", {
               default.sort_inv(sender,formname,fields)
            end
         end,
+
+   on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+       local selves = minetest.get_objects_inside_radius(pos, 0.1)
+       local self
+       for _,obj in pairs(selves) do
+          if obj:get_luaentity().name == 'default:3dchest' then
+             self = obj:get_luaentity()
+             break
+          end
+       end
+       local meta = minetest.get_meta(pos)
+       local name = 'default:3dchest2'
+       local pll = clicker:get_player_name()
+       local formspec = meta:get_string('formspect')
+
+       if not self then
+          minetest.show_formspec(pll, name..'_'..minetest.serialize(pos), formspec)
+          return
+       else
+           self.object:set_animation({x=10,y=25}, 60, 0)
+           minetest.after(0.1,function(dtime)
+               self.object:set_animation({x=25,y=25}, 20, 0)
+           end)
+           minetest.sound_play('chestopen', {pos = pos, gain = 0.3, max_hear_distance = 5})
+           minetest.show_formspec(pll, name..'_'..minetest.serialize(pos), formspec)
+       end
+   end,
 })
---[[
-minetest.register_node("default:chest_left", {
-    tiles = {"default_chest_top_big.png", "default_chest_top_big.png", "default_chest_side.png",
-        "default_chest_side.png", "default_chest_side_big.png^[transformFX", "default_chest_front_big.png"},
-    paramtype2 = "facedir",
-    groups = {choppy=default.dig.chest,not_in_creative_inventory=1},
-    drop = "default:chest",
-    sounds = default.node_sound_wood_defaults(),
-    on_destruct = function(pos)
-        local m = minetest.get_meta(pos)
-        if m:get_string("infotext") == "Chest" then
-            return
-        end
-        local param2 = minetest.get_node(pos).param2
-        local p = get_chest_neighborpos(pos, param2, "left")
-        if not p or minetest.get_node(p).name ~= "default:chest_right" then
-            return
-        end
-        local meta = minetest.get_meta(p)
-        meta:set_string("formspec",
-            "size[9,7.2]"..
-            "bgcolor[#bbbbbb;false]"..
-            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
-
-            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
-            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
-            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
-            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
-
-            "list[context;main;0,0;9,3;]"..
-            "list[current_player;main;0,3.2;9,3;9]"..
-            "list[current_player;main;0,6.4;9,1;]")
-        meta:set_string("infotext", "Chest")
-        minetest.swap_node(p, {name="default:chest"})
-    end,
-    after_dig_node = function(pos, oldnode, oldmetadata, digger)
-        local meta = minetest.get_meta(pos)
-        local meta2 = meta
-        meta:from_table(oldmetadata)
-        local inv = meta:get_inventory()
-        for i=1,inv:get_size("main") do
-            local stack = inv:get_stack("main", i)
-            if not stack:is_empty() then
-                local p = {x=pos.x+math.random(0, 10)/10-0.5, y=pos.y, z=pos.z+math.random(0, 10)/10-0.5}
-                minetest.add_item(p, stack)
-            end
-        end
-        meta:from_table(meta2:to_table())
-        local placer=digger
-                   local m = minetest.get_meta(pos)
-            local ent = minetest.env:add_entity(pos,'default:3dchest')
-            if ent then
-                local ent2 = ent:get_luaentity()
-                ent:set_animation({x=1,y=1}, 20, 0)
-                local dir = placer:get_look_dir()
-                local absx, absy, absz = math.abs(dir.x), math.abs(dir.y), math.abs(dir.z)
-                local maxd = math.max(math.max(absx,absy),absz)
-                if maxd == absx then
-                   if dir.x>0 then
-                      ent:setyaw(math.pi/2)
-                      m:set_int('dir',1)
-                   else
-                      ent:setyaw(3*math.pi/2)
-                      m:set_int('dir',3)
-                   end
-                elseif maxd == absy then
-                   if dir.x>dir.z then
-                      ent:setyaw(math.pi)
-                      m:set_int('dir',2)
-                   else
-                      ent:setyaw(3*math.pi/2)
-                      m:set_int('dir',3)
-                   end
-                elseif maxd == absz then
-                   if dir.z>0 then
-                      ent:setyaw(math.pi)
-                      m:set_int('dir',2)
-                   else
-                      ent:setyaw(0)
-                      m:set_int('dir',0)
-                   end
-                end
-                m:set_int('3d',1)
-            end
-        local timer = minetest.get_node_timer(pos)
-        timer:start(1)
-    end,
-    on_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
-        minetest.log("action", player:get_player_name()..
-                " moves stuff in chest at "..minetest.pos_to_string(pos))
-    end,
-    on_metadata_inventory_put = function(pos, listname, index, stack, player)
-        minetest.log("action", player:get_player_name()..
-                " moves stuff to chest at "..minetest.pos_to_string(pos))
-    end,
-    on_metadata_inventory_take = function(pos, listname, index, stack, player)
-        minetest.log("action", player:get_player_name()..
-                " takes stuff from chest at "..minetest.pos_to_string(pos))
-    end,
-        on_receive_fields = function(pos, formname, fields, sender)
-           if sender and sender:is_player() then
-              default.sort_inv(sender,formname,fields)
-           end
-        end,
-
-})]]
---[[
-minetest.register_node("default:chest_right", {
-    tiles = {"default_chest_top_big.png^[transformFX", "default_chest_top_big.png^[transformFX", "default_chest_side.png",
-        "default_chest_side.png", "default_chest_side_big.png", "default_chest_front_big.png^[transformFX"},
-    paramtype2 = "facedir",
-    groups = {choppy=default.dig.chest,not_in_creative_inventory=1},
-    drop = "default:chest",
-    sounds = default.node_sound_wood_defaults(),
-    on_destruct = function(pos)
-        local m = minetest.get_meta(pos)
-        if m:get_string("infotext") == "Chest" then
-            return
-        end
-        local param2 = minetest.get_node(pos).param2
-        local p = get_chest_neighborpos(pos, param2, "right")
-        if not p or minetest.get_node(p).name ~= "default:chest_left" then
-            return
-        end
-        local meta = minetest.get_meta(p)
-        meta:set_string("formspec",
-            "size[9,7.2]"..
-            "bgcolor[#bbbbbb;false]"..
-            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
-
-            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
-            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
-            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
-            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
-
-            "list[context;main;0,0;9,3;]"..
-            "list[current_player;main;0,3.2;9,3;9]"..
-            "list[current_player;main;0,6.4;9,1;]")
-        meta:set_string("infotext", "Chest")
-        minetest.swap_node(p, {name="default:chest"})
-    end,
-    after_dig_node = function(pos, oldnode, oldmetadata, digger)
-        local meta = minetest.get_meta(pos)
-        local meta2 = meta
-        meta:from_table(oldmetadata)
-        local inv = meta:get_inventory()
-        for i=1,inv:get_size("main") do
-            local stack = inv:get_stack("main", i)
-            if not stack:is_empty() then
-                local p = {x=pos.x+math.random(0, 10)/10-0.5, y=pos.y, z=pos.z+math.random(0, 10)/10-0.5}
-                minetest.add_item(p, stack)
-            end
-        end
-        meta:from_table(meta2:to_table())
-        local placer=digger
-                   local m = minetest.get_meta(pos)
-            local ent = minetest.env:add_entity(pos,'default:3dchest')
-            if ent then
-                local ent2 = ent:get_luaentity()
-                ent:set_animation({x=1,y=1}, 20, 0)
-                local dir = placer:get_look_dir()
-                local absx, absy, absz = math.abs(dir.x), math.abs(dir.y), math.abs(dir.z)
-                local maxd = math.max(math.max(absx,absy),absz)
-                if maxd == absx then
-                   if dir.x>0 then
-                      ent:setyaw(math.pi/2)
-                      m:set_int('dir',1)
-                   else
-                      ent:setyaw(3*math.pi/2)
-                      m:set_int('dir',3)
-                   end
-                elseif maxd == absy then
-                   if dir.x>dir.z then
-                      ent:setyaw(math.pi)
-                      m:set_int('dir',2)
-                   else
-                      ent:setyaw(3*math.pi/2)
-                      m:set_int('dir',3)
-                   end
-                elseif maxd == absz then
-                   if dir.z>0 then
-                      ent:setyaw(math.pi)
-                      m:set_int('dir',2)
-                   else
-                      ent:setyaw(0)
-                      m:set_int('dir',0)
-                   end
-                end
-                m:set_int('3d',1)
-            end
-        local timer = minetest.get_node_timer(pos)
-        timer:start(1)
-    end,
-    on_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
-        minetest.log("action", player:get_player_name()..
-                " moves stuff in chest at "..minetest.pos_to_string(pos))
-    end,
-    on_metadata_inventory_put = function(pos, listname, index, stack, player)
-        minetest.log("action", player:get_player_name()..
-                " moves stuff to chest at "..minetest.pos_to_string(pos))
-    end,
-    on_metadata_inventory_take = function(pos, listname, index, stack, player)
-        minetest.log("action", player:get_player_name()..
-                " takes stuff from chest at "..minetest.pos_to_string(pos))
-    end,
-        on_receive_fields = function(pos, formname, fields, sender)
-           if sender and sender:is_player() then
-              default.sort_inv(sender,formname,fields)
-           end
-        end,
 
 
-})]]--
-
-local function has_locked_chest_privilege(meta, player)
+function default.has_locked_chest_privilege(meta, player)
     if player:get_player_name() ~= meta:get_string("owner") then
         return false
     end
@@ -1305,9 +1110,12 @@ local function has_locked_chest_privilege(meta, player)
 end
 
 function default.get_locked_chest_formspec(pos)
-    local spos = pos.x .. "," .. pos.y .. "," ..pos.z
-    local formspec =
-            "size[9,7.2]"..
+    local meta = minetest.get_meta(pos)
+    local formspec = ''
+    if meta:get_int('locked') == 0 then
+       local spos = pos.x .. "," .. pos.y .. "," ..pos.z
+       formspec =
+            "size[9,8.2]"..
             "bgcolor[#bbbbbb;false]"..
             "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
 
@@ -1318,7 +1126,12 @@ function default.get_locked_chest_formspec(pos)
 
             "list[nodemeta:".. spos .. ";main;0,0;9,3;]"..
             "list[current_player;main;0,3.2;9,3;9]"..
-            "list[current_player;main;0,6.4;9,1;]"
+            "list[current_player;main;0,6.4;9,1;]"..
+            "button[7,7.5;2,1;open;Lock]"
+    else
+        formspec = "size[2,0.8]button[0,0;2,1;open;Unlock]"
+    end
+
     return formspec
 end
 
@@ -1326,28 +1139,97 @@ minetest.register_node("default:chest_locked", {
     description = "Locked Chest",
     tiles = {"default_chest_top.png", "default_chest_top.png", "default_chest_side.png",
         "default_chest_side.png", "default_chest_side.png", "default_chest_lock.png"},
+    wield_image = "default_chest_lock.png",
+    inventory_image = minetest.inventorycube("default_chest_top.png", "default_chest_lock.png", "default_chest_side.png"),
+    drawtype = "nodebox",
+    node_box = {
+        type = "fixed",
+        fixed = {-0.01, -0.01, -0.01, 0.01, 0.01, 0.01},
+    },
+    selection_box = {
+        type = "fixed",
+        fixed = {
+            {-0.501, -0.501, -0.501, 0.501, 0.501, 0.501},
+        }
+    },
+    paramtype = "light",
     paramtype2 = "facedir",
-    groups = {choppy=2,oddly_breakable_by_hand=2},
+    groups = {choppy=default.dig.chest,oddly_breakable_by_hand=2},
     legacy_facedir_simple = true,
     sounds = default.node_sound_wood_defaults(),
     after_place_node = function(pos, placer)
         local meta = minetest.get_meta(pos)
         meta:set_string("owner", placer:get_player_name() or "")
         meta:set_string("infotext", "Locked chest (owned by "..
-                meta:get_string("owner")..")")
-            meta:set_string("formspec",
-            "size[9,7.2]"..
-            "bgcolor[#bbbbbb;false]"..
-            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
-
-            "image_button[9.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
-            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
-            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
-            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
-
-            "list[context;main;0,0;9,3;]"..
-            "list[current_player;main;0,3.2;9,3;9]"..
-            "list[current_player;main;0,6.4;9,1;]")
+        meta:get_string("owner")..")")
+        meta:set_int('locked',0)
+        meta:set_string("formspect",default.get_locked_chest_formspec(pos))
+        local m = minetest.get_meta(pos)
+        local ent = minetest.add_entity(pos,'default:3dchest2')
+        if ent then
+            local ent2 = ent:get_luaentity()
+            ent:set_animation({x=1,y=1}, 20, 0)
+            local dir = placer:get_look_dir()
+            local absx, absy, absz = math.abs(dir.x), math.abs(dir.y), math.abs(dir.z)
+            local maxd = math.max(math.max(absx,absy),absz)
+            if maxd == absx then
+               if dir.x>0 then
+                  ent:setyaw(math.pi/2)
+                  m:set_int('dir',1)
+               else
+                  ent:setyaw(3*math.pi/2)
+                  m:set_int('dir',3)
+               end
+            elseif maxd == absy then
+               if dir.x>dir.z then
+                  ent:setyaw(math.pi)
+                  m:set_int('dir',2)
+               else
+                  ent:setyaw(3*math.pi/2)
+                  m:set_int('dir',3)
+               end
+            elseif maxd == absz then
+               if dir.z>0 then
+                  ent:setyaw(math.pi)
+                  m:set_int('dir',2)
+               else
+                  ent:setyaw(0)
+                  m:set_int('dir',0)
+               end
+            end
+            m:set_int('3d',1)
+        end
+        local timer = minetest.get_node_timer(pos)
+        timer:start(1)
+    end,
+    on_timer = function(pos,el)
+       if global_timer<15 then return true end
+       local meta = minetest.get_meta(pos)
+       local cover = false
+       local node = minetest.get_node(pos)
+       local objs = minetest.get_objects_inside_radius(pos, 0.1)
+             for i,obj in ipairs(objs) do
+                 if not obj:is_player() then
+                    local self = obj:get_luaentity()
+                    if self.name == 'default:3dchest2' and node.name == 'default:chest_locked' then
+                       cover = true
+                       break
+                    else
+                       self.object:remove()
+                    end
+                 end
+             end
+      if not cover then
+         if node.name == 'default:chest_locked' then
+            local ent = minetest.env:add_entity(pos,'default:3dchest2')
+            if ent then
+                ent:set_animation({x=1,y=1}, 20, 0)
+                local dir = meta:get_int('dir')
+                ent:setyaw(dir*(math.pi/2))
+            end
+         end
+      end
+       return true
     end,
     on_construct = function(pos)
         local meta = minetest.get_meta(pos)
@@ -1359,25 +1241,25 @@ minetest.register_node("default:chest_locked", {
     can_dig = function(pos,player)
         local meta = minetest.get_meta(pos);
         local inv = meta:get_inventory()
-        return inv:is_empty("main") and has_locked_chest_privilege(meta, player)
+        return inv:is_empty("main") and default.has_locked_chest_privilege(meta, player)
     end,
     allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
         local meta = minetest.get_meta(pos)
-        if not has_locked_chest_privilege(meta, player) then
+        if not default.has_locked_chest_privilege(meta, player) then
             return 0
         end
         return count
     end,
     allow_metadata_inventory_put = function(pos, listname, index, stack, player)
         local meta = minetest.get_meta(pos)
-        if not has_locked_chest_privilege(meta, player) then
+        if not default.has_locked_chest_privilege(meta, player) then
             return 0
         end
         return stack:get_count()
     end,
     allow_metadata_inventory_take = function(pos, listname, index, stack, player)
         local meta = minetest.get_meta(pos)
-        if not has_locked_chest_privilege(meta, player) then
+        if not default.has_locked_chest_privilege(meta, player) then
             return 0
         end
         return stack:get_count()
@@ -1394,23 +1276,421 @@ minetest.register_node("default:chest_locked", {
         local inam = stack:get_name()
         minetest.log("action", player:get_player_name().. " took " .. inam .. " from a chest at "..minetest.pos_to_string(pos))
     end,
-    on_rightclick = function(pos, node, clicker)
-        local meta = minetest.get_meta(pos)
-        if has_locked_chest_privilege(meta, clicker) then
-            minetest.show_formspec(
-                clicker:get_player_name(),
-                "default:chest_locked",
-                default.get_locked_chest_formspec(pos)
-            )
+    on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+       local selves = minetest.get_objects_inside_radius(pos, 0.1)
+       local self
+       for _,obj in pairs(selves) do
+          if obj:get_luaentity().name == 'default:3dchest2' then
+             self = obj:get_luaentity()
+             break
+          end
+       end
+       local meta = minetest.get_meta(pos)
+       local name = 'default:3dchest2'
+       local pll = clicker:get_player_name()
+       local formspec = meta:get_string('formspect')
+
+       if not self then
+          minetest.show_formspec(pll, name..'_'..minetest.serialize(pos), formspec)
+          return
+       else
+           self.object:set_animation({x=10,y=25}, 60, 0)
+           minetest.after(0.1,function(dtime)
+               self.object:set_animation({x=25,y=25}, 20, 0)
+           end)
+           minetest.sound_play('chestopen', {pos = pos, gain = 0.3, max_hear_distance = 5})
+           minetest.show_formspec(pll, name..'_'..minetest.serialize(pos), formspec)
+       end
+    end,
+})
+
+function default.has_shared_chest_privilege(meta, player)
+    local pll = player:get_player_name()
+    if meta:get_string("owner") then return true end
+    local shared = minetest.deserialize(meta:get_string("shared"))
+    if shared == true
+    then return true
+    else return false
+    end
+end
+
+function default.get_shared_chest_formspec(pos)
+    local meta = minetest.get_meta(pos)
+    local formspec = ''
+    local users = minetest.deserialize(meta:get_string('shared')) or {}
+    local list = ''
+    for i,nm in pairs(users) do
+        list=list..nm..','
+    end
+    if meta:get_int('locked') == 0 then
+       local spos = pos.x .. "," .. pos.y .. "," ..pos.z
+       formspec =
+            "size[11,7.2]"..
+            "bgcolor[#bbbbbb;false]"..
+            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
+
+            "image_button[11.0,-0.3;0.80,1.7;b_bg2.png;just_bg;Z;true;false]"..
+            "image_button[11.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
+            "image_button[11.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
+            "image_button[11.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
+
+            "list[nodemeta:".. spos .. ";main;0,0;9,3;]"..
+            "list[current_player;main;0,3.2;9,3;9]"..
+            "list[current_player;main;0,6.4;9,1;]"..
+            "button[9,1;2,1;add;Add player]"..
+            "button[9,2;2,1;rem;Del player]"..
+            "button_exit[9,6.5;2,1;open;Close]"..
+            "field[9.3,0;2,1;user;;]"..
+            "label[9,3;Userlist]"..
+            "textlist[9,3.5;1.8,2.5;list;"..list..";1;true]"
+    else
+        formspec = "size[2,0.8]button[0,0;2,1;open;Open]"
+    end
+
+    return formspec
+end
+
+minetest.register_node("default:shared_chest", {
+    description = "Shared Chest",
+    tiles = {"default_chest_top.png", "default_chest_top.png", "default_chest_side.png",
+        "default_chest_side.png", "default_chest_side.png", "chests.0gb.us_shared_front.png"},
+    wield_image = "chests.0gb.us_shared_front.png",
+    inventory_image = minetest.inventorycube("default_chest_top.png", "chests.0gb.us_shared_front.png", "default_chest_side.png"),
+    drawtype = "nodebox",
+    node_box = {
+        type = "fixed",
+        fixed = {-0.01, -0.01, -0.01, 0.01, 0.01, 0.01},
+    },
+    selection_box = {
+        type = "fixed",
+        fixed = {
+            {-0.501, -0.501, -0.501, 0.501, 0.501, 0.501},
+        }
+    },
+    paramtype = "light",
+    paramtype2 = "facedir",
+    groups = {choppy=default.dig.chest,oddly_breakable_by_hand=2},
+    legacy_facedir_simple = true,
+    sounds = default.node_sound_wood_defaults(),
+    after_place_node = function(pos, placer)
+        local meta = minetest.env:get_meta(pos)
+        meta:set_string("owner", placer:get_player_name() or "")
+        meta:set_string("shared", 'return { "'..meta:get_string("owner")..'" }')
+        meta:set_string("infotext", "Shared chest (owner is "..
+                meta:get_string("owner")..")")
+        meta:set_string("formspect", default.get_shared_chest_formspec(pos))
+        local m = minetest.get_meta(pos)
+        local ent = minetest.add_entity(pos,'default:3dchest3')
+        if ent then
+            local ent2 = ent:get_luaentity()
+            ent:set_animation({x=1,y=1}, 20, 0)
+            local dir = placer:get_look_dir()
+            local absx, absy, absz = math.abs(dir.x), math.abs(dir.y), math.abs(dir.z)
+            local maxd = math.max(math.max(absx,absy),absz)
+            if maxd == absx then
+               if dir.x>0 then
+                  ent:setyaw(math.pi/2)
+                  m:set_int('dir',1)
+               else
+                  ent:setyaw(3*math.pi/2)
+                  m:set_int('dir',3)
+               end
+            elseif maxd == absy then
+               if dir.x>dir.z then
+                  ent:setyaw(math.pi)
+                  m:set_int('dir',2)
+               else
+                  ent:setyaw(3*math.pi/2)
+                  m:set_int('dir',3)
+               end
+            elseif maxd == absz then
+               if dir.z>0 then
+                  ent:setyaw(math.pi)
+                  m:set_int('dir',2)
+               else
+                  ent:setyaw(0)
+                  m:set_int('dir',0)
+               end
+            end
+            m:set_int('3d',1)
         end
+        local timer = minetest.get_node_timer(pos)
+        timer:start(1)
+    end,
+    on_timer = function(pos,el)
+       if global_timer<15 then return true end
+       local meta = minetest.get_meta(pos)
+       local cover = false
+       local node = minetest.get_node(pos)
+       local objs = minetest.get_objects_inside_radius(pos, 0.1)
+             for i,obj in ipairs(objs) do
+                 if not obj:is_player() then
+                    local self = obj:get_luaentity()
+                    if self.name == 'default:3dchest3' and node.name == 'default:shared_chest' then
+                       cover = true
+                       break
+                    else
+                       self.object:remove()
+                    end
+                 end
+             end
+      if not cover then
+         if node.name == 'default:shared_chest' then
+            local ent = minetest.env:add_entity(pos,'default:3dchest3')
+            if ent then
+                ent:set_animation({x=1,y=1}, 20, 0)
+                local dir = meta:get_int('dir')
+                ent:setyaw(dir*(math.pi/2))
+            end
+         end
+      end
+       return true
+    end,
+    on_construct = function(pos)
+        local meta = minetest.env:get_meta(pos)
+        meta:set_int('locked',0)
+        meta:set_string("infotext", "Shared chest")
+        meta:set_string("owner", "")
+        local inv = meta:get_inventory()
+        inv:set_size("main", 9*4)
+    end,
+    can_dig = function(pos,player)
+        local meta = minetest.env:get_meta(pos);
+        local inv = meta:get_inventory()
+        return inv:is_empty("main")
+    end,
+    allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
+        local meta = minetest.get_meta(pos)
+        if not has_shared_chest_privilege(meta, player) then
+            return 0
+        end
+        return count
+    end,
+    allow_metadata_inventory_put = function(pos, listname, index, stack, player)
+        local meta = minetest.get_meta(pos)
+        if not has_shared_chest_privilege(meta, player) then
+            return 0
+        end
+        return stack:get_count()
+    end,
+    allow_metadata_inventory_take = function(pos, listname, index, stack, player)
+        local meta = minetest.get_meta(pos)
+        if not has_shared_chest_privilege(meta, player) then
+            return 0
+        end
+        return stack:get_count()
+    end,
+    on_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
+        minetest.log("action", player:get_player_name()..
+                " rearranged stuff in a chest at "..minetest.pos_to_string(pos))
+    end,
+    on_metadata_inventory_put = function(pos, listname, index, stack, player)
+        local inam = stack:get_name()
+        minetest.log("action", player:get_player_name().. " put " .. inam .. " in a chest at "..minetest.pos_to_string(pos))
+    end,
+    on_metadata_inventory_take = function(pos, listname, index, stack, player)
+        local inam = stack:get_name()
+        minetest.log("action", player:get_player_name().. " took " .. inam .. " from a chest at "..minetest.pos_to_string(pos))
+    end,
+    on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+       local selves = minetest.get_objects_inside_radius(pos, 0.1)
+       local self
+       for _,obj in pairs(selves) do
+          if obj:get_luaentity().name == 'default:3dchest3' then
+             self = obj:get_luaentity()
+             break
+          end
+       end
+       local meta = minetest.get_meta(pos)
+       local name = 'default:3dchest3'
+       local pll = clicker:get_player_name()
+       local formspec = meta:get_string('formspect')
+
+       if not self then
+          minetest.show_formspec(pll, name..'_'..minetest.serialize(pos), formspec)
+          return
+       else
+           self.object:set_animation({x=10,y=25}, 60, 0)
+           minetest.after(0.1,function(dtime)
+               self.object:set_animation({x=25,y=25}, 20, 0)
+           end)
+           minetest.sound_play('chestopen', {pos = pos, gain = 0.3, max_hear_distance = 5})
+           minetest.show_formspec(pll, name..'_'..minetest.serialize(pos), formspec)
+       end
+    end,
+})
+
+minetest.register_node("default:wormhole_chest", {
+    description = "Wormhole chest",
+    tiles = {"default_chest_wormhole_top.png", "default_chest_wormhole_top.png", "default_chest_wormhole_side.png",
+        "default_chest_wormhole_side.png", "default_chest_wormhole_side.png", "default_chest_wormhole_front.png"},
+    wield_image = "default_chest_wormhole_front.png",
+    inventory_image = minetest.inventorycube("default_chest_wormhole_top.png", "default_chest_wormhole_front.png", "default_chest_wormhole_side.png"),
+    drawtype = "nodebox",
+    node_box = {
+        type = "fixed",
+        fixed = {-0.01, -0.01, -0.01, 0.01, 0.01, 0.01},
+    },
+    selection_box = {
+        type = "fixed",
+        fixed = {
+            {-0.501, -0.501, -0.501, 0.501, 0.501, 0.501},
+        }
+    },
+    paramtype = "light",
+    paramtype2 = "facedir",
+    groups = {choppy=default.dig.chest,oddly_breakable_by_hand=2},
+    legacy_facedir_simple = true,
+    sounds = default.node_sound_wood_defaults(),
+    drop = '',
+    after_place_node = function(pos, placer)
+        local m = minetest.get_meta(pos)
+        local ent = minetest.add_entity(pos,'default:3dchest4')
+        if ent then
+            local ent2 = ent:get_luaentity()
+            ent:set_animation({x=1,y=1}, 20, 0)
+            local dir = placer:get_look_dir()
+            local absx, absy, absz = math.abs(dir.x), math.abs(dir.y), math.abs(dir.z)
+            local maxd = math.max(math.max(absx,absy),absz)
+            if maxd == absx then
+               if dir.x>0 then
+                  ent:setyaw(math.pi/2)
+                  m:set_int('dir',1)
+               else
+                  ent:setyaw(3*math.pi/2)
+                  m:set_int('dir',3)
+               end
+            elseif maxd == absy then
+               if dir.x>dir.z then
+                  ent:setyaw(math.pi)
+                  m:set_int('dir',2)
+               else
+                  ent:setyaw(3*math.pi/2)
+                  m:set_int('dir',3)
+               end
+            elseif maxd == absz then
+               if dir.z>0 then
+                  ent:setyaw(math.pi)
+                  m:set_int('dir',2)
+               else
+                  ent:setyaw(0)
+                  m:set_int('dir',0)
+               end
+            end
+            m:set_int('3d',1)
+        end
+        local timer = minetest.get_node_timer(pos)
+        timer:start(1)
+    end,
+    on_timer = function(pos,el)
+        for i=1,15 do
+        minetest.after(math.random(),function(dtime)
+            local rx,rz,ry,r1,r2,r3 = math.random(),math.random(),math.random(),math.random(-1,1),math.random(-1,1),math.random(-1,1)
+            local s = {x=pos.x+15*rx*r1, y=pos.y+15*ry*r2, z=pos.z+15*rz*r3}
+            local p = pos
+            local vec = {x=p.x-s.x, y=p.y-s.y, z=p.z-s.z}
+            local vle = (vec.x^2+vec.y^2+vec.z^2)^0.5
+            local vno = {x=vec.x/vle, y=vec.y/vle, z=vec.z/vle}
+            minetest.add_particle({x=pos.x+rz*r1, y=pos.y+ry*r2, z=pos.z+rz*r3},
+                                  vno,
+                                  {x=0.1*r1, y=0.1*r2, z=0.1*r3},
+                                  0.5,
+                                  1,
+                                  false,
+                                  "default_wormhole_particle.png")
+            end)
+        end
+       if global_timer<15 then return true end
+       local meta = minetest.get_meta(pos)
+       local cover = false
+       local node = minetest.get_node(pos)
+       local objs = minetest.get_objects_inside_radius(pos, 0.1)
+             for i,obj in ipairs(objs) do
+                 if not obj:is_player() then
+                    local self = obj:get_luaentity()
+                    if self.name == 'default:3dchest4' and node.name == 'default:wormhole_chest' then
+                       cover = true
+                       break
+                    else
+                       self.object:remove()
+                    end
+                 end
+             end
+      if not cover then
+         if node.name == 'default:wormhole_chest' then
+            local ent = minetest.env:add_entity(pos,'default:3dchest4')
+            if ent then
+                ent:set_animation({x=1,y=1}, 20, 0)
+                local dir = meta:get_int('dir')
+                ent:setyaw(dir*(math.pi/2))
+            end
+         end
+      end
+       return true
+    end,
+    on_destruct = function(pos)
+       local count = math.random(1,8)
+       minetest.add_item(pos, 'default:obsidian '..count)
+       local meta = minetest.env:get_meta(pos)
+    end,
+    on_construct = function(pos)
+            local meta = minetest.env:get_meta(pos)
+            meta:set_string("formspect",
+            "size[9,7.2]"..
+            "bgcolor[#30204c;false]"..
+            "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
+            "image_button[9.0,-0.3;0.80,1.7;b_bg3.png;just_bg;Z;true;false]"..
+            "image_button[9.2,-0.2;0.5,0.5;b_bg.png;sort_horz;=;true;true]"..
+            "image_button[9.2,0.3;0.5,0.5;b_bg.png;sort_vert;||;true;true]"..
+            "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
+            "list[current_player;wormhole;0,0;9,3]"..
+            "list[current_player;main;0,3.2;9,3;9]"..
+            "list[current_player;main;0,6.4;9,1;]")
+            meta:set_string("infotext", "Wormhole chest")
+    end,
+    on_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
+        minetest.log("action", player:get_player_name()..
+                " moves stuff in chest at "..minetest.pos_to_string(pos))
+    end,
+    on_metadata_inventory_put = function(pos, listname, index, stack, player)
+        minetest.log("action", player:get_player_name()..
+                " moves stuff to chest at "..minetest.pos_to_string(pos))
+    end,
+    on_metadata_inventory_take = function(pos, listname, index, stack, player)
+        minetest.log("action", player:get_player_name()..
+                " takes stuff from chest at "..minetest.pos_to_string(pos))
     end,
         on_receive_fields = function(pos, formname, fields, sender)
            if sender and sender:is_player() then
               default.sort_inv(sender,formname,fields)
            end
         end,
+   on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+       local selves = minetest.get_objects_inside_radius(pos, 0.1)
+       local self
+       for _,obj in pairs(selves) do
+          if obj:get_luaentity().name == 'default:3dchest4' then
+             self = obj:get_luaentity()
+             break
+          end
+       end
+       local meta = minetest.get_meta(pos)
+       local name = 'default:3dchest4'
+       local pll = clicker:get_player_name()
+       local formspec = meta:get_string('formspect')
 
-
+       if not self then
+          minetest.show_formspec(pll, name..'_'..minetest.serialize(pos), formspec)
+          return
+       else
+           self.object:set_animation({x=10,y=25}, 60, 0)
+           minetest.after(0.1,function(dtime)
+               self.object:set_animation({x=25,y=25}, 20, 0)
+           end)
+           minetest.sound_play('chestopen', {pos = pos, gain = 0.3, max_hear_distance = 5})
+           minetest.show_formspec(pll, name..'_'..minetest.serialize(pos), formspec)
+       end
+   end,
 })
 
 
@@ -1739,7 +2019,7 @@ minetest.register_node("default:furnace_active", {
 
 minetest.register_abm({
     nodenames = {"default:furnace","default:furnace_active"},
-    interval = 1,
+    interval = 0.99,
     chance = 1,
     action = function(pos, node, active_object_count, active_object_count_wider)
      -- normal
@@ -1779,7 +2059,7 @@ minetest.register_abm({
 
         local was_active = false
 
-        if meta:get_float("fuel_time") < meta:get_float("fuel_totaltime") then
+        if meta:get_float("fuel_time") <= meta:get_float("fuel_totaltime") then
             was_active = true
             meta:set_float("fuel_time", meta:get_float("fuel_time") + 1)
             meta:set_float("src_time", meta:get_float("src_time") + 1)
@@ -1810,7 +2090,7 @@ minetest.register_abm({
 
         local gwas_active = false
 
-        if meta:get_float("gfuel_time") < meta:get_float("gfuel_totaltime") then
+        if meta:get_float("gfuel_time") <= meta:get_float("gfuel_totaltime") then
             gwas_active = true
             meta:set_float("gfuel_time", meta:get_float("gfuel_time") + 1)
             meta:set_float("gsrc_time", meta:get_float("gsrc_time") + 1)
@@ -1830,9 +2110,10 @@ minetest.register_abm({
         end
 
      -- normal
-        if meta:get_float("fuel_time") < meta:get_float("fuel_totaltime") then
+        if meta:get_float("fuel_time") <= meta:get_float("fuel_totaltime") then
             local percent = math.floor(meta:get_float("fuel_time") / meta:get_float("fuel_totaltime") * 100)
             local percent2 = math.floor(meta:get_float("src_time") / meta:get_float("src_totaltime") * 100)
+            if percent2 == 0 then percent2 = 100 end
             meta:set_string("infotext","Furnace active: "..percent2.."%")
             meta:set_string("percent", percent)
             local node = minetest.get_node(pos)
@@ -1858,11 +2139,12 @@ minetest.register_abm({
 
             "list[current_player;main;0,4.2;9,3;9]"..
             "list[current_player;main;0,7.4;9,1;]")
-            minetest.get_node_timer(pos):start(1,0.99)
+            minetest.get_node_timer(pos):start(0,0.49)
         end
-        if meta:get_float("gfuel_time") < meta:get_float("gfuel_totaltime") then
+        if meta:get_float("gfuel_time") <= meta:get_float("gfuel_totaltime") then
             local gpercent = math.floor(meta:get_float("gfuel_time") / meta:get_float("gfuel_totaltime") * 100)
             local gpercent2 = math.floor(meta:get_float("gsrc_time") / meta:get_float("gsrc_totaltime") * 100)
+            if gpercent2 == 0 then gpercent2 = 100 end
             meta:set_string("infotext","Furnace active: "..gpercent2.."%")
             meta:set_string("percent", gpercent)
             local gnode = minetest.get_node(pos)
@@ -1888,7 +2170,7 @@ minetest.register_abm({
 
             "list[current_player;main;0,4.2;9,3;9]"..
             "list[current_player;main;0,7.4;9,1;]")
-            minetest.get_node_timer(pos):start(1,0.99)
+            minetest.get_node_timer(pos):start(0,0.49)
         end
         if meta:get_float("fuel_time") < meta:get_float("fuel_totaltime")
         or meta:get_float("gfuel_time") < meta:get_float("gfuel_totaltime")
@@ -2231,15 +2513,6 @@ minetest.register_node("default:workbench", {
 
 })
 
-minetest.register_craft({
-    output = "default:workbench",
-    recipe = {
-        {"group:wood", "group:wood"},
-        {"group:wood", "group:wood"},
-    },
-})
-
-
 minetest.register_alias("default:axe_steel","default:iron")
 minetest.register_alias("default:axe_steel", "default:axe_iron")
 minetest.register_alias("default:shovel_steel", "default:shovel_iron")
@@ -2256,10 +2529,22 @@ minetest.register_alias("default:coal_lump","default:coal")
 minetest.register_alias("default:fence_wood","default:fence")
 minetest.register_alias("default:sign_wall","default:sign")
 
+minetest.register_abm({
+    nodenames = {"default:water_source","default:water_flowing","default:lava_source","default:lava_flowing"},
+    interval = 10,
+    chance = 1,
+    action = function(pos, node, active_object_count, active_object_count_wider)
+          local p = {x=pos.x,y=pos.y-2,z=pos.z}
+          if minetest.get_node(p).name ~= 'air' then return end
+          minetest.get_node_timer(pos):start(1)
+    end,
+})
+
 -- make all nodes w/o is_ground_content unaffected by mapgen
 minetest.after(0,function(dtime)
     for cou,def in pairs(minetest.registered_nodes) do
-        if not def.is_ground_content then
+        if not def.is_ground_content or def.name == "default:wood" then
+           print(def.name)
            minetest.override_item(def.name, {is_ground_content=false,})
         end
     end

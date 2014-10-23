@@ -104,12 +104,6 @@ minetest.register_craftitem("default:clay_brick", {
     inventory_image = "default_clay_brick.png",
 })
 
-minetest.register_craftitem("default:apple", {
-    description = "Apple1",
-    inventory_image = "default_apple.png",
-    on_use = minetest.item_eat(),
-})
-
 minetest.register_craftitem("default:apple_gold", {
     description = "Golden Apple",
     inventory_image = "default_apple_gold.png",

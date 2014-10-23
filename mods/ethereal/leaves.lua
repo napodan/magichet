@@ -35,12 +35,14 @@ minetest.register_node(":"..name, {
         local dropped = false
         local wielded = digger:get_wielded_item():get_name()
         if cutby then
+        minetest.chat_send_all(wielded)
         for i,tool in ipairs(cutby) do
-            if wielded == tool
+            minetest.chat_send_all(wielded .. '; '..tool..'; '..minetest.serialize(minetest.registered_items[wielded][tool]))
+            if wielded == tool            
             or minetest.get_item_group(wielded, tool)>0
             then
                dropped = true
-               --minetest.chat_send_all('wielded: '.. wielded ..', tool/group: '..tool)
+               minetest.chat_send_all('wielded: '.. wielded ..', tool/group: '..tool)
                break
             end
         end
@@ -60,7 +62,7 @@ minetest.register_node(":"..name, {
                 end
             end
         end
-        minetest.chat_send_all('nn: '..nn..', name: '..name)
+        --minetest.chat_send_all('nn: '..nn..', name: '..name)
         -- let it be dropeed, if it's not the leaves
         if dropped or nn ~= name then
            local obj = minetest.add_item(pos, nn)

@@ -47,24 +47,52 @@ minetest.register_globalstep(function(dtime)
             local gh = isghost[pll]
             if not isghost[pll] then
 
-            for _,object in ipairs(minetest.get_objects_inside_radius(pos, 0.7)) do
-                if not object:is_player() and object:get_luaentity() and object:get_luaentity().name == "__builtin:item" then
-                    if inv and inv:room_for_item("main", ItemStack(object:get_luaentity().itemstring)) then
-                        inv:add_item("main", ItemStack(object:get_luaentity().itemstring))
-                        if object:get_luaentity().itemstring ~= "" then
+            for _,object in ipairs(minetest.get_objects_inside_radius(pos, 1)) do
+                if not object:is_player()
+                and object:get_luaentity()
+                and (object:get_luaentity().name == "__builtin:item" or (object:get_luaentity().item_type == 'ammo' and object:get_luaentity().dead))
+                then                    
+                    if object:get_luaentity().xp and object:get_luaentity().xp.skill then
+                    -- if we're dealing with an XP entity
+                            minetest.sound_play("item_drop_pickup", {
+                                to_player = player:get_player_name(),
+                                gain = 0.3,
+                            })
+                        specialties.changeXP(pll, object:get_luaentity().xp.skill, object:get_luaentity().xp.amount)    
+                        object:get_luaentity().xp.skill = nil                        
+                        object:remove()                                                
+                        -- end of an XP ball
+                    else
+                        local itemstring = ""
+                        if object:get_luaentity().itemstring~='' then itemstring = object:get_luaentity().itemstring end
+                        if      object:get_luaentity().item_type == 'ammo'
+                        and     object:get_luaentity().dead
+                        and not object:get_luaentity().collected
+                        then itemstring = object:get_luaentity().itemname end
+                        
+                    -- if we're dealing with a common item                                            
+                        if itemstring ~= "" then
+                            object:get_luaentity().collected = true
+                            if inv and inv:room_for_item("main", ItemStack(itemstring)) then
+                            inv:add_item("main", ItemStack(itemstring))
                             minetest.sound_play("item_drop_pickup", {
                                 to_player = player:get_player_name(),
                                 gain = 0.4,
                             })
-                        end
-                        object:get_luaentity().itemstring = ""
-                        object:remove()
-                    end
+                            end                        
+                          object:get_luaentity().itemstring = ""
+                        end  
+                          object:remove()                        
+                    -- end of a common item    
+                    end                    
                 end
             end
 
-            for _,object in ipairs(minetest.get_objects_inside_radius(pos, 1.5)) do
-                if not object:is_player() and object:get_luaentity() and object:get_luaentity().name == "__builtin:item" then
+            for _,object in ipairs(minetest.get_objects_inside_radius(pos, 2.0)) do
+                if not object:is_player()
+                and object:get_luaentity()
+                and (object:get_luaentity().name == "__builtin:item" or (object:get_luaentity().item_type == 'ammo' and object:get_luaentity().dead))
+                then
                     if object:get_luaentity().collect then
                         if inv and inv:room_for_item("main", ItemStack(object:get_luaentity().itemstring)) then
                             local pos1 = pos
@@ -84,19 +112,27 @@ minetest.register_globalstep(function(dtime)
 
                             minetest.after(1, function(args)
                                 local lua = object:get_luaentity()
-                                if object == nil or lua == nil or lua.itemstring == nil then
-                                    return
-                                end
-                                if inv:room_for_item("main", ItemStack(object:get_luaentity().itemstring)) then
+                                if lua then
+                                
+                                if object:get_luaentity().xp and object:get_luaentity().xp.skill then                        
+                                        minetest.sound_play("item_drop_pickup", {
+                                            to_player = player:get_player_name(),
+                                            gain = 0.3,
+                                        })
+                                    object:remove()
+                                    specialties.changeXP(pll, object:get_luaentity().xp.skill, object:get_luaentity().xp.amount)                        
+                                    -- end of an XP ball
+                                elseif inv and inv:room_for_item("main", ItemStack(object:get_luaentity().itemstring)) then
                                     inv:add_item("main", ItemStack(object:get_luaentity().itemstring))
                                     if object:get_luaentity().itemstring ~= "" then
                                         minetest.sound_play("item_drop_pickup", {
                                             to_player = player:get_player_name(),
                                             gain = 0.4,
                                         })
-                                    end
+                                    end                        
                                     object:get_luaentity().itemstring = ""
                                     object:remove()
+                                -- end of a common item    
                                 else
                                     object:setvelocity({x=0,y=0,z=0})
                                     object:get_luaentity().physical_state = true
@@ -104,6 +140,7 @@ minetest.register_globalstep(function(dtime)
                                         physical = true,
                                         collisionbox = {-0.17,-0.17,-0.17, 0.17,0.17,0.17},
                                     })
+                                end
                                 end
                             end, {player, object})
 

@@ -1,7 +1,7 @@
 Enchantment
 ===========
 
-**License:** Until released CC BY-NC-SA (3.0)
+**License:** GPLv3
 
  This mod adds enchantment! Yep, similar to that of Minecraft :)
  Yet, there are differences. This mod is dependent on either specialties or

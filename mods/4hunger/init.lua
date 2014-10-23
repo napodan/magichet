@@ -4,7 +4,7 @@
 ---    with the help of   ---
 ---       fairiestoy      ---
 -----------------------------
---- license: CC BY-NC 3.0 ---
+---     license: GPLv3    ---
 -----------------------------
 
 ----
@@ -20,35 +20,19 @@
 ----
 ---- Disclaimer 2 ----
 ----
--- Modified "sprint" mod's code was used.
--- The original mod had NO info about it's author whatsoever and it was
--- really hard to recollect where did I get it. So, if you ARE the one -
--- tell me and I'll gladly add your name here. Be sure to provide
--- decisive evidences that you're REALLY the one, though.
-----
-
-----
----- Disclaimer 3 ----
-----
 -- Since lua_api documentation sucks (it's of GREAT use nevertheless),
 -- I got inspired AND "guided" by some other mods that this one:
 --  1. "Farming" from the "Minitest" game by PilzAdam. What hunger if
 --     there's nothing to eat?
---  2. "HUD & hunger" by BlockMen. Hope, he realizes, there should be "a",
---     and "custom" is spelled as provided here. (Unless he's all like
---     Nikolai the II, The Emperor.) I make mistakes too. Stupid ones too.
---     But those two were repeated over and over, despite some community
---     members' notions, and they were pissing me off so much, that I
---     decided to edit Blockmen's HUD mod to fix those errors...
---     And then I saw that his hunger do NOT depend on taken by a player
---     actions...
---     Then I got my lazy butt up and wrote this hunger mod.
---  3. Once again, the "Sprint" mod by I-don't-know-who. Very usefull.
+--  2. "HUD & hunger". I make mistakes. Stupid ones too.
+--     But those ones, deliberately repeated by Blockman over and over,
+--     in spite of some community members' notions, were pissing me off so much,
+--     that I decided to edit his mod to fix 'em...
+--     That was when I saw that his "hunger" do NOT depend on taken by a player
+--     actions... That was a shame!
+--     So, I got my lazy butt up and wrote this hunger mod.
+--  3. The "Sprint" mod by I-don't-know-who. Very useful. (The old one.)
 --
--- But "inspired" do NOT mean that I copied smth directly. I used the
--- ideas - just like any designer does. I needed examples and got them
--- from the mods above. The only exception is the "sprint" mod, but
--- that's the reason of having the 2nd disclaimer.
 ----
 
 --
@@ -62,6 +46,14 @@
 
 --
 -- Update: added poison effects
+--
+
+--
+-- Update: fixed poison/hunger effects, fixed bananas
+--
+
+--
+-- Update: new sprinting code, ore types of exhaustion and tweaks
 --
 
 max_save_time    = 30  -- seconds between saving
@@ -81,11 +73,14 @@ oldpos           = {}  -- keeps track of last known pos; in case of lags would "
 timers           = {}  -- keeps track of personal timer (used for different statuses)
 sprinting        = {}  -- keeps track of sprinting physics override
 state            = {}  -- -1=being idle, 0=walking, 1=sprinting, 2=swimming, 3=jumping,
+sprinting_trg    = {}
                        -- attacking=4, receiving damage=5,
                        -- jumping while sprinting=6, effects of food poisoning=7 & 8
                        -- breaking a block=9, regenerating the last 2 HPs=10
 hungerhud        = {}  -- hunger huds IDs
 hungerhudb       = {}  -- hunger huds' bgs IDs
+hearthud         = {}  -- health huds IDs
+hearthudb        = {}  -- health huds' bgs IDs
 need_to_update_ph = {}
 --eating           = {}  -- are you chewing?
 --eat_timer        = {}  -- and... for how long you have been doing this?
@@ -95,7 +90,7 @@ local ews = 0.01      -- walking or sheaking            +
 local esw = 0.015     -- swimming                       +
 local ebr = 0.025     -- digging anything               +
 local ejp = 0.2       -- jumping                        +
-local eat = 0.3       -- attacking                      -
+local eat = 0.3       -- attacking                      +
 local edm = 0.3       -- getting hurt                   +
 local ef1 = 0.5       -- food poison                    +
 local ef2 = 1.5       -- food poison                    -
@@ -114,7 +109,6 @@ local death_message = 'No one had fed him anything... Poor '
 if rus then
    death_message = 'Никто так и не покормил бедняжку '
 end
-
 
 local function save_4hunger()
     local output = io.open(minetest.get_worldpath().."/4hunger.lua", "w")
@@ -172,14 +166,15 @@ load_4hunger()
 -- the function to define food_points for un~/supported mods
 -- values for 4items are from MC wiki. Haven't checked if those are adequate
 -- "ps" can be 1 or 2 for different kinds of poison
-local function get_points(item)
+local function get_points(item) -- ToDo: redo to use groups!
    local fp,sp,ps,stack = 0,0,0, false
+    if item:find("ethereal:mushroom_plant")   then fp,sp = 00.5, 01.0 end
     if item:find("4hunger:apple2")   then fp,sp = 02.0, 06.4 end
     if item:find('apple')            then fp,sp = 05.0, 06.0 end
     if item:find('gold_apple')       then fp,sp = 04.0, 09.6 end
     if item:find('golden_apple')     then fp,sp = 06.0, 09.6 end
     if item:find('gold_apple_2')     then fp,sp = 04.0, 09.6 end
-    if item:find('banana')           then fp,sp = 01.0, 00.0 end
+    if item:find('ethereal:banana')  then fp,sp = 05.0, 0.01 end
     if item:find('banana_bread')     then fp,sp = 06.0, 01.0 end
     if item:find('bread')            then fp,sp = 05.0, 06.0 end
     if item:find('beef_raw')         then fp,sp = 03.0, 01.8 end
@@ -202,7 +197,7 @@ local function get_points(item)
     if item:find('salmon_raw')       then fp,sp = 02.0, 00.4 end
     if item:find('salmon_cooked')    then fp,sp = 06.0, 09.6 end
     if item:find('cookie')           then fp,sp = 02.0, 00.4 end
-    if item:find('melon')            then fp,sp = 02.0, 01.2 end
+    if item:find('melon_slice')      then fp,sp = 02.0, 01.2 end
     if item:find('mushroom_stew')    then fp,sp = 05.0, 00.2 end
     if item:find('hearty_stew')      then fp,sp = 08.0, 04.2 end
     if item:find('hearty_stew_co')   then fp,sp = 10.0, 06.2 end
@@ -228,7 +223,7 @@ local old_eat=minetest.item_eat
 
 -- the function used to substitute the real function
 function minetest.item_eat(food_points, saturation_points, replace_with_item)
-    return function(itemstack, user, pointed_thing)  -- closure
+     return function(itemstack, user, pointed_thing)  -- closure
         if itemstack --[[ and pointed_thing and pointed_thing.type~='node' ]] then
            local f = food_points
            if not user or not user:is_player() then return itemstack end
@@ -287,8 +282,8 @@ function distance(pos1,pos2)
     return math.sqrt( (pos1.x - pos2.x)^2 + (pos1.y - pos2.y)^2 + (pos1.z - pos2.z)^2 )
 end
 
--- load stuff & set defaults on_join
-minetest.register_on_joinplayer(function(player)
+-- initialize hunger~bar
+function init_hunger(player)
   if player then
      local pll = player:get_player_name()
      -- by default food_level->hp influence is caused per foodTickTimerMAX seconds
@@ -300,9 +295,32 @@ minetest.register_on_joinplayer(function(player)
      -- if food_saturation also doesn't exist then make it equal to the food_level
      if not food_saturation[pll] then food_saturation[pll]=food_level[pll] end
      --
+     if not sprinting_trg[pll] then sprinting_trg[pll]={} end
+     --
      if not timers[pll] then timers[pll] = -1 end
 
      minetest.after(0, function()
+     player:hud_set_flags({healthbar = false})
+     -- add health hud background
+     hearthudb[pll]=player:hud_add({
+        hud_elem_type = "statbar",
+        position = {x=0.5,y=1},
+        direction=1,
+        text = "heart_b.png",
+        number = max_drumsticks,
+        alignment = {x=1,y=1},
+        offset = {x=-172, y=-60},
+     })
+     -- add health hud
+     hearthud[pll]=player:hud_add({
+        hud_elem_type = "statbar",
+        position = {x=0.5,y=1},
+        direction=1,
+        text = "heart.png",
+        number = max_drumsticks,
+        alignment = {x=1,y=1},
+        offset = {x=-172, y=-60},
+     })
      -- add hunger hud background
      hungerhudb[pll]=player:hud_add({
         hud_elem_type = "statbar",
@@ -325,6 +343,11 @@ minetest.register_on_joinplayer(function(player)
      })
     end)
   end
+end
+
+-- load stuff & set defaults on_join
+minetest.register_on_joinplayer(function(player)
+   init_hunger(player)
 end)
 
 -- test item
@@ -365,211 +388,240 @@ end
 
 -- time based events like: status changes, damage & distance calculation & applying damage
 minetest.after(0, function(dtime)
-minetest.register_globalstep(function(dtime)
-   if save_time > max_save_time then
-      save_time=0
-      save_4hunger()
-   else
-      save_time=save_time+dtime
-   end
-   local players = minetest.get_connected_players()
-   for i,player in ipairs(players) do
-       local pll = player:get_player_name()
-       --print(minetest.serialize(default.player_physics[pll]))
-       local pos = player:getpos()
-       local hp  = player:get_hp()
-       local control = player:get_player_control()
-       local wstack = player:get_wielded_item():get_name()
-       local bar
-       local addex = 0
+local global_dtime = 0
+local doit = false
 
-     if hp==1 then
-        death_timer[pll] = death_timer[pll] + dtime
-      --  print(death_timer[pll])
-     end
-
-     if death_timer[pll] > max_being_hungry_time then
-        death_timer[pll] = 0
-        minetest.chat_send_all(death_message .. pll)
-        food_level[pll] = max_drumsticks
-        food_saturation[pll] = food_level[pll]
-        player:set_hp(0)
-     end
-
-     if state[pll] == 7 or state[pll] == 8 then
-        if not timers[pll] then
-           timers[pll] = 15
-           player:hud_change(hungerhudb[pll],"text",'hunger_tile_d.png')
-           player:hud_change(hungerhud[pll] ,"text",'hunger_tile_c.png')
-           sprinting[pll] = true
-            if hp>1 then
-               player:set_hp(hp-1)
-               hp=hp-1
-            end
-        end
-     end
-
-     if timers[pll] then
-        timers[pll] = timers[pll] - dtime
-         if timers[pll]<0 then
-            timers[pll]=nil
-              player:hud_change(hungerhudb[pll],"text",'hunger_tile_b.png')
-              player:hud_change(hungerhud[pll] ,"text",'hunger_tile.png')
-         else
-            if hp>1 and math.random()<0.1 then
-               armor.nowear[pll] = true
-               player:set_hp(hp-1)
-               hp=hp-1
-            end
-         end
-     end
-       -- get HP vs oldHP difference --
-       local hp_diff = 0
-       if oldHPs[pll] and hp then   -- assume that player took damage
-          hp_diff = oldHPs[pll]-hp  -- but if hp_diff<0 then the "player"
-       end                          -- got healed and should take food
-                                    -- exaustion damage if hp>18
-       if hp_diff>0 then            -- if HPs ammount really has decreased
-          state[pll] = 5            -- then set "state" to "receiving dmg"
+    minetest.register_globalstep(function(dtime)
+       global_dtime = global_dtime + dtime
+       if global_dtime>1 then -- timer for applying effects every sec or whatever count of it
+          doit = true
+          global_dtime = 0
        end
 
-       oldHPs[pll] = hp             -- after that we can save hp to oldHPs
-
-       -- if oldpos[pll] and pos exist then get the distance
-       local dist = distance(oldpos[pll],pos) -- walked distance;
-
-       -- "sprint" mod's code below
-        if player:get_player_control().up == true and sprinting[pll] == nil and not need_to_update_ph[pll] then
-            minetest.after(0.20, function()
-                if not player:get_player_control().up then
-                    minetest.after(0.20, function()
-                        if player:get_player_control().up and not need_to_update_ph[pll] then
-                           local ph = default.player_physics[pll]
-                                default.ph_override(player,{
-                                                            speed = ph.speed * 2,
-                                                            jump =  ph.jump * 1.1,
-                                                           })
-                                need_to_update_ph[pll] = true
-                            sprinting[pll] = true
-                           -- print('4hunger on sprint +')
-                        end
-                    end)
-                end
-            end)
-        elseif not player:get_player_control().up and need_to_update_ph[pll] and sprinting[pll] then
-            minetest.after(0.2, function()
-                if not player:get_player_control().up and need_to_update_ph[pll] then
-                    sprinting[pll] = nil
-                    local ph = default.player_physics[pll]
-                    default.ph_override(player,{
-                                                 speed = ph.speed / 2,
-                                                 jump = ph.jump / 1.1,
-                                                })
-                    need_to_update_ph[pll] = false
-                   -- print('4hunger on sprint -')
-                end
-            end)
-        end
-       -- "sprint" mod's code above
-
-       -- flags --
-       pos.y=pos.y-1
-       local node = minetest.get_node(pos)
-       name = node.name
-
-       if sprinting[pll] then state[pll]=1 end -- sprinting
-
-       if name:find("air") then
-          if state[pll] == 1 then
-             state[pll] = 6 -- jumping while sprinting
-          else
-             state[pll] = 3 -- jumping
-          end
+       if save_time > max_save_time then
+          save_time=0
+          save_4hunger()
        else
-           if dist and dist>0 then
-              state[pll] = 0   -- walking or steady
-           else
-              state[pll] = -1  -- idle
-           end
+          save_time=save_time+dtime
        end
 
-       pos.y=pos.y+1
-       local node = minetest.get_node(pos)
-       local name = node.name
-       if minetest.get_item_group(name, "water") ~= 0 then
-           state[pll] = 2 -- swimming
-       end
+       local players = minetest.get_connected_players()
+       for i,player in ipairs(players) do
+           local pll = player:get_player_name()
+           if not isghost[pll] then  -- we don't want a ghost to feel hunger
+               local pos = player:getpos()
+               local hp  = player:get_hp()
+               local control = player:get_player_control()
+               local wstack = player:get_wielded_item():get_name()
+               local bar
+               local addex = 0
 
-       -- foodTickTImer increment (if hunger=0 of above 17) --
-       if food_level[pll]==0 or (food_level[pll]>17 and food_level[pll]<=max_drumsticks)
-       then
-           if foodTickTimer[pll]
-           then foodTickTimer[pll] = foodTickTimer[pll] + dtime
-           else foodTickTimer[pll] = dtime
-           end
-       end
-
-       if foodTickTimer[pll]>foodTickTimerMax[pll] then
-          -- foodTickTimer functioncall (dmg or regen)
-         if food_level[pll]>17 and food_level[pll]<=max_drumsticks then if hp>0 then player:set_hp(hp+1) end
-         elseif food_level[pll]==0 then
-             if hp>1 then
-                armor.nowear[pll] = true
-                player:set_hp(hp-1)
-                hp = hp-1
+             if hp==1 and food_level[pll]<=0 and food_saturation[pll]<=0 then
+                death_timer[pll] = death_timer[pll] + dtime
+              --  print(death_timer[pll])
              end
-         end
-          foodTickTimer[pll] = 0
-       end
 
-       -- wallked distance --
-       if not walked_distance[pll] then walked_distance[pll] = 0 end  -- if there's record for a player then
-       oldpos[pll]=pos
-       walked_distance[pll] = walked_distance[pll] + dist          -- accumulate total distance
+             if death_timer[pll] > max_being_hungry_time then
+                death_timer[pll] = 0
+                minetest.chat_send_all(death_message .. pll)
+                food_level[pll] = max_drumsticks
+                food_saturation[pll] = max_drumsticks
+                food_exhaustion[pll] = 0
+                player:set_hp(0)
+             end
 
-       -- regenerating last 2 hp, set "state" to an appr. value
-       if hp_diff<0 and hp>18 then state[pll]=10 end
+             if state[pll] == 7 or state[pll] == 8 then
+                if not timers[pll] then
+                   timers[pll] = 15
+                   player:hud_change(hungerhudb[pll],"text",'hunger_tile_d.png')
+                   player:hud_change(hungerhud[pll] ,"text",'hunger_tile_c.png')
+                   sprinting[pll] = true
+                    if doit==true and hp>1 then
+                       player:set_hp(hp-1)
+                       hp=hp-1
+                    end
+                end
+                if state == 7 then addex = addex + ef1 else addex = addex + ef2 end
+             end
 
-       if not state[pll] then state[pll]=-1 end      -- idle
-       if     state[pll]==-1 then addex=eid          -- staying still
-       elseif state[pll]==00 then addex=ews*dist     -- walking or sneaking
-       elseif state[pll]==01 then addex=esp*dist     -- sprinting
-       elseif state[pll]==02 then addex=esw*dist     -- swimming
-       elseif state[pll]==03 then addex=ejp*dist     -- jumping or falling
-       --elseif state[pll]==04 then addex=eat*dist     -- attacking
-       elseif state[pll]==05 then addex=edm*hp_diff  -- taking damage
-       elseif state[pll]==06 then addex=esj*dist     -- jump/fall while sprinting
-       elseif state[pll]==07 then addex=ef1*dist     -- food poison per sec 1
-       elseif state[pll]==08 then addex=ef2*dist     -- food poison per sec 2
-       --elseif state[pll]==09 then addex=ebr*dist     -- digging smth
-       elseif state[pll]==10 then addex=erg*-hp_diff  -- healing the last 2 HPs
-       end
-       -- applying exaustion
-       if food_exhaustion[pll] then
-          food_exhaustion[pll]=food_exhaustion[pll]+addex
-       else
-           food_exhaustion[pll]=addex
-       end
+             if timers[pll] then
+                timers[pll] = timers[pll] - dtime
+                 if timers[pll]<0 then
+                    timers[pll]=nil
+                      sprinting[pll] = false
+                      player:hud_change(hungerhudb[pll],"text",'hunger_tile_b.png')
+                      player:hud_change(hungerhud[pll] ,"text",'hunger_tile.png')
+                 else
+                    if doit==true and hp>1 then
+                       armor.nowear[pll] = true
+                       player:set_hp(hp-1)
+                       hp=hp-1
+                    end
+                 end
+             end
+               -- get HP vs oldHP difference --
+               local hp_diff = 0
+               if oldHPs[pll] and hp then   -- assume that player took damage
+                  hp_diff = oldHPs[pll]-hp  -- but if hp_diff<0 then the "player"
+               end                          -- got healed and should take food
+                                            -- exaustion damage if hp>18
+               if hp_diff~=0 then           -- if HPs ammount really has decreased
+               -- healing WILL increase food exhaustion
+                  state[pll] = 5            -- then set "state" to "receiving dmg"
+                  addex = addex + edm
+                  player:hud_change(hearthud[pll],"number",hp)
+               end
 
-       -- at this point "food_exaustion[pll]" just can't be undefined
-       if food_exhaustion[pll]>max_exhaustion then
-          if food_saturation[pll] then
-             food_saturation[pll] = food_saturation[pll]-1
-             if food_saturation[pll]<0 then food_saturation[pll]=0 end
-          else
-             food_saturation[pll] = food_level[pll]-1
-          end
-          if food_saturation[pll]==0 then food_level[pll]=food_level[pll]-1 end
-          if food_level[pll]<0 then food_level[pll]=0 end
-          food_exhaustion[pll] = 0
-       end
+               oldHPs[pll] = hp             -- after that we can save hp to oldHPs
 
-       -- change hungerhud's number
-       if hungerhud[pll] and food_level[pll] then
-          player:hud_change(hungerhud[pll],"number",food_level[pll])
+               -- if oldpos[pll] and pos exist then get the distance
+               local dist = distance(oldpos[pll],pos) -- walked distance;
+
+               ------------------ dtime based sprinting
+               local control = player:get_player_control()
+               if not control.up then
+                  if sprinting_trg[pll][1] and not sprinting_trg[pll][2] then
+                     sprinting_trg[pll][2] = true
+                  else
+                     sprinting_trg[pll]= {}
+                    if need_to_update_ph[pll] then
+                      sprinting[pll] = nil
+                      local ph = default.player_physics[pll]
+                      default.ph_override(player,{
+                                                  speed = ph.speed / 2,
+                                                  jump = ph.jump / 1.1,
+                                                  })
+                      need_to_update_ph[pll] = false
+                    end
+                  end
+               else --control.up then
+                  if not sprinting_trg[pll][1] then
+                     sprinting_trg[pll][1] = true
+                  elseif sprinting_trg[pll][2] then
+                     sprinting_trg[pll][3] = true
+                      if not need_to_update_ph[pll] then
+                         local ph = default.player_physics[pll]
+                         default.ph_override(player,{
+                                                     speed = ph.speed * 2,
+                                                     jump =  ph.jump * 1.1,
+                                                    })
+                         need_to_update_ph[pll] = true
+                         sprinting[pll] = true
+                      end
+                  end
+               end
+
+               -- flags --
+               pos.y=pos.y-1
+               local node = minetest.get_node(pos)
+               name = node.name
+
+               if sprinting[pll] then state[pll]=1 end -- sprinting
+
+               if name:find("air") then
+                  if state[pll] == 1 then
+                     state[pll] = 6 -- jumping while sprinting
+                     addex = addex + esj
+                  else
+                     state[pll] = 3 -- jumping
+                     addex = addex + ejp
+                  end
+               else
+                   if dist and dist>0 then
+                      state[pll] = 0   -- walking or steady
+                   else
+                      state[pll] = -1  -- idle
+                   end
+               end
+
+               pos.y=pos.y+1
+               local node = minetest.get_node(pos)
+               local name = node.name
+               if minetest.get_item_group(name, "water") ~= 0 then
+                  state[pll] = 2 -- swimming
+               end
+
+               if food_level[pll]<=0 then food_level[pll] = 0 end
+
+               -- foodTickTImer increment (if hunger=0 of above 17) --
+               if food_level[pll]==0 or (food_level[pll]>17 and food_level[pll]<=max_drumsticks)
+               then
+                   if foodTickTimer[pll]
+                   then foodTickTimer[pll] = foodTickTimer[pll] + dtime
+                   else foodTickTimer[pll] = dtime
+                   end
+               end
+
+               if foodTickTimer[pll]>foodTickTimerMax[pll] then
+                  -- foodTickTimer functioncall (dmg or regen)
+                 if food_level[pll]>17 and food_level[pll]<=max_drumsticks then
+                    if hp>0 then
+                       player:set_hp(hp+1)
+                    end
+                 elseif food_level[pll]==0 then
+                     if hp>1 then
+                        armor.nowear[pll] = true
+                        player:set_hp(hp-1)
+                        hp = hp-1
+                     end
+                 end
+                  foodTickTimer[pll] = 0
+               end
+
+               -- wallked distance --
+               if not walked_distance[pll] then walked_distance[pll] = 0 end  -- if there's record for a player then
+               oldpos[pll]=pos
+               walked_distance[pll] = walked_distance[pll] + dist          -- accumulate total distance
+
+               -- regenerating last 2 hp, set "state" to an appr. value
+               if hp_diff<0 and hp>18 then state[pll]=10 end
+
+               if not state[pll] then state[pll]=-1 end      -- idle
+               if     state[pll]==-1 then addex=addex+eid          -- staying still
+               elseif state[pll]==00 then addex=addex+ews*dist     -- walking or sneaking
+               elseif state[pll]==01 then addex=addex+esp*dist     -- sprinting
+               elseif state[pll]==02 then addex=addex+esw*dist     -- swimming
+               elseif state[pll]==03 then addex=addex+ejp*dist     -- jumping or falling
+               --elseif state[pll]==05 then addex=edm*hp_diff  -- taking damage
+               elseif state[pll]==06 then addex=addex+esj*dist     -- jump/fall while sprinting
+               --elseif state[pll]==07 then addex=ef1*dist     -- food poison per sec 1
+               --elseif state[pll]==08 then addex=ef2*dist     -- food poison per sec 2
+               elseif state[pll]==09 then addex=addex+ebr*dist     -- digging smth
+               elseif state[pll]==10 then addex=addex+erg*-hp_diff  -- healing the last 2 HPs
+               end
+               if state[pll]==04
+                   or (default.statuses[pll] and default.statuses[pll].atack)
+                                     then addex=addex+eat    -- attacking
+               end
+               default.statuses[pll].atack = false
+               -- applying exaustion
+               if food_exhaustion[pll] then
+                  food_exhaustion[pll]=food_exhaustion[pll]+addex
+               else
+                   food_exhaustion[pll]=addex
+               end
+
+               -- at this point "food_exaustion[pll]" just can't be undefined
+               if food_exhaustion[pll]>max_exhaustion then
+                  if food_saturation[pll] then
+                     food_saturation[pll] = food_saturation[pll]-1
+                     if food_saturation[pll]<0 then food_saturation[pll]=0 end
+                  else
+                     food_saturation[pll] = food_level[pll]-1
+                  end
+                  if food_saturation[pll]==0 then food_level[pll]=food_level[pll]-1 end
+                  if food_level[pll]<0 then food_level[pll]=0 end
+                  food_exhaustion[pll] = 0
+               end
+
+               -- change hungerhud's number
+               if hungerhud[pll] and food_level[pll] then
+                  player:hud_change(hungerhud[pll],"number",food_level[pll])
+               end
+           end
        end
-   end
-end)
+       doit = false
+    end)
 end)
 
 
@@ -584,13 +636,22 @@ minetest.register_on_dignode(function(pos, oldnode, digger)
   end
 end)
 
-minetest.after(1,function(dtime)
-    for cou,def in pairs(minetest.registered_craftitems) do
-        if get_points(def['name']) ~= false then
+minetest.after(0,function(dtime)
+    for cou,def in pairs(minetest.registered_items) do
+       if get_points(def['name']) ~= false then
+         -- print(def.name .. ' ' ..minetest.serialize(get_points(def['name'])))
           def['on_use'] = minetest.item_eat(1)
-          minetest.register_item(':' .. def['name'], def)
-        end
+          minetest.register_item(':' .. def.name, def)
+       end
     end
 end )
+
+minetest.register_chatcommand("hunger", {
+    func = function(name, param)
+        food_level[name] = 0
+        food_saturation[name] = 0
+    end
+})
+
 
 print('[OK] 4hunger loaded')

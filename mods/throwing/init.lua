@@ -7,76 +7,32 @@ arrows = {
 }
 
 local throwing_shoot_arrow = function(itemstack, player)
-    for _,arrow in ipairs(arrows) do
-        if player:get_inventory():get_stack("main", player:get_wield_index()+1):get_name() == arrow[1] then
-            if not minetest.setting_getbool("creative_mode") then
-                player:get_inventory():remove_item("main", arrow[1])
-            end
-            local playerpos = player:getpos()
-            local obj = minetest.add_entity({x=playerpos.x,y=playerpos.y+1.5,z=playerpos.z}, arrow[2])
+        if player:get_inventory():get_stack("main", player:get_wield_index()+1):get_name() == "throwing:arrow" then
+            player:get_inventory():remove_item("main", "throwing:arrow")
+            local pos = player:getpos()
+            local obj = minetest.add_entity({x=pos.x,y=pos.y+1.5,z=pos.z}, "adbs:arrow")
             local dir = player:get_look_dir()
+            obj:get_luaentity().master = player
+            obj:get_luaentity().target = nil
             obj:setvelocity({x=dir.x*19, y=dir.y*19, z=dir.z*19})
-            obj:setacceleration({x=dir.x*-3, y=-10, z=dir.z*-3})
-            obj:setyaw(player:get_look_yaw()+math.pi)
-            minetest.sound_play("throwing_sound", {pos=playerpos})
+            obj:setacceleration({x=dir.x*-2, y=-9.8, z=dir.z*-2})
+            minetest.sound_play("throwing_sound", pos)
             if obj:get_luaentity().player == "" then
-                obj:get_luaentity().player = player
+               obj:get_luaentity().player = player
             end
-            obj:get_luaentity().node = player:get_inventory():get_stack("main", 1):get_name()
+            --obj:get_luaentity().node = player:get_inventory():get_stack("main", 1):get_name() -- building arrow
             return true
         end
-    end
     return false
 end
 
-minetest.register_tool("throwing:bow_wood0", {
+minetest.register_tool("throwing:bow_wood", {
     description = "Wood Bow",
     inventory_image = "throwing_bow_wood0.png",
     stack_max = 1,
     on_use = function(itemstack, user, pointed_thing)
         if throwing_shoot_arrow(itemstack, user, pointed_thing) then
-            if not minetest.setting_getbool("creative_mode") then
-                itemstack:add_wear(65535/50)
-            end
-        end
-        return itemstack
-    end,
-})
-minetest.register_tool("throwing:bow_wood1", {
-    description = "Wood Bow",
-    inventory_image = "throwing_bow_wood1.png",
-    stack_max = 1,
-    on_use = function(itemstack, user, pointed_thing)
-        if throwing_shoot_arrow(itemstack, user, pointed_thing) then
-            if not minetest.setting_getbool("creative_mode") then
-                itemstack:add_wear(65535/50)
-            end
-        end
-        return itemstack
-    end,
-})
-minetest.register_tool("throwing:bow_wood2", {
-    description = "Wood Bow",
-    inventory_image = "throwing_bow_wood2.png",
-    stack_max = 1,
-    on_use = function(itemstack, user, pointed_thing)
-        if throwing_shoot_arrow(itemstack, user, pointed_thing) then
-            if not minetest.setting_getbool("creative_mode") then
-                itemstack:add_wear(65535/50)
-            end
-        end
-        return itemstack
-    end,
-})
-minetest.register_tool("throwing:bow_wood3", {
-    description = "Wood Bow",
-    inventory_image = "throwing_bow_wood3.png",
-    stack_max = 1,
-    on_use = function(itemstack, user, pointed_thing)
-        if throwing_shoot_arrow(itemstack, user, pointed_thing) then
-            if not minetest.setting_getbool("creative_mode") then
-                itemstack:add_wear(65535/50)
-            end
+           itemstack:add_wear(65535/50)
         end
         return itemstack
     end,
@@ -85,9 +41,9 @@ minetest.register_tool("throwing:bow_wood3", {
 minetest.register_craft({
     output = 'throwing:bow_wood',
     recipe = {
-        {'farming:string', 'default:wood', ''},
-        {'farming:string', '', 'default:wood'},
-        {'farming:string', 'default:wood', ''},
+        {'group:string', 'default:wood', ''},
+        {'group:string', '', 'default:wood'},
+        {'group:string', 'default:wood', ''},
     }
 })
 
@@ -97,9 +53,7 @@ minetest.register_tool("throwing:bow_stone", {
     stack_max = 1,
     on_use = function(itemstack, user, pointed_thing)
         if throwing_shoot_arrow(item, user, pointed_thing) then
-            if not minetest.setting_getbool("creative_mode") then
-                itemstack:add_wear(65535/100)
-            end
+           itemstack:add_wear(65535/100)
         end
         return itemstack
     end,
@@ -108,9 +62,9 @@ minetest.register_tool("throwing:bow_stone", {
 minetest.register_craft({
     output = 'throwing:bow_stone',
     recipe = {
-        {'farming:string', 'default:cobble', ''},
-        {'farming:string', '', 'default:cobble'},
-        {'farming:string', 'default:cobble', ''},
+        {'group:string', 'default:cobble', ''},
+        {'group:string', '', 'default:cobble'},
+        {'group:string', 'default:cobble', ''},
     }
 })
 
@@ -120,9 +74,7 @@ minetest.register_tool("throwing:bow_steel", {
     stack_max = 1,
     on_use = function(itemstack, user, pointed_thing)
         if throwing_shoot_arrow(item, user, pointed_thing) then
-            if not minetest.setting_getbool("creative_mode") then
-                itemstack:add_wear(65535/200)
-            end
+           itemstack:add_wear(65535/200)
         end
         return itemstack
     end,
@@ -131,16 +83,16 @@ minetest.register_tool("throwing:bow_steel", {
 minetest.register_craft({
     output = 'throwing:bow_steel',
     recipe = {
-        {'farming:string', 'default:steel_ingot', ''},
-        {'farming:string', '', 'default:steel_ingot'},
-        {'farming:string', 'default:steel_ingot', ''},
+        {'group:string', 'default:steel_ingot', ''},
+        {'group:string', '', 'default:steel_ingot'},
+        {'group:string', 'default:steel_ingot', ''},
     }
 })
 
 dofile(minetest.get_modpath("throwing").."/arrow.lua")
-dofile(minetest.get_modpath("throwing").."/fire_arrow.lua")
-dofile(minetest.get_modpath("throwing").."/teleport_arrow.lua")
-dofile(minetest.get_modpath("throwing").."/dig_arrow.lua")
-dofile(minetest.get_modpath("throwing").."/build_arrow.lua")
+--dofile(minetest.get_modpath("throwing").."/fire_arrow.lua")
+--dofile(minetest.get_modpath("throwing").."/teleport_arrow.lua")
+--dofile(minetest.get_modpath("throwing").."/dig_arrow.lua")
+--dofile(minetest.get_modpath("throwing").."/build_arrow.lua")
 
 print('[OK] Throwing loaded')

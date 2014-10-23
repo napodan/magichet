@@ -20,27 +20,28 @@
 -- ToDo: travel as soul at the night time - can see gb and collect them
 --
 
-ghosts_skin={}
-g_blocks_count={}
-bdeathpos = {}
-isghost={}
-local g_changed = false
-local save_delta = 10
-ghosts={}   -- dead?
-ghosts2={}  -- hud activated?
-ghosts3={}  -- ID of a hud
-ghosts4={}  -- Warned about beeing ghost!
-upd_physics = {}
-local deaths_count = {}  -- count of deaths
-ghosts_maxhp={}
-ginvs={}
-ghost_speed_modifier = 0.5
-ghost_jump_modifier = 1.05
-ghost_gravity_modifier = 0.1
-ghost_sneak_value = false
-ghost_sneak_glitch = true
+ghosts_skin={}                  -- has it smth to do with skins?
+g_blocks_count={}               -- how much blocks have you destroyed?
+bdeathpos = {}                  -- position of your LAST death
+isghost={}                      -- are you a ghost?
+local g_changed = false         -- was data changed?
+local save_delta = 10           -- how ofthen should we save the data?
+ghosts={}                       -- dead?
+ghosts2={}                      -- hud activated?
+ghosts3={}                      -- ID of HUDs (GV & GM)
+ghosts4={}                      -- Warned about beeing ghost (inverted "do you want to be notified")
+upd_physics = {}                -- should the game update your physics? (ghost<->alive transition)
+local deaths_count = {}         -- count of deaths
+ghosts_maxhp={}                 -- max HP of a given ghost
+ginvs={}                        -- inventory of a killed player
+inv_size={}                     -- inventory size of a given player (too long w/o reincarnator is baaad)
+ghost_speed_modifier = 0.5      -- well, the ghost speed modifier
+ghost_jump_modifier = 1.05      -- well, the ghost jump modifier
+ghost_gravity_modifier = 0.1    -- well, the ghost gravity modifier
+ghost_sneak_value = false       -- well, the ghost sneak value flag
+ghost_sneak_glitch = true       -- well, the ghost sneak glitch flag
 
-local poses = {} -- keeps track of players' pos
+local poses = {}                -- keeps track of players' pos
 
 local locale = os.setlocale(nil, 'collate')
 
@@ -126,6 +127,13 @@ function g_save_stuff()
        o2 = string.sub(o, i, -1)
        output:write(o1 .. "\n")
        output:write("ginvs = minetest.deserialize('" .. o2 .. "')\n")
+
+       o  = minetest.serialize(inv_size)
+       i  = string.find(o, "return")
+       o1 = string.sub(o, 1, i-1)
+       o2 = string.sub(o, i, -1)
+       output:write(o1 .. "\n")
+       output:write("inv_size = minetest.deserialize('" .. o2 .. "')\n")
 
        o  = minetest.serialize(ghosts_skin)
        i  = string.find(o, "return")
@@ -529,6 +537,9 @@ minetest.register_node("ghosts:reincarnator", {
                             --inv2:set_stack("main", i, stack)
                         end
                     end
+                inv_size[pll] = 9*4
+                inv:set_size('main', inv_size[pll])
+                player:set_inventory_formspec(default.default_pl_fs)
                 g_changed = true
                else
                    -- ask if a player wants to lose ANYTHING
@@ -610,19 +621,13 @@ minetest.after(0, function()
 
 
        if isghost[pll] and g_blocks_count[pll]~=nil and ghosts3[pll] and ghosts3[pll][1]~=nil then
-          player:hud_remove(ghosts3[pll][1])
-          ghosts3[pll][1] = player:hud_add({
-                    hud_elem_type = "text",
-                    position = {x=0.80, y=0.95},
-                    offset = {x=-0, y=0},
-                    alignment = {x=1, y=-1},
-                    number = 0xFFFFFF ,
-                    text = "GM: ".. tostring(math.ceil(g_blocks_count[pll]/10)),
-                })
+          player:hud_change(ghosts3[pll][1],'text', "GM: ".. tostring(math.ceil(g_blocks_count[pll]/10)))
        end
 
        if (ghosts[pll]) and (not ghosts2[pll]) then
-          local hud=player:hud_add({hud_elem_type = "image",
+          if (not ghosts3[pll]) then ghosts3[pll]={} end
+
+          ghosts3[pll][0]=player:hud_add({hud_elem_type = "image",
                        scale = {x=-100, y=-100},
                        position = {x=0, y=0},
                        name = "ghostly_vision",
@@ -630,10 +635,10 @@ minetest.after(0, function()
                        alignment = {x=1, y=1},
                        offset = {x=0, y=0},
                        })
-           if (not ghosts3[pll]) then ghosts3[pll]={} end
-           ghosts3[pll][0] = hud
+
+
            if g_blocks_count[pll]~=nil then
-               local hud2 = player:hud_add({
+               ghosts3[pll][1] = player:hud_add({
                     hud_elem_type = "text",
                     position = {x=0.90, y=0.95},
                     offset = {x=-0, y=0},
@@ -641,13 +646,13 @@ minetest.after(0, function()
                     number = 0xFFFFFF ,
                     text = "GM: ".. tostring(math.ceil(g_blocks_count[pll]/10)),
                 })
-               ghosts3[pll][1]=hud2
+
            end
            ghosts2[pll]=1
         end
         if (not ghosts[pll]) and (ghosts2[pll]) and (ghosts3[pll]) then
-           player:hud_remove(ghosts3[pll][0])
-           player:hud_remove(ghosts3[pll][1])
+           if player:hud_get(ghosts3[pll][0]) then player:hud_remove(ghosts3[pll][0]) end
+           if player:hud_get(ghosts3[pll][1]) then player:hud_remove(ghosts3[pll][1]) end
            ghosts[pll]=nil
            ghosts2[pll]=nil
            ghosts3[pll][0]=nil
@@ -673,7 +678,7 @@ minetest.register_on_dieplayer(function(player)
 
 minetest.register_on_respawnplayer(function(player)
         local pll=player:get_player_name()
-        if (ghosts2[pll]) then
+        if (ghosts[pll]) then
            if rus == 1 then       -- russian
               localized_announce = announce_rus
               localized_close = close_rus
@@ -724,70 +729,96 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
            end
 
         if fields.g_close or (fields.quit and formname == "ghosts:unlocked" and not fields.g_reinc) then
-         -- not reincarnated
+           -- not reincarnated
            -- ghosts are invulnerable to fall damage
            default.player_status[pll].fall = 1000
            ghosts_maxhp[pll]={['time_before_diminish']=80, ['max_hp']=20}
-         -- you're allready a ghost, so nothing to do :)
-
-              if not isghost[pll] then
-               --------------------------------------
+           -- you're allready a ghost, so nothing to do :)
+           if not isghost[pll] then
+           -- if pll isn't a ghost then...
               if skins then
-              ghosts_skin[pll] = skins.skins[pll]
-            --  minetest.debug("The old skin was " .. minetest.serialize(skins.skins[pll]))
-              skins.skins[pll]="player_13"
-              skins.update_player_skin(player)
+                 ghosts_skin[pll] = skins.skins[pll]
+                 skins.skins[pll]="player_13"
+                 skins.update_player_skin(player)
+              end
+              --------------keep inventory... but in ghosts list ------------------------
+              if hungerhud[pll] and food_level[pll] then
+                 player:hud_change(hungerhud[pll],"text",'ghosts_ectoplasm_w16.png')
+              end
+              if hungerhudb[pll] and food_level[pll] then
+                 player:hud_change(hungerhudb[pll],"text",'ghosts_empty_w16.png')
               end
 
-              g_changed = true
+              local inv = player:get_inventory()
+              local ginv = minetest.get_inventory({type="detached", name="ghosts_".. pll})
+              if ginv then
+              else
+                  ginv = minetest.create_detached_inventory("ghosts_"..pll)
+                  if ginv then
+                  else
+                  end
+              end
 
-               --------------keep inventory... but in ghosts list ------------------------
-                  ghosts[pll]=1
-                  isghost[pll]=1
-                    -- if pll isn't a ghost then...
-                    local inv = player:get_inventory()
-                      local ginv = minetest.get_inventory({type="detached", name="ghosts_".. pll})
-                      if ginv then
-                      else
-                         ginv = minetest.create_detached_inventory("ghosts_"..pll)
-                         if ginv then
-                         else
+              if inv and ginv then
+                 for i,stack in ipairs(inv:get_list("main")) do
+                     if not isghost[pll] then
+                        -- if it's your first life, then copy to ginv
+                        ginv:set_stack("copy", i, stack)
+                     else
+                         -- else add to ginv beyound your 9*4 inv (up to 5x inventories)
+                         if i+9*4*deaths_count[pll] <=9*4*5 then
+                            ginv:set_stack("copy", i+9*4*deaths_count[pll], stack)
                          end
-                      end
+                     end
+                     stack:clear()
+                     inv:set_stack("main", i, stack)
+                 end
+              end
+              ------------------------------------
+              if not upd_physics[pll] then
 
-                      if inv and ginv then
-                          for i,stack in ipairs(inv:get_list("main")) do
-                              if not isghost[pll] then
-                                 -- if it's your first life, then copy to ginv
-                                 ginv:set_stack("copy", i, stack)
-                              else
-                                 -- else add to ginv beyound your 9*4 inv (up to 5x inventories)
-                                 if i+9*4*deaths_count[pll] <=9*4*5 then
-                                    ginv:set_stack("copy", i+9*4*deaths_count[pll], stack)
-                                 end
-                              end
-                              stack:clear()
-                              inv:set_stack("main", i, stack)
-                          end
-                      end
-                ------------------------------------
-                if not upd_physics[pll] then
-                  ph=default.player_physics[pll]
-                  default.ph_override(player,{ speed = ph.speed * ghost_speed_modifier,
-                                                jump = ph.jump * ghost_jump_modifier,
-                                                gravity = ph.gravity * ghost_gravity_modifier,
-                                             })
-                  upd_physics[pll]=true
-               --   print('ghosts on become a ghost')
-                end
-               g_changed = true
+                 ph=default.player_physics[pll]
+                 default.ph_override(player,{ speed = ph.speed * ghost_speed_modifier,
+                                              jump = ph.jump * ghost_jump_modifier,
+                                              gravity = ph.gravity * ghost_gravity_modifier,
+                                            })
+                 upd_physics[pll]=true
+              end
+              g_changed = true
+           else
+               if not g_blocks_count[pll] or g_blocks_count[pll]<10 then
+                  g_blocks_count[pll]=10
                else
-                   if not g_blocks_count[pll] or g_blocks_count[pll]<10 then g_blocks_count[pll]=10
-                   else
-                       g_blocks_count[pll] = g_blocks_count[pll]*2
-                   end
+                   g_blocks_count[pll] = g_blocks_count[pll]*2
                end
-               return
+           end
+           ghosts[pll]=1
+           isghost[pll]=1
+
+           if (not ghosts3[pll]) then ghosts3[pll]={} end
+
+           if player:hud_get(ghosts3[pll][0]) then player:hud_remove(ghosts3[pll][0]) end
+           if player:hud_get(ghosts3[pll][1]) then player:hud_remove(ghosts3[pll][1]) end
+           ghosts3[pll][0]=player:hud_add({hud_elem_type = "image",
+                       scale = {x=-100, y=-100},
+                       position = {x=0, y=0},
+                       name = "ghostly_vision",
+                       text = "gv.png",
+                       alignment = {x=1, y=1},
+                       offset = {x=0, y=0},
+                       })
+
+
+            if g_blocks_count[pll]==nil then g_blocks_count[pll]= 0 end
+            ghosts3[pll][1] = player:hud_add({
+                    hud_elem_type = "text",
+                    position = {x=0.90, y=0.95},
+                    offset = {x=-0, y=0},
+                    alignment = {x=1, y=-1},
+                    number = 0xFFFFFF ,
+                    text = "GM: ".. tostring(math.ceil(g_blocks_count[pll]/10)),
+                })
+           return
         end
 
 
@@ -796,7 +827,12 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
            if beds.beds_player_spawns[pll] then
               player:setpos(beds.beds_player_spawns[pll])
            end
-          -- print('reincarnation at '..minetest.pos_to_string(player:getpos()) .. '; bed at '.. minetest.pos_to_string(beds.beds_player_spawns[pll]) .. '; deathpos is '.. minetest.pos_to_string(bdeathpos[pll]))
+           if hungerhud[pll] and food_level[pll] then
+              player:hud_change(hungerhud[pll],"text",'hunger_tile.png')
+           end
+           if hungerhudb[pll] and food_level[pll] then
+              player:hud_change(hungerhudb[pll],"text",'hunger_tile_b.png')
+           end
 
          -- clear up your stuff and onto your reincarnation, Muah-ha-ha-haaaa he-hee hoooo...
                   local pos = bdeathpos[pll]
@@ -827,8 +863,9 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
                         pos.x = pos.x - x
                         pos.z = pos.z - z
                     end
-                    -- decrease inventory by 1*2^deaths_count
-                    inv:set_size(inv:get_size('main') - 1*math.pow(2,deaths_count[pll]))
+                    -- decrease inventory by 1*2^deaths_count after EASY reincarnation!
+                    inv_size[pll] = inv:get_size('main') - 1*math.pow(2,deaths_count[pll])
+                    inv:set_size('main', inv_size[pll])
                   end
 ------------------------------------------------------------
                g_blocks_count[pll]=nil
@@ -860,7 +897,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
         return
     end)
 
--- save it every <save_delta> seconds
+-- save it every <save_delta> seconds IF it has been changed
 local delta = 0
 minetest.register_globalstep(function(dtime)
     delta = delta + dtime
@@ -887,12 +924,28 @@ minetest.register_on_joinplayer(function(player)
          if ginvs and ginvs[pll] then
             load_ginv(pll)
          end
+
+         minetest.after(0,function()
+         if inv_size and inv_size[pll] then
+            local i = player:get_inventory()
+            i:set_size("main", inv_size[pll])
+         end
+         end)
+
          -- nothing else to do if you're not a ghost
          if not isghost[pll] then return end
-
+         minetest.after(0.1,function()
+                  if hungerhud[pll] and food_level[pll] then
+                     player:hud_change(hungerhud[pll],"text",'ghosts_ectoplasm_w16.png')
+                  end
+                  if hungerhudb[pll] and food_level[pll] then
+                     player:hud_change(hungerhudb[pll],"text",'ghosts_empty_w16.png')
+                  end
+         end)
          --upd_physics
          local ph = default.player_physics[pll]
             if isghost[pll] and not upd_physics[pll] then
+
                upd_physics[pll]=true
                default.ph_override(player, { speed   = ph.speed * ghost_speed_modifier,
                                              jump    = ph.jump * ghost_jump_modifier,
@@ -930,6 +983,7 @@ end
 end)
 
 minetest.register_chatcommand("ghost", {
+    privs = {ghost=true},
     func = function(name, param)
         local player = minetest.get_player_by_name(name)
         if skins then
@@ -943,8 +997,10 @@ minetest.register_chatcommand("ghost", {
 })
 
 minetest.register_chatcommand("isghost", {
+    privs = {isghost=true},
     func = function(name, param)
            isghost[name]=not isghost[name]
+           ghosts[name]= isghost[name]
            return
     end
 })

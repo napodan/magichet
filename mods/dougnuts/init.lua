@@ -34,8 +34,9 @@ minetest.register_globalstep(function(dtime)
             if (connected_hud[playern])
             and ((controls.aux1==false) or (controls.sneak==false))
             then
-                player:hud_remove(connected_hud[playern])
+                if player:hud_get(connected_hud[playern]) then player:hud_remove(connected_hud[playern])
                 connected_hud[playern]=nil
+                end
             end
         end
 end)
@@ -64,6 +65,7 @@ function findapos()
 end
 
 minetest.register_chatcommand("spawn", {
+    privs = {spawn=true},
     description = "Teleports you to the spawn point (2000 meters away max)",
     func = function(name, param)
         local pl = minetest.get_player_by_name(name)

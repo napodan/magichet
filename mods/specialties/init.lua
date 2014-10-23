@@ -66,7 +66,8 @@ minetest.register_on_joinplayer(function(player)
         local Yoffset = 0.02
         local y = 0
         for skill,num in pairs(specialties.players[name].skills) do
-            specialties.players[name].hud[skill] = player:hud_add({
+            if not specialties.players[name].hud[skill] then specialties.players[name].hud[skill]={} end
+            specialties.players[name].hud[skill][1] = player:hud_add({
                 hud_elem_type = "text",
                 position = {x=0, y=0.85+y},
                 offset = {x=100, y=0},
@@ -74,19 +75,20 @@ minetest.register_on_joinplayer(function(player)
                 number = 0xFFFFFF ,
                 text = tostring(num),
             })
+--[[
             if skill=='miner' then skill_rus='Miner' end
             if skill=='lumberjack' then skill_rus='Lumberjack' end
             if skill=='digger' then skill_rus='Digger' end
             if skill=='farmer' then skill_rus='Farmer' end
-            if skill=='builder' then skill_rus='Builder' end
-            player:hud_add({
+            if skill=='builder' then skill_rus='Builder' end ]]
+            specialties.players[name].hud[skill][2] = player:hud_add({
                 hud_elem_type = "text",
                 position = {x=0, y=0.85+y},
                 offset = {x=10, y=0},
                 alignment = {x=1, y=0},
                 scale = {x=100, y=50},
                 number = 0xFFFFFF ,
-                text = skill_rus,
+                text = skill,
             })
             y = y+Yoffset
         end
@@ -218,9 +220,41 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
     end
 end)
 
+minetest.register_craftitem('specialties:xp_ball', {
+    description = "XP points",
+    inventory_image = "specialties_xp.png",
+    groups = {xp=1},
+})
 
 
 --XP Events
+local function drop_xp(pos,skill,amount)
+      local obj = minetest.add_item(pos, "specialties:xp_ball")
+      if obj ~= nil then
+        prop = {
+            is_visible = true,
+            visual = "sprite",
+            textures = {"specialties_xp.png"},
+            automatic_rotate = 0,
+               }
+         obj:set_properties(prop)
+         obj:get_luaentity().itemstring = ""
+         obj:get_luaentity().collect = true
+         obj:get_luaentity().xp.skill = skill
+         obj:get_luaentity().xp.amount = amount
+         local x = math.random(1, 5)
+         if math.random(1,2) == 1 then
+            x = -x
+         end
+         local z = math.random(1, 5)
+         if math.random(1,2) == 1 then
+            z = -z
+         end
+         obj:setvelocity({x=1/x, y=obj:getvelocity().y, z=1/z})
+      end
+end
+
+
 local node_dig = minetest.node_dig
 
 function minetest.node_dig(pos, oldnode, digger)
@@ -237,8 +271,6 @@ function minetest.node_dig(pos, oldnode, digger)
 
     local pll = digger:get_player_name()
     if pll == builder then
-       -- print(pll)
-       -- print(builder)
         specialties.changeXP(pll, "builder", -1)
         return pos, oldnode, digger
     end
@@ -251,7 +283,8 @@ function minetest.node_dig(pos, oldnode, digger)
 
     local name = digger:get_player_name()
     if tool:find("pick") ~= nil then
-        specialties.changeXP(name, "miner", 1)
+        drop_xp(pos,"miner",1)
+        --specialties.changeXP(name, "miner", 1)
     end
 
     if tool:find("axe") ~= nil then
@@ -264,13 +297,16 @@ function minetest.node_dig(pos, oldnode, digger)
                 y = y+1
                 abovepos = {x=pos.x,y=pos.y+y,z=pos.z}
             end
-            specialties.changeXP(name, "lumberjack", y-1)
+            drop_xp(pos,"lumberjack", y-1)
+            --specialties.changeXP(name, "lumberjack", y-1)
         end
     end
     if tool:find("shovel") ~= nil then
-        specialties.changeXP(name, "digger", 1)
+        drop_xp(pos,"digger", 1)
+        --specialties.changeXP(name, "digger", 1)
     end
     if oldnode.name:find("farming") ~= nil then
+        drop_xp(pos,"farmer", 5)
         specialties.changeXP(name, "farmer", 5)
     end
 

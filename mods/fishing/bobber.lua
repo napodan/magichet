@@ -102,12 +102,11 @@ local FISHING_BOBBER_ENTITY={
         local player = puncher:get_player_name()
         local inv = puncher:get_inventory()
         if MESSAGES == true then minetest.chat_send_player(player, "You didn't catch anything.", false) end -- fish escaped
-        if not minetest.setting_getbool("creative_mode") then
-            if inv:room_for_item("main", {name="fishing:bait_worm", count=1, wear=0, metadata=""}) then
-                inv:add_item("main", {name="fishing:bait_worm", count=1, wear=0, metadata=""})
-                if MESSAGES == true then minetest.chat_send_player(player, "The bait is still there.", false) end -- bait still there
-            end
+        if inv:room_for_item("main", {name="fishing:bait_worm", count=1, wear=0, metadata=""}) then
+           inv:add_item("main", {name="fishing:bait_worm", count=1, wear=0, metadata=""})
+           if MESSAGES == true then minetest.chat_send_player(player, "The bait is still there.", false) end -- bait still there
         end
+
         -- make sound and remove bobber
         minetest.sound_play("fishing_bobber1", {
             pos = self.object:getpos(),
@@ -256,12 +255,10 @@ local FISHING_BOBBER_ENTITY={
                                     inv:add_item("main", {name=MoD..":"..iTeM, count=1, wear=WeaR, metadata=""})
                                     if MESSAGES == true then say(player, "You caught "..MeSSaGe, false) end -- caught somethin'
                                 end
-                                if not minetest.setting_getbool("creative_mode") then
-                                    if GeTBaiTBack == true then
-                                        if inv:room_for_item("main", {name="fishing:bait_worm", count=1, wear=0, metadata=""}) then
-                                            inv:add_item("main", {name="fishing:bait_worm", count=1, wear=0, metadata=""})
-                                            if MESSAGES == true then say(player, "The bait is still there.", false) end -- bait still there?
-                                        end
+                                if GeTBaiTBack == true then
+                                    if inv:room_for_item("main", {name="fishing:bait_worm", count=1, wear=0, metadata=""}) then
+                                        inv:add_item("main", {name="fishing:bait_worm", count=1, wear=0, metadata=""})
+                                        if MESSAGES == true then say(player, "The bait is still there.", false) end -- bait still there?
                                     end
                                 end
                             else

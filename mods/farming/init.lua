@@ -18,7 +18,7 @@ local function get_field(nodename, fieldname)
 end
 
 -- regular growth func; subject to be changed to support MC-like cond detection
-function try_to_grow(pos,node)
+function try_to_grow(pos, node, cheating)
         -- return if already full grown
         if not node or not node.name then return false end
         local plantname = get_field(node.name, "plantname")             -- name of the plant
@@ -31,8 +31,32 @@ function try_to_grow(pos,node)
         then
             return false
         end
+
         if mature == state_count then
-            return false
+           if cheating or (plantname~='melon_plant' and plantname~='pumpkin_plant') then
+              return false
+           else -- if we're NOT cheating and there's a melon or a pumpkin plant - try to grow fruits
+               local meta = minetest.get_meta(pos)
+               if meta:get_int('produced')==1 then return false end
+               local height = mature + 1
+               local x = math.random(-1,1)
+               local z = math.random(-1,1)
+               local fruit_pos = {x=pos.x+x, y=pos.y, z=pos.z+z}
+               local name = minetest.get_node(fruit_pos).name
+               if math.abs(x)~=math.abs(z) and (name=='air' or name=="default:water_flowing" or name=="default:water_source") then
+                  local new_name = "farming:".. plantname:sub(1,plantname:find('_')-1) -- gets "melon" or "pumpkin"
+                  local dir = {x=x,z=z}
+                  local param2 = minetest.dir_to_facedir(dir)
+                  minetest.set_node(pos, {name="farming:"..plantname.."_"..height, param2=param2},2)
+                  meta:set_int('produced',1)
+                  --
+                  minetest.set_node(fruit_pos, {name=new_name})
+                  local meta2 = minetest.get_meta(fruit_pos)
+                  meta2:set_string('plant',minetest.serialize(pos))
+                  --
+               end
+               return true
+           end
         end
 
         -- check if on wet soil
@@ -66,7 +90,7 @@ function try_to_grow(pos,node)
 function try_to_grow_cheating(pos,node)
    local rnd = math.random(1,100/cheat_chance) -- 20% chances
    if rnd == 1 then
-      local grown = try_to_grow(pos,node)
+      local grown = try_to_grow(pos,node,true) -- true is merely a "cheating" flag
       if not grown then return false end
       local pos1 = {x=pos.x-0.3, y=pos.y-0.3, z=pos.z-0.3}
       local pos2 = {x=pos.x+0.3, y=pos.y+0.3, z=pos.z+0.3}
@@ -102,7 +126,6 @@ minetest.register_node("farming:soil", {
     description = "Soil",
     tiles = {"farming_soil.png", "default_dirt.png"},
     drop = "default:dirt",
-    is_ground_content = true,
     groups = {crumbly=default.dig.dirt_with_grass, not_in_creative_inventory=1, soil=2},
     sounds = default.node_sound_dirt_defaults(),
 })
@@ -111,7 +134,6 @@ minetest.register_node("farming:soil_wet", {
     description = "Wet Soil",
     tiles = {"farming_soil_wet.png", "farming_soil_wet_side.png"},
     drop = "default:dirt",
-    is_ground_content = true,
     groups = {crumbly=default.dig.dirt_with_grass, not_in_creative_inventory=0, soil=3},
     sounds = default.node_sound_dirt_defaults(),
 })
@@ -358,13 +380,8 @@ minetest.register_node(":default:grass_1", {
         if math.random(1, 5) == 1 then
             nn = "farming:seed_wheat"
         end
-        if minetest.setting_getbool("creative_mode") then
-            local inv = digger:get_inventory()
-            if not inv:contains_item("main", ItemStack(nn)) then
-                inv:add_item("main", ItemStack(nn))
-            end
-        else
-            if digger:get_wielded_item():get_name() == "default:shears"  or nn ~= "default:grass_1" then
+           local wielded = digger:get_wielded_item():get_name()
+            if wielded == "default:shears"  or nn ~= "default:grass_1" or minetest.get_item_group(wielded, 'sharp')>0 then
                 local obj = minetest.add_item(pos, nn)
                 if obj ~= nil then
                     obj:get_luaentity().collect = true
@@ -379,7 +396,6 @@ minetest.register_node(":default:grass_1", {
                     obj:setvelocity({x=1/x, y=obj:getvelocity().y, z=1/z})
                 end
             end
-        end
     end,
     on_place = function(itemstack, placer, pointed_thing)
         -- place a random grass node
@@ -406,13 +422,8 @@ for i=2,5 do
         if math.random(1, 5) == 1 then
             nn = "farming:seed_wheat"
         end
-        if minetest.setting_getbool("creative_mode") then
-            local inv = digger:get_inventory()
-            if not inv:contains_item("main", ItemStack(nn)) then
-                inv:add_item("main", ItemStack(nn))
-            end
-        else
-            if digger:get_wielded_item():get_name() == "default:shears" or nn ~= "default:grass_1" then
+           local wielded = digger:get_wielded_item():get_name()
+           if wielded == "default:shears" or nn ~= "default:grass_1" or minetest.get_item_group(wielded, 'sharp')>0 then
                 local obj = minetest.add_item(pos, nn)
                 if obj ~= nil then
                     obj:get_luaentity().collect = true
@@ -427,7 +438,6 @@ for i=2,5 do
                     obj:setvelocity({x=1/x, y=obj:getvelocity().y, z=1/z})
                 end
             end
-        end
     end,
         groups = {dig_immediate=3,flammable=3,flora=1,attached_node=1,not_in_creative_inventory=1},
         sounds = default.node_sound_leaves_defaults({
@@ -463,13 +473,8 @@ minetest.register_node(":default:junglegrass", {
         if math.random(1, 8) == 1 then
             nn = "farming:seed_cotton"
         end
-        if minetest.setting_getbool("creative_mode") then
-            local inv = digger:get_inventory()
-            if not inv:contains_item("main", ItemStack(nn)) then
-                inv:add_item("main", ItemStack(nn))
-            end
-        else
-            if digger:get_wielded_item():get_name() == "default:shears"  or nn ~= "default:junglegrass" then
+            local wielded = digger:get_wielded_item():get_name()
+            if wielded == "default:shears"  or nn ~= "default:junglegrass" or minetest.get_item_group(wielded, 'sharp')>0 then
                 local obj = minetest.add_item(pos, nn)
                 if obj ~= nil then
                     obj:get_luaentity().collect = true
@@ -484,7 +489,6 @@ minetest.register_node(":default:junglegrass", {
                     obj:setvelocity({x=1/x, y=obj:getvelocity().y, z=1/z})
                 end
             end
-        end
     end,
 
     groups = {dig_immediate=3,flammable=2,flora=1,attached_node=1},
@@ -536,9 +540,7 @@ local function place_seed(itemstack, placer, pointed_thing, plantname)
 
     -- add the node and remove 1 item from the itemstack
     minetest.add_node(pt.above, {name=plantname})
-    if not minetest.setting_getbool("creative_mode") then
-        itemstack:take_item()
-    end
+    itemstack:take_item()
     return itemstack
 end
 
@@ -616,14 +618,15 @@ minetest.register_craftitem("farming:seed_cotton", {
 minetest.register_craftitem("farming:string", {
     description = "String",
     inventory_image = "farming_string.png",
+    groups = {string=1},
 
 })
 
 minetest.register_craft({
     output = "wool:white",
     recipe = {
-        {"farming:string", "farming:string"},
-        {"farming:string", "farming:string"},
+        {"group:string", "group:string"},
+        {"group:string", "group:string"},
     }
 })
 
@@ -745,7 +748,7 @@ minetest.register_abm({
 })
 
 minetest.register_craftitem('farming:carrot_gold', {
-    description = "Gold carrot",
+    description = "Gold Carrot",
     inventory_image = "farming_gold_carrot.png",
     on_use = minetest.item_eat(1),
 })
@@ -791,7 +794,6 @@ for i=1,8 do
         paramtype = "light",
         walkable = false,
         buildable_to = true,
-        is_ground_content = true,
         drop = drop,
         plantname = "potato",
         light_req = 9,
@@ -816,13 +818,13 @@ minetest.register_abm({
 })
 
 minetest.register_craftitem("farming:potato_baked", {
-    description = "Baked potato",
+    description = "Baked Potato",
     inventory_image = "farming_potato_baked.png",
     on_use = minetest.item_eat(),
 })
 
 minetest.register_craftitem("farming:potato_poisonous", {
-    description = "Poisonous potato",
+    description = "Poisonous Potato",
     inventory_image = "farming_potato_poisonous.png",
     on_use = minetest.item_eat(),
 })
@@ -838,7 +840,7 @@ minetest.register_craft({
 --
 minetest.register_craftitem("farming:fertilizer", {
     description = "Fertilizer",
-    inventory_image = "heart.png",
+    inventory_image = "bonemeal.png",
 
     on_place = function(itemstack, placer, pointed_thing)
         local node = minetest.get_node(pointed_thing.under)
@@ -856,6 +858,229 @@ minetest.handle_node_drops(pos, drops, digger)
 ^ Can be overridden to get different functionality (eg. dropping items on
   ground)]]--
 
+
+--
+-- Melon
+--
+minetest.register_craftitem("farming:seed_melon", {
+    description = "Melon Seed",
+    inventory_image = "farming_melon_seeds.png",
+
+    on_place = function(itemstack, placer, pointed_thing)
+        return place_seed(itemstack, placer, pointed_thing, "farming:melon_plant_1")
+    end,
+})
+
+minetest.register_node("farming:melon", {
+    description = "Melon",
+    tiles = {"farming_melon_top.png", "farming_melon_top.png", "farming_melon_side.png"},
+    after_dig_node = function(pos, oldnode, oldmetadata, digger)
+       cnt = math.random(1,7)
+       for i=1,cnt do
+            local obj = minetest.add_item(pos, 'farming:melon_slice')
+            if obj ~= nil then
+                obj:get_luaentity().collect = true
+                local x = math.random(1, 5)
+                if math.random(1,2) == 1 then
+                    x = -x
+                end
+                local z = math.random(1, 5)
+                if math.random(1,2) == 1 then
+                    z = -z
+                end
+                obj:setvelocity({x=1/x, y=obj:getvelocity().y, z=1/z})
+            end
+       end
+       if oldmetadata then
+          local plant = oldmetadata.fields.plant
+          if plant then
+             local pp = minetest.deserialize(plant)
+             minetest.set_node(pp, {name="farming:melon_plant_8"},2)
+             local meta = minetest.get_meta(pp)
+             if meta then meta:set_int('produced',0) end
+          end
+       end
+    end,
+
+    drop = '',
+    groups = {crumbly=default.dig.dirt_with_grass, fruit=1},
+    sounds = default.node_sound_stone_defaults(),
+})
+
+minetest.register_craftitem("farming:melon_slice", {
+    description = "Melon Slice",
+    inventory_image = "farming_melon_slice.png",
+    on_use = minetest.item_eat(),
+})
+
+for i=1,8 do
+    minetest.register_node("farming:melon_plant_"..i, {
+        drawtype = "plantlike",
+        tiles = {"farming_melon_"..i..".png"},
+        paramtype = "light",
+        walkable = false,
+        buildable_to = true,
+        plantname="melon_plant",
+        light_req = 10,
+        state_count = 8,
+        is_ground_content = true,
+        drop = '',
+        selection_box = {
+            type = "fixed",
+            fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
+        },
+        groups = {dig_immediate=3,flammable=2,plant=1,melon_plant=i,not_in_creative_inventory=1,attached_node=1,plantname=1},
+    })
+end
+
+    minetest.register_node("farming:melon_plant_9", {
+        drawtype = "nodebox",
+        tiles = {"farming_melon_9.png"},
+        paramtype = "light",
+        paramtype2 = "facedir",
+        tiles = {
+            "farming_melon_9.png",
+            "farming_melon_9.png",
+            "farming_melon_9.png",
+            "farming_melon_9.png^[transformFX",
+        },
+        walkable = false,
+        buildable_to = true,
+        plantname="melon_plant",
+        light_req = 10,
+        state_count = 8,
+        is_ground_content = true,
+        drop = '',
+        node_box = {
+            type = "fixed",
+            fixed = {
+                {-0.0, -0.5, -0.5, 0.0, 0.5, 0.5},
+            }
+        },
+        selection_box = {
+            type = "fixed",
+            fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
+        },
+        groups = {dig_immediate=3,flammable=2,plant=1,melon_plant=8,not_in_creative_inventory=1,attached_node=1,plantname=1},
+    })
+
+minetest.register_abm({
+    nodenames = {"group:melon_plant"},
+    neighbors = {"group:soil"},
+    interval = 82,
+    chance = 3.5,
+    action = function(pos,node)
+    try_to_grow(pos,node)
+    end,
+})
+
+
+--
+-- Pumpkin
+--
+minetest.register_craftitem("farming:seed_pumpkin", {
+    description = "Pumpkin Seed",
+    inventory_image = "farming_pumpkin_seed.png",
+
+    on_place = function(itemstack, placer, pointed_thing)
+        return place_seed(itemstack, placer, pointed_thing, "farming:pumpkin_plant_1")
+    end,
+})
+
+minetest.register_node("farming:pumpkin", {
+    description = "Pumpkin",
+    tiles = {"farming_pumpkin_top.png", "farming_pumpkin_side.png", "farming_pumpkin_side.png",
+        "farming_pumpkin_side.png", "farming_pumpkin_side.png", "farming_pumpkin_face.png"},
+    paramtype2 = "facedir",
+    after_dig_node = function(pos, oldnode, oldmetadata, digger)
+       if oldmetadata then
+          local plant = oldmetadata.fields.plant
+          if plant then
+             local pp = minetest.deserialize(plant)
+             minetest.set_node(pp, {name="farming:pumpkin_plant_8"},2)
+             local meta = minetest.get_meta(pp)
+             if meta then meta:set_int('produced',0) end
+          end
+       end
+    end,
+    groups = {crumbly=default.dig.dirt_with_grass, fruit=1, fleshy=1, metal=0, blast=0, armor_use=2000},
+    wear = 0,
+    sounds = default.node_sound_stone_defaults(),
+})
+
+minetest.register_node("farming:jack_o_lantern", {
+    description = "Jack-O-Lantern",
+    tiles = {"farming_pumpkin_top.png", "farming_pumpkin_side.png", "farming_pumpkin_side.png",
+        "farming_pumpkin_side.png", "farming_pumpkin_side.png", "farming_pumpkin_face_light.png"},
+    groups = {crumbly=default.dig.dirt_with_grass, fruit=1},
+    light_source = 11,
+    paramtype = 'light',
+    paramtype2 = "facedir",
+    groups = {crumbly=default.dig.dirt_with_grass, fruit=1, fleshy=1, metal=0, blast=0, armor_use=2000},
+    wear = 0,
+    sounds = default.node_sound_stone_defaults(),
+})
+
+for i=1,8 do
+    minetest.register_node("farming:pumpkin_plant_"..i, {
+        drawtype = "plantlike",
+        tiles = {"farming_melon_"..i..".png"}, -- change it later to use separate images
+        paramtype = "light",
+        walkable = false,
+        buildable_to = true,
+        plantname="pumpkin_plant",
+        light_req = 10,
+        state_count = 8,
+        is_ground_content = true,
+        drop = '',
+        selection_box = {
+            type = "fixed",
+            fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
+        },
+        groups = {dig_immediate=3,flammable=2,plant=1,pumpkin_plant=i,not_in_creative_inventory=1,attached_node=1,plantname=1},
+    })
+end
+
+    minetest.register_node("farming:pumpkin_plant_9", {
+        drawtype = "nodebox",
+        tiles = {"farming_melon_9.png"},
+        paramtype = "light",
+        paramtype2 = "facedir",
+        tiles = {
+            "farming_melon_9.png",
+            "farming_melon_9.png",
+            "farming_melon_9.png",
+            "farming_melon_9.png^[transformFX",
+        },
+        walkable = false,
+        buildable_to = true,
+        plantname="pumpkin_plant",
+        light_req = 10,
+        state_count = 8,
+        is_ground_content = true,
+        drop = '',
+        node_box = {
+            type = "fixed",
+            fixed = {
+                {-0.0, -0.5, -0.5, 0.0, 0.5, 0.5},
+            }
+        },
+        selection_box = {
+            type = "fixed",
+            fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
+        },
+        groups = {dig_immediate=3,flammable=2,plant=1,pumpkin_plant=8,not_in_creative_inventory=1,attached_node=1,plantname=1},
+    })
+
+minetest.register_abm({
+    nodenames = {"group:pumpkin_plant"},
+    neighbors = {"group:soil"},
+    interval = 82,
+    chance = 3.5,
+    action = function(pos,node)
+    try_to_grow(pos,node)
+    end,
+})
 
 --
 -- Craftitems
@@ -883,6 +1108,36 @@ minetest.register_craft({
     output = "farming:flour",
     type = "shapeless",
     recipe = { "farming:wheat", "farming:wheat" }
+})
+
+minetest.register_craft({
+    output = "farming:seed_melon",
+    type = "shapeless",
+    recipe = { "farming:melon_slice"}
+})
+
+minetest.register_craftitem('farming:pumpkin_pie', {
+    description = "Pumpkin Pie",
+    inventory_image = "farming_pumpkin_pie.png",
+    on_use = minetest.item_eat(1),
+})
+
+--
+-- crafting
+--
+
+minetest.register_craft({
+    output = "farming:melon",
+    recipe = { {"farming:melon_slice","farming:melon_slice","farming:melon_slice"},
+               {"farming:melon_slice","farming:melon_slice","farming:melon_slice"},
+               {"farming:melon_slice","farming:melon_slice","farming:melon_slice"}}
+})
+
+minetest.register_craft({
+    output = "farming:pumpkin_pie",
+    type = "shapeless",
+    recipe = { "default:sugar", "4items:egg", "farming:pumpkin" },
+    replacements = {{"bucket:bucket_water", "bucket:bucket_empty"}},
 })
 
 minetest.register_craft({

@@ -1,21 +1,17 @@
 
 ------------------------------------
 ---- enchantment mod by 4aiman -----
-----        prerelease         -----
+----    public beta release    -----
 ------------------------------------
------ license: CC BY-NC-SA 3.0 -----
+-----     license:  GPLv3      -----
 ------------------------------------
 
 --------------------------------------------------------------------------------
 -- This mod adds enchantment! Yep, similar to that of Minecraft :)
--- Yet, there are differences. This mod is dependent on either specialties or
--- ghosts mod. The latter is prefered and it is ghosts that'll be used if both
--- are installed.
+-- Yet, there are differences.
 --
 -- So, basics are the same - three enchantements with weird names and (pseudo)
--- random cost. If there's only specialties - XP would be taken from the
--- enchanter. If there's ghosts mod - you'll need to lay your hands on some
--- ectoplazm.
+-- random cost. XP or ectoplasm is needed.
 --
 -- To get some descent enchantements you'll need to be lucky.
 -- Mechanics are well explained here: http://minecraft.gamepedia.com/Enchanting
@@ -493,11 +489,11 @@ end
 local function select_enchantment(item, level, points)
    -- finallist is empty = no boons
     local finallist = {}
-    
+
    -- if there's no points, there will be no enchantement
     if not points then return finallist end
-    
-   -- get the names of all possible chants 
+
+   -- get the names of all possible chants
     local list2 = {}
     for en,chant in pairs(mte) do
         for i,levels in ipairs(chant) do
@@ -506,13 +502,13 @@ local function select_enchantment(item, level, points)
             end
         end
     end
-    
+
    -- the number of chants
     local eeeee = 1
-    
-   -- get random chant from the full list         
-    local ch = random_elem(list2) 
-   -- and insert it in the final list of chants 
+
+   -- get random chant from the full list
+    local ch = random_elem(list2)
+   -- and insert it in the final list of chants
     table.insert(finallist, ch)
    -- calculate the chances of continuation
     local chance = math.random() <= ((points+1)/50)
@@ -528,15 +524,15 @@ local function select_enchantment(item, level, points)
            end
        end
        points = points/2
-      -- get random chant from the full list         
-       ch = random_elem(list2) 
-      -- and insert it in the final list of chants 
+      -- get random chant from the full list
+       ch = random_elem(list2)
+      -- and insert it in the final list of chants
        table.insert(finallist, ch)
       -- calculate the chances of continuation
-       chance = math.random() <= ((points+1)/50)       
+       chance = math.random() <= ((points+1)/50)
       -- if we're lucky, then repeat
-    end  
-    
+    end
+
     return finallist
 end
 
@@ -638,7 +634,9 @@ for j,def in ipairs(chanted_items) do
 
        for i,ii in ipairs(hhh) do
            local ddd = deepcopy(def)
-           ddd.groups = {not_in_creative_inventory=1,not_in_craft_guide=1}
+           if not ddd.groups then ddd.groups={} end
+           ddd.groups.not_in_creative_inventory=1
+           ddd.groups.not_in_craft_guide=1
            local dsc = string.sub(ddd.description,1)
            local dnm = string.sub(ddd.name,1)
            local speedup, casualty, slvl, clvl
@@ -857,13 +855,13 @@ minetest.register_node("enchantment:table", {
        meta:set_string("formspec", make_ench_list(sender,pos,item))
     end,
 
-    after_place_node  = function(pos, placer, itemstack, pointed_thing) 
+    after_place_node  = function(pos, placer, itemstack, pointed_thing)
        for i=-2,2 do
            for j=-2,2 do
                for k=-2,2 do
                    local pp = {x=i+pos.x, y=j+pos.y, z=k+pos.z}
                    local nn = minetest.get_node(pp).name
-                   if nn=='default:bookshelf'                    
+                   if nn=='default:bookshelf'
                    and (i%2==0 or j%2==0 or k%2==0) then
                       minetest.get_node_timer(pp):start(1)
                    end
@@ -879,7 +877,7 @@ minetest.register_node("enchantment:table", {
                for k=-2,2 do
                    local pp = {x=i+pos.x, y=j+pos.y, z=k+pos.z}
                    local nn = minetest.get_node(pp).name
-                   if nn=='default:bookshelf' 
+                   if nn=='default:bookshelf'
                    and not minetest.find_node_near(pp, 2, 'enchantment:table')
                    and (i%2==0 or j%2==0 or k%2==0) then
                       minetest.get_node_timer(pp):stop()
@@ -888,14 +886,14 @@ minetest.register_node("enchantment:table", {
             end
        end
     end,
-    
+
     on_timer = function(pos, elapsed)
        for i=-2,2 do
            for j=-2,2 do
                for k=-2,2 do
                    local pp = {x=i+pos.x, y=j+pos.y, z=k+pos.z}
                    local nn = minetest.get_node(pp).name
-                   if nn=='default:bookshelf'                    
+                   if nn=='default:bookshelf'
                    and (i%2==0 or j%2==0 or k%2==0) then
                        local timer = minetest.get_node_timer(pp)
                        if not timer:is_started()
@@ -904,10 +902,10 @@ minetest.register_node("enchantment:table", {
                    end
                end
             end
-       end       
+       end
        return true
     end,
-        
+
 })
 -- Enchantment table's craft
 if ghosts then
@@ -979,7 +977,7 @@ minetest.register_node(":default:bookshelf", {
        if spid then minetest.delete_particlespawner(spid) end
        return true
     end,
-       --removed after_place & timer:start() to save CPU time     
+       --removed after_place & timer:start() to save CPU time
 
 })
 
@@ -992,6 +990,7 @@ minetest.register_chatcommand("gbxp", {
 })
 
 minetest.register_chatcommand("spxp", {
+    privs = {spxp=true},
     func = function(name, param)
         local player = minetest.get_player_by_name(name)
         minetest.chat_send_player(name,'Your specialties total XP is ' .. get_sxp(name))
@@ -1000,6 +999,7 @@ minetest.register_chatcommand("spxp", {
 })
 
 minetest.register_chatcommand("enchant", {
+    privs = {server=true},
     func = function(name, param)
         local player = minetest.get_player_by_name(name)
         local wstack = player:get_wielded_item()
@@ -1083,10 +1083,10 @@ minetest.register_globalstep(function(dtime)
 
                elseif boon:find('Fire affinity') then
                   local pos = player:getpos()
-                  if minetest.find_node_near(pos, 2, 'default:lava_source')
-                  or minetest.find_node_near(pos, 2, 'default:lava_flowing')
+                  if minetest.find_node_near(pos, 2, 'group:hot')
                   or minetest.find_node_near(pos, 2, 'group:fire')
-                  or minetest.find_node_near(pos, 2, 'group:hot')
+                  or minetest.find_node_near(pos, 2, 'default:lava_source')
+                  or minetest.find_node_near(pos, 2, 'default:lava_flowing')
                   then
                      node = true
                   else
@@ -1141,13 +1141,16 @@ minetest.register_globalstep(function(dtime)
                end
         end
 
--- remove boons
+--[[ remove boons
         for j,boon in pairs(pchants) do
             local boontp = string.sub(j,1,-3)
             local boonlv = tonumber(string.sub(j,-1))
             if (enplhuds[pll][boontp] and not pchants[j][pll])then
-            player:hud_remove(enplhuds[pll][boontp])
-            enplhuds[pll][boontp]=nil
+               if player:hud_get(enplhuds[pll][boontp]) then
+                  player:hud_remove(enplhuds[pll][boontp])
+                  print('removed ' .. boontp)
+                  enplhuds[pll][boontp]=nil
+               end
             end
         end
 
@@ -1167,10 +1170,12 @@ minetest.register_globalstep(function(dtime)
                                                        offset = {x=10+40*math.floor((numhud-1)/7), y=yy*40},
                                                        alignment = {x=1, y=1},
                                                        scale = {x=1, y=1},
-                                                       text = "enchantment_".. string.gsub(boontp, ' ', '_') ..".png^enchantment_".. boonlv ..".png^",
+                                                       text = "enchantment_".. string.gsub(boontp, ' ', '_') ..".png^enchantment_".. boonlv ..".png",
                                                       })
+               print('added ' .. boontp)
            end
-        end
+        end]]
+
         wielded_chant[pll] = itemname
     end
 end)
@@ -1180,43 +1185,24 @@ minetest.register_on_dignode(function(pos, oldnode, digger)
 -- for effects like treasurer or tenderness, infinity etc
      if not digger then return true end
      local pll = digger:get_player_name()
-     local nowear = false
+     local nowear = 1
    --  Everlast enchantment - will "heal" your tool occasionaly
-     if      pchants['Everlast 1'][pll] then nowear = 1
-     elseif  pchants['Everlast 2'][pll] then nowear = 2
-     elseif  pchants['Everlast 3'][pll] then nowear = 3
-     elseif  pchants['Everlast 4'][pll] then nowear = 4
+     if      pchants['Everlast 1'][pll] then nowear = 0.8
+     elseif  pchants['Everlast 2'][pll] then nowear = 0.6
+     elseif  pchants['Everlast 3'][pll] then nowear = 0.4
+     elseif  pchants['Everlast 4'][pll] then nowear = 0.25
      end
-     if nowear then
-        --print('Nowear level = ' .. nowear)
-        local itemstack = digger:get_wielded_item()
-        local tool = itemstack:get_name()
-        local wear = itemstack:get_wear()
-        local nn = oldnode.name
 
-        local group = 'dig'
-        if     minetest.get_item_group(nn, 'cracky') then group = 'cracky'
-        elseif minetest.get_item_group(nn, 'crumbly') then group = 'crumbly'
-        elseif minetest.get_item_group(nn, 'choppy') then group = 'choppy'
-        elseif minetest.get_item_group(nn, 'snappy') then mult = 'snappy'
-        end
-        -- not interested if there's no such a tool. Client's probably "hacked"
-        if not minetest.registered_tools[tool] then return end
-        -- also won't do anything if a tool wasn't supposed to dug a group
-        if not minetest.registered_tools[tool].tool_capabilities.groupcaps[group] then return end
-        -- with two above met, we can proceed and get uses count
-        local uses = minetest.registered_tools[tool].tool_capabilities.groupcaps[group].uses
---        print(minetest.serialize(minetest.registered_tools[tool].tool_capabilities.groupcaps[group].uses))
-        if wear>0 and uses then
---            nowear = 1/nowear+1.5
-            if math.random() < ((nowear+1)/20) then
-
-               itemstack:add_wear(-65535/(uses-1))
-              -- print('additional wear = ' .. tostring(-65535/(uses-1)) .. ' --- '.. tostring((nowear+1)/10))
-            end
-        end
-        digger:set_wielded_item(itemstack)
-     end
+     local wstack = digger:get_wielded_item()
+     local wear = wstack:get_wear()
+     local uses = minetest.registered_items[wstack:get_name()].uses or 1562 -- diamond
+       if wear + 65535/uses*nowear >= 65535 then
+          wstack:clear()
+          minetest.sound_play("default_break_tool",{pos = digger:getpos(),gain = 0.5, max_hear_distance = 10,})
+       else
+           wstack:set_wear(wear + 65535/uses*nowear)
+       end
+       digger:set_wielded_item(wstack)
 end)
 
 minetest.register_on_placenode(function(pos, newnode, placer, oldnode, itemstack, pointed_thing)

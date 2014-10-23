@@ -86,6 +86,8 @@ end
 
 armor.nowear = {}
 
+jack_pll = {}
+
 armor.update_armor = function(self, player)
     if no_wear then return end
     if not player then
@@ -161,16 +163,43 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
        or armor.pll_inv[pll][4] ~= inv:get_stack('boots',1):get_name()
        then
            armor:set_player_armor(player)
-           armor.pll_inv[name] = {[1]=inv:get_stack('helm',1):get_name(),
-                                  [2]=inv:get_stack('torso',1):get_name(),
-                                  [3]=inv:get_stack('pants',1):get_name(),
-                                  [4]=inv:get_stack('boots',1):get_name()}
+           armor.pll_inv[pll] = {[1]=inv:get_stack('helm',1):get_name(),
+                                 [2]=inv:get_stack('torso',1):get_name(),
+                                 [3]=inv:get_stack('pants',1):get_name(),
+                                 [4]=inv:get_stack('boots',1):get_name()}
+
+           if armor.pll_inv[pll][1] == 'farming:pumpkin' then
+              if not player:hud_get(jack_pll[pll]) then
+                 jack_pll[pll] = player:hud_add({hud_elem_type = "image",
+                                                 scale = {x=-100, y=-100},
+                                                 position = {x=0, y=0},
+                                                 name = "pumpkin_vision1",
+                                                 text = "farming_pumpkin_hud.png",
+                                                 alignment = {x=1, y=1},
+                                                 offset = {x=0, y=0},
+                                                })
+
+              end
+           elseif armor.pll_inv[pll][1] == 'farming:jack_o_lantern' then
+              if not player:hud_get(jack_pll[pll]) then
+                 jack_pll[pll] = player:hud_add({hud_elem_type = "image",
+                                                 scale = {x=-100, y=-100},
+                                                 position = {x=0, y=0},
+                                                 name = "pumpkin_vision2",
+                                                 text = "farming_pumpkin_hud2.png",
+                                                 alignment = {x=1, y=1},
+                                                 offset = {x=0, y=0},
+                                                })
+              end
+           else
+               if player:hud_get(jack_pll[pll]) then player:hud_remove(jack_pll[pll]) jack_pll[pll] = nil end
+           end
        end
     end
     for field, _ in pairs(fields) do
         if string.find(field, "^skins_set_") then
             minetest.after(0, function(player)
-                armor.textures[name].skin = skins.skins[name]..".png"
+                armor.textures[pll].skin = skins.skins[pll]..".png"
                 armor:update_player_visuals(player)
             end, player)
         end

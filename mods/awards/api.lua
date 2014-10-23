@@ -13,9 +13,9 @@ local rus
 local locale = os.setlocale(nil, 'collate')
 if (locale:find('Russian') ~= nil) or (locale:find('ru_RU') ~= nil) then rus=true else rus = false end
 local mess = {rus = {"Новое достижение:"," открыл(а) достижение ","awards: Показывает список достижений", "А достижений-то особых и нет!", " открыл следующие достижения:"},
-              eng = {"New achievent:"," got achievment ","awards: lists your achievemnts list in unhandy form...", "You haven't do smth special yet!", " unlocked following:"},
+              eng = {"New achievment:"," got achievment ","awards: shows a list of your achievements in uncanny way...", "You haven't done smth special yet!", " unlocked following:"},
               }
---rus=false
+rus=false
 -- Table Save Load Functions
 function awards.save()
     local file = io.open(minetest.get_worldpath().."/awards.txt", "w")
@@ -215,62 +215,61 @@ function awards.give_achievement(name,award)
         elseif Use_Hud == true then
            local player = minetest.get_player_by_name(name)
            if player then
-           minetest.after(0,function(dtime)
-           local hudbg=player:hud_add({
-                       hud_elem_type = "image",
-                position = {x=1, y=0.1},
-                offset = {x=-20, y=0},
-                alignment = {x=-1, y=0},
-                scale = {x=1.5, y=1.5},
-                number = 0xFFFFFF ,
-                       name = "award_bg",
-                       text = background,
-                     })
-           local hudbg2=player:hud_add({
-                       hud_elem_type = "image",
-                position = {x=1, y=0.1},
-                offset = {x=-20, y=0},
-                alignment = {x=-1, y=0},
-                scale = {x=1.5, y=1.5},
-                number = 0xFFFFFF ,
-                       name = "award_bg",
-                       text = background,
-                     })
-           local hudic=player:hud_add({
-                       hud_elem_type = "image",
-                position = {x=1, y=0.101},
-                offset = {x=-260, y=0},
-                alignment = {x=-1, y=0},
-                scale = {x=2, y=2},
-                number = 0xFFFFFF ,
-                       name = "award_ic",
-                       text = icon,
-                     })
-            local hudtxt = player:hud_add({
-                hud_elem_type = "text",
-                position = {x=1, y=0.1},
-                offset = {x=-240, y=0},
-                alignment = {x=1, y=-1},
-                number = 0xFFFFFF ,
-                text = custom_announce,
-            })
-            local hudtxt2 = player:hud_add({
-                hud_elem_type = "text",
-                position = {x=1, y=0.105},
-                offset = {x=-240, y=16},
-                alignment = {x=1, y=-1},
-                number = 0xFFFFFF ,
-                text = title,
-            })
-           end)
-           minetest.after(10,function()
-              player:hud_remove(hudbg)              
-              player:hud_remove(hudbg2)
-              player:hud_remove(hudic)
-              player:hud_remove(hudtxt)
-              player:hud_remove(hudtxt2)
-           end
-           )
+               minetest.after(0.5,function(dtime)
+                   local hudbg=player:hud_add({
+                               hud_elem_type = "image",
+                        position = {x=1, y=0.1},
+                        offset = {x=-20, y=0},
+                        alignment = {x=-1, y=0},
+                        scale = {x=1.5, y=1.5},
+                        number = 0xFFFFFF ,
+                               name = "award_bg",
+                               text = background,
+                             })
+                   local hudbg2=player:hud_add({
+                               hud_elem_type = "image",
+                        position = {x=1, y=0.1},
+                        offset = {x=-20, y=0},
+                        alignment = {x=-1, y=0},
+                        scale = {x=1.5, y=1.5},
+                        number = 0xFFFFFF ,
+                               name = "award_bg",
+                               text = background,
+                             })
+                   local hudic=player:hud_add({
+                               hud_elem_type = "image",
+                        position = {x=1, y=0.101},
+                        offset = {x=-260, y=0},
+                        alignment = {x=-1, y=0},
+                        scale = {x=2, y=2},
+                        number = 0xFFFFFF ,
+                               name = "award_ic",
+                               text = icon,
+                             })
+                    local hudtxt = player:hud_add({
+                        hud_elem_type = "text",
+                        position = {x=1, y=0.1},
+                        offset = {x=-240, y=0},
+                        alignment = {x=1, y=-1},
+                        number = 0xFFFFFF ,
+                        text = custom_announce,
+                    })
+                    local hudtxt2 = player:hud_add({
+                        hud_elem_type = "text",
+                        position = {x=1, y=0.105},
+                        offset = {x=-240, y=16},
+                        alignment = {x=1, y=-1},
+                        number = 0xFFFFFF ,
+                        text = title,
+                    })
+                   minetest.after(10,function()
+                      if player:hud_get(hudbg)   then player:hud_remove(hudbg)   end
+                      if player:hud_get(hudbg2)  then player:hud_remove(hudbg2)  end
+                      if player:hud_get(hudic)   then player:hud_remove(hudic)   end
+                      if player:hud_get(hudtxt)  then player:hud_remove(hudtxt)  end
+                      if player:hud_get(hudtxt2) then player:hud_remove(hudtxt2) end
+                   end)
+               end)
            end
         else
             -- use the chat console to send it

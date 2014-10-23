@@ -13,6 +13,7 @@ minetest.register_entity(":__builtin:item", {
     },
 
     itemstring = '',
+    xp = {skill=nil, amount = 0 },
     physical_state = true,
 
     set_item = function(self, itemstring)
@@ -45,7 +46,9 @@ minetest.register_entity(":__builtin:item", {
             prop.visual = "wielditem"
             prop.textures = {itemname}
             prop.visual_size = {x=0.20, y=0.20}
-            prop.automatic_rotate = math.pi * 0.25
+            if itemname~='specialties:xp' then
+               prop.automatic_rotate = math.pi * 0.25
+            end
        -- end
         self.object:set_properties(prop)
     end,
@@ -56,6 +59,7 @@ minetest.register_entity(":__builtin:item", {
             itemstring = self.itemstring,
             always_collect = self.always_collect,
             timer = self.timer,
+            xp = self.xp,
         })
     end,
 
@@ -66,6 +70,7 @@ minetest.register_entity(":__builtin:item", {
                 self.itemstring = data.itemstring
                 self.always_collect = data.always_collect
                 self.timer = data.timer
+                self.xp = data.xp
                 if not self.timer then
                     self.timer = 0
                 end

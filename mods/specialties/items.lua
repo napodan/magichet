@@ -63,6 +63,7 @@ for name, def in pairs(minetest.registered_tools) do
 						newdef[k] = v
 					end
 					newdef.description = def.description.." "..special.description
+                                        newdef.groups = {not_in_creative_inventory = 1}
 					newdef.inventory_image = def.inventory_image.."^specialties_"..special.name..".png"
 					if(name:find(":hoe") ~= nil) then
 						newdef.on_use = function(itemstack, user, pointed_thing)

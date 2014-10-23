@@ -1,46 +1,47 @@
 function village_at_point(minp, noise1)
-       for xi = -2, 2 do
+       local pi = PseudoRandom(get_bseed(minp))
+       local s = pi:next(1, 400)
+       
+       --[[for xi = -2, 2 do
         for zi = -2, 0 do
                 if xi~=0 or zi~=0 then
-                        local mp = {x=minp.x+80*xi, z=minp.z+80*zi}
-                        local pi = PseudoRandom(get_bseed(mp))
-                        local s = pi:next(1, 400)
-                        local x = pi:next(mp.x, mp.x+79)
-                        local z = pi:next(mp.z, mp.z+79)
-                        if s<=28 and noise1:get2d({x=x, y=z})>=-0.3 then
-                           --print('no village for ya! (1)')
+                        --local mp = {x=minp.x+80*xi, z=minp.z+80*zi}
+                        --local x = pi:next(mp.x, mp.x+79)
+                        --local z = pi:next(mp.z, mp.z+79)
+                        --if s<=28 and noise1:get2d({x=x, y=z})>=-0.3 then                           
+                        if s<=28 then -- no check for oceans!                        
                            return 0,0,0,0
                         end
                 end
         end
-        end
+        end]]
 
-        local pr = PseudoRandom(get_bseed(minp))
-        if pr:next(1,400)>28 then
-           --print('no village for ya! (2)')
+
+        local x = pi:next(minp.x, minp.x+79)
+        local z = pi:next(minp.z, minp.z+79)
+--[[        if noise1:get2d({x=x, y=z})<-0.3 then
+          return 0,0,0,0
+        end ]]
+
+
+        local size = pi:next(20, 40)
+        local height = -5
+        local pp = find_base_pos(x,height,z)
+        local cnt = 1
+        
+        if pi:next(1,400)>28
+        --or minetest.get_node(pp).name:find('water')  -- no water villages
+        then
            return 0,0,0,0
         end
 
-        local x = pr:next(minp.x, minp.x+79)
-        local z = pr:next(minp.z, minp.z+79)
-        if noise1:get2d({x=x, y=z})<-0.3 then
-          --print('no village for ya! (3)')
-          return 0,0,0,0
-        end
-
-
-        local size = pr:next(20, 40)
-        local height = pr:next(-5,50)
-        local pp = find_base_pos(x,height,z)
-        local cnt = 1
+        
         while pp.y<0 do
-           --print(pp.y)
-           height = pr:next(-5,50)
            pp = find_base_pos(x,height,z)
            cnt=cnt+1
            if cnt>4 then return 0,0,0,0 end
         end
-        print('A new village has spawned at '..minetest.pos_to_string(pp))
+      --  print('A new village has spawned at '..minetest.pos_to_string(pp))
         height = pp.y
         return x,z,size,height
 end
@@ -312,8 +313,8 @@ local function generate_building(pos, minp, maxp, data, a, pr, extranodes, stop)
                    local filler = data[a:index(ax, ayy, az)]
                    if not filler or filler==c_ignore then filler = c_cobble end
                    for ayy = ayy, pos.y-1 do
-                      -- data can't be set for some reason while set_node always do the job
-                      --data[a:index(ax, ayy, az)] = filler
+                      -- data can't be set due to a bug in FM
+                      data[a:index(ax, ayy, az)] = filler
                       minetest.set_node({x=ax, y=ayy, z=az},{name=minetest.get_name_from_content_id(filler)},2)                      
                    end
 
@@ -411,7 +412,7 @@ end
 function generate_village(vx, vz, vs, vh, minp, maxp, data, a, vnoise, to_grow)
         local seed = get_bseed({x=vx, z=vz})
         local pr_village = PseudoRandom(seed)
-        local bpos = generate_bpos(vx, vz, vs, vh, pr_village, vnoise)
+        local bpos = generate_bpos(vx, vz, vs, vh, pr_village, vnoise)        
         --if maxp.y<5 then generate_walls(bpos, data, a, minp, maxp, vh, vx, vz, vs, vnoise) end
         local pr = PseudoRandom(seed)
         for _, g in ipairs(to_grow) do

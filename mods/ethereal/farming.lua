@@ -37,13 +37,13 @@ local fertilize = function(itemstack, placer, pointed_thing)
 end
 
 
-		
+
 if minetest.registered_items['farming:fertilizer'] then
    -- redefine that fertilizer
    local test=minetest.registered_items['farming:fertilizer'].on_place
    minetest.register_craftitem(':farming:fertilizer', {
        description = 'Fertilizer X',
-       inventory_image = 'ethereal_fertilizer.png',
+       inventory_image = 'bonemeal.png',
        on_place = fertilize,
        }
    )
@@ -51,8 +51,8 @@ else
    -- make a new one
    minetest.register_craftitem('ethereal:fertilizer', {
        description = 'Fertilizer X',
-       inventory_image = 'ethereal_fertilizer.png',
-       on_place = fertilize,       
-	   }
+       inventory_image = 'bonemeal.png',
+       on_place = fertilize,
+       }
    )
 end

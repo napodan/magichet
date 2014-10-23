@@ -1,0 +1,7 @@
+## Non-static Magichet directories
+/support/*
+/unused/*
+
+## Configuration/log files
+useful.txt
+lua_api.txt

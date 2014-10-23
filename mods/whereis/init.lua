@@ -1,12 +1,13 @@
  
 minetest.register_chatcommand("whereis", {
-	params = "<имя игрока>",
-	description = "Сообщает, где на ходится игрок",
+	params = "<playername>",
+	description = "Tells you the distance to the player",
+        privs = {whereis=true},
 	func = function (name, param)
 		local player = minetest.get_player_by_name(param)
 		
 		if ( player == nil ) then
-			minetest.chat_send_player(name,param.." вообще-то не в сети!")
+			minetest.chat_send_player(name,param.." isn't online!")
 			return false
 		end
 		
@@ -20,7 +21,7 @@ minetest.register_chatcommand("whereis", {
 		
 		local distance = math.floor(math.sqrt( (mePos.x - playerPos.x)^2 + (mePos.y - playerPos.y)^2 + (mePos.z - playerPos.z)^2 ))
 		
-		minetest.chat_send_player(name, player:get_player_name().." сейчас в точке "..minetest.pos_to_string(playerPos)..". Это где-то в "..tostring(distance).." блоках отсюда")
+		minetest.chat_send_player(name, player:get_player_name().." now's at "..minetest.pos_to_string(playerPos)..". It's within "..tostring(distance).." meters away.")
 	end
 })
 

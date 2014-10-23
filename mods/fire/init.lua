@@ -138,6 +138,14 @@ function fire.onnodetimer(pos,elapsed)
             minetest.remove_node(pos)
             fire.on_flame_remove_at(pos)
        end
+
+       for _,obj in pairs(minetest.get_objects_inside_radius(pos,1)) do
+          if obj:is_player() then
+             obj:set_hp(obj:get_hp()- default.statuses[obj:get_player_name()].lava_damage-2)
+             -- env. damage for entities is calculated @adbs:init.lua
+          end
+       end
+
        return true
 
 end
@@ -153,7 +161,7 @@ minetest.register_node("fire:flame_xp_missing", {
     }},
     inventory_image = "fire_basic_flame.png",
     light_source = 14,
-    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=3},
+    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=2},
     drop = '',
     walkable = false,
     buildable_to = false,
@@ -186,7 +194,7 @@ minetest.register_node("fire:flame_xm_missing", {
     }},
     inventory_image = "fire_basic_flame.png",
     light_source = 14,
-    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=3},
+    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=2},
     drop = '',
     walkable = false,
     buildable_to = false,
@@ -219,7 +227,7 @@ minetest.register_node("fire:flame_zp_missing", {
     }},
     inventory_image = "fire_basic_flame.png",
     light_source = 14,
-    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=3},
+    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=2},
     drop = '',
     walkable = false,
     buildable_to = false,
@@ -252,7 +260,7 @@ minetest.register_node("fire:flame_zm_missing", {
     }},
     inventory_image = "fire_basic_flame.png",
     light_source = 14,
-    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=3},
+    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=2},
     drop = '',
     walkable = false,
     buildable_to = false,
@@ -285,7 +293,7 @@ minetest.register_node("fire:flame_xpxm_missing", {
     }},
     inventory_image = "fire_basic_flame.png",
     light_source = 14,
-    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=3},
+    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=2},
     drop = '',
     walkable = false,
     buildable_to = false,
@@ -316,7 +324,7 @@ minetest.register_node("fire:flame_xmzp_missing", {
     }},
     inventory_image = "fire_basic_flame.png",
     light_source = 14,
-    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=3},
+    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=2},
     drop = '',
     walkable = false,
     buildable_to = false,
@@ -347,7 +355,7 @@ minetest.register_node("fire:flame_zpzm_missing", {
     }},
     inventory_image = "fire_basic_flame.png",
     light_source = 14,
-    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=3},
+    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=2},
     drop = '',
     walkable = false,
     buildable_to = false,
@@ -379,7 +387,7 @@ minetest.register_node("fire:flame_xpzm_missing", {
     }},
     inventory_image = "fire_basic_flame.png",
     light_source = 14,
-    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=3},
+    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=2},
     drop = '',
     walkable = false,
     buildable_to = false,
@@ -412,7 +420,7 @@ minetest.register_node("fire:flame_xmzm_missing", {
     }},
     inventory_image = "fire_basic_flame.png",
     light_source = 14,
-    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=3},
+    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=2},
     drop = '',
     walkable = false,
     buildable_to = false,
@@ -445,7 +453,7 @@ minetest.register_node("fire:flame_xpzp_missing", {
     }},
     inventory_image = "fire_basic_flame.png",
     light_source = 14,
-    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=3},
+    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=2},
     drop = '',
     walkable = false,
     buildable_to = false,
@@ -478,7 +486,7 @@ minetest.register_node("fire:flame_xp_only", {
     }},
     inventory_image = "fire_basic_flame.png",
     light_source = 14,
-    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=3},
+    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=2},
     drop = '',
     walkable = false,
     buildable_to = false,
@@ -510,7 +518,7 @@ minetest.register_node("fire:flame_xm_only", {
     }},
     inventory_image = "fire_basic_flame.png",
     light_source = 14,
-    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=3},
+    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=2},
     drop = '',
     walkable = false,
     buildable_to = false,
@@ -541,7 +549,7 @@ minetest.register_node("fire:flame_zp_only", {
     }},
     inventory_image = "fire_basic_flame.png",
     light_source = 14,
-    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=3},
+    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=2},
     drop = '',
     walkable = false,
     buildable_to = false,
@@ -572,7 +580,7 @@ minetest.register_node("fire:flame_zm_only", {
     }},
     inventory_image = "fire_basic_flame.png",
     light_source = 14,
-    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=3},
+    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=2},
     drop = '',
     walkable = false,
     buildable_to = false,
@@ -596,14 +604,14 @@ minetest.register_node("fire:flame_zm_only", {
 
 minetest.register_node("fire:flame_normal", {
     description = "Fire",
-    drawtype = "plantlike",
+    drawtype = "firelike",
     tiles = {{
         name="fire_basic_flame_animated.png",
         animation={type="vertical_frames", aspect_w=16, aspect_h=16, length=1},
     }},
     inventory_image = "fire_basic_flame.png",
     light_source = 14,
-    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=3},
+    groups = {igniter=2,dig_immediate=3,fire=1 ,hot=2},
     drop = '',
     walkable = false,
     buildable_to = false,

@@ -33,7 +33,7 @@ Unless you'll be *very* hungry for 2 or more minutes. Then it WILL.
 --------------------------------
 My "ghosts" mod supported and "sprint" mod "incorporated".
 Also (for better experience) try out my 4items mod along this one.
-Or eat only strange anddefault apples.
+Or eat only strange and default apples.
 
 **NOTE:**
 

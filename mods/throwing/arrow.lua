@@ -1,6 +1,6 @@
 minetest.register_craftitem("throwing:arrow", {
 	description = "Arrow",
-	inventory_image = "throwing_arrow.png",
+	inventory_image = "adbs_arrow.png",
 })
 
 minetest.register_node("throwing:arrow_box", {
@@ -26,7 +26,7 @@ minetest.register_node("throwing:arrow_box", {
 		}
 	},
 	tiles = {"throwing_arrow.png", "throwing_arrow.png", "throwing_arrow_back.png", "throwing_arrow_front.png", "throwing_arrow_2.png", "throwing_arrow.png"},
-	groups = {not_in_creative_inventory=1},
+	--groups = {not_in_creative_inventory=1},
 })
 
 local THROWING_ARROW_ENTITY={
@@ -45,7 +45,7 @@ THROWING_ARROW_ENTITY.on_step = function(self, dtime)
 	local node = minetest.get_node(pos)
 
 	if self.timer>0.2 then
-		local objs = minetest.get_objects_inside_radius({x=pos.x,y=pos.y,z=pos.z}, 2)
+		local objs = minetest.get_objects_inside_radius(p, 1)
 		for k, obj in pairs(objs) do
 			if obj:get_luaentity() ~= nil then
 				if obj:get_luaentity().name ~= "throwing:arrow_entity" and obj:get_luaentity().name ~= "__builtin:item" then

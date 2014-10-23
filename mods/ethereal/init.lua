@@ -54,9 +54,7 @@ function place_seed(itemstack, placer, pointed_thing, plantname)
     end
 
 minetest.add_node(pt.above, {name=plantname})
-    if not minetest.setting_getbool("creative_mode") then
-        itemstack:take_item()
-    end
+    itemstack:take_item()
     return itemstack
 end
 ------------------------------------------------------------------------
@@ -90,6 +88,6 @@ end
 
 
 -- added by 4aiman
---dofile(minetest.get_modpath("ethereal").."/farming.lua")
+dofile(minetest.get_modpath("ethereal").."/farming.lua")
 
 print('[OK] Ethereal (4aiman\'s version) loaded')

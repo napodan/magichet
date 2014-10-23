@@ -1,9 +1,9 @@
-
+--[[
 minetest.register_craftitem('4items:bowl', {
     description = "Bowl",
     inventory_image = "bowl.png",
 --    on_use = minetest.item_eat(1),
-})
+})]]--
 --[[
 minetest.register_craftitem('4items:cocoa_beans', {
     description = "Cocoa beans",
@@ -42,12 +42,7 @@ minetest.register_craftitem('4items:steak', {
     inventory_image = "steak.png",
     on_use = minetest.item_eat(1),
 })
---[[minetest.register_craftitem('4items:cake', {
-    description = "Cake",
-    inventory_image = "cake.png",
---    on_use = minetest.item_eat(1),
-})
-
+--[[
 minetest.register_craftitem('4items:clownfish', {
     description = "Clownfish",
     inventory_image = "clownfish.png",
@@ -99,26 +94,24 @@ minetest.register_craftitem('4items:cookie', {
     inventory_image = "cookie.png",
 --    on_use = minetest.item_eat(1),
 })
-minetest.register_craftitem('4items:melon', {
-    description = "Melon",
+minetest.register_craftitem('4items:melon_slice', {
+    description = "Melon slice",
     inventory_image = "melon.png",
 --    on_use = minetest.item_eat(1),
 })]]
+
 minetest.register_craftitem('4items:mushroom_stew', {
     description = "Mushrom stew",
     inventory_image = "stew.png",
     on_use = minetest.item_eat(1),
-}) --[[
+})
+--[[
 minetest.register_craftitem('4items:pufferfish', {
     description = "Puffer fish",
     inventory_image = "pufferfish.png",
 --    on_use = minetest.item_eat(1),
 })]]
-minetest.register_craftitem('4items:pumpkin_pie', {
-    description = "Pumpkin pie",
-    inventory_image = "pumpkin_pie.png",
-    on_use = minetest.item_eat(1),
-})
+
 minetest.register_craftitem('4items:rotten_flesh', {
     description = "Rotten flesh",
     inventory_image = "rotten_flesh.png",
@@ -130,12 +123,41 @@ minetest.register_craftitem('4items:spider_eye', {
     inventory_image = "spider_eye.png",
 --    on_use = minetest.item_eat(1),
 })
-
+]]--
 minetest.register_craftitem('4items:leather', {
     description = "Leather",
     inventory_image = "leather.png",
 --    on_use = minetest.item_eat(1),
 })
-]]--
+
+
+minetest.register_craftitem('4items:antimatter', {
+    description = "Wormhole flesh",
+    inventory_image = "wormhole_flesh.png",
+    on_use = minetest.item_eat(1),
+})
+
+minetest.register_craftitem('4items:milk', {
+    description = "A bucket of milk",
+    inventory_image = "milk.png",
+    on_use = minetest.item_eat(1),
+})
+
+minetest.register_craftitem('4items:white_bone', {
+    description = "Bone",
+    inventory_image = "white_bone.png",
+})
+
+minetest.register_craftitem('4items:saddle', {
+    description = "Saddle",
+    inventory_image = "saddle.png",
+})
+
+minetest.register_craft({
+    output = "farming:fertilizer",
+    recipe = {
+        {'4items:white_bone'},
+    }
+})
 
 print('[OK] 4items loaded')

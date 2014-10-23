@@ -40,17 +40,18 @@ minetest.after(2, function(dtime)
               end
               if dtimes[pll] then dtimes[pll]=dtimes[pll]+dtime else dtimes[pll]=0 end
               if dtimes[pll]>dlimit then
-                 if huds[pll] then player:hud_remove(huds[pll]) end
+                 if player:hud_get(huds[pll]) then player:hud_remove(huds[pll]) end
                  dtimes[pll]=dlimit+1
               end
               if wstack ~= wield[pll] then
                   wield[pll]=wstack
                   dtimes[pll]=0
                  -- if huds[pll]
-                 -- then 
-                      -- player:hud_change(huds[pll], 'text', desc) --doesn't work for me :`(                      
-                       player:hud_remove(huds[pll])
+                 -- then
+                      -- player:hud_change(huds[pll], 'text', desc) --doesn't work for me :`(
+                       if player:hud_get(huds[pll]) then player:hud_remove(huds[pll])
                        huds[pll] = nil
+                       end
                  -- else
                   local off = {x=0, y=-80}
                   if airhudmod then off.y=off.y-20 end
@@ -61,7 +62,7 @@ minetest.after(2, function(dtime)
                                                  alignment = {x=0, y=0},
                                                  number = 0xFFFFFF ,
                                                  text = desc,
-                                                })               
+                                                })
                  -- end
               end
 

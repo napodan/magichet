@@ -71,8 +71,9 @@ minetest.register_item(":", {
 minetest.register_tool("default:pick_wood", {
     description = "Wooden Pickaxe",
     inventory_image = "default_tool_woodpick.png",
+    uses = 60,  -- set to uses
     tool_capabilities = {
-        groupcaps = get_groupcaps(60, "cracky",
+        groupcaps = get_groupcaps(0, "cracky",
             {times={
                 [default.dig.stone] = 1.15,
                 [default.dig.cobble] = 1.5,
@@ -86,7 +87,7 @@ minetest.register_tool("default:pick_wood", {
                 [default.dig.netherbrick] = 1.5,
                 [default.dig.brick] = 1.5,
                 [default.dig.pressure_plate_stone] = 0.4,
-            }, uses=60}
+            }, uses=0} -- set to ZERO
         ),
         full_punch_interval = 1,
         enchantability = 15,
@@ -96,8 +97,9 @@ minetest.register_tool("default:pick_wood", {
 minetest.register_tool("default:pick_stone", {
     description = "Stone Pickaxe",
     inventory_image = "default_tool_stonepick.png",
+    uses = 132,
     tool_capabilities = {
-        groupcaps = get_groupcaps(132, "cracky",
+        groupcaps = get_groupcaps(0, "cracky",
             {times={
                 [default.dig.stone] = 0.6,
                 [default.dig.cobble] = 0.75,
@@ -111,7 +113,7 @@ minetest.register_tool("default:pick_stone", {
                 [default.dig.netherbrick] = 0.75,
                 [default.dig.brick] = 0.75,
                 [default.dig.pressure_plate_stone] = 0.2,
-            }, uses=132}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = 5,
@@ -121,8 +123,9 @@ minetest.register_tool("default:pick_stone", {
 minetest.register_tool("default:pick_iron", {
     description = "Iron Pickaxe",
     inventory_image = "default_tool_ironpick.png",
+    uses = 251,
     tool_capabilities = {
-        groupcaps = get_groupcaps(251, "cracky",
+        groupcaps = get_groupcaps(0, "cracky",
             {times={
                 [default.dig.stone] = 0.4,
                 [default.dig.cobble] = 0.5,
@@ -139,7 +142,7 @@ minetest.register_tool("default:pick_iron", {
                 [default.dig.redstone_ore] = 0.75,
                 [default.dig.brick] = 0.5,
                 [default.dig.pressure_plate_stone] = 0.15,
-            }, uses=251}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = 14,
@@ -150,8 +153,9 @@ minetest.register_tool("default:pick_iron", {
 minetest.register_tool("default:pick_bronze", {
     description = "Iron Pickaxe",
     inventory_image = "default_tool_bronzepick.png",
+    uses = 351,
     tool_capabilities = {
-        groupcaps = get_groupcaps(451, "cracky",
+        groupcaps = get_groupcaps(0, "cracky",
             {times={
                 [default.dig.stone] = 0.4,
                 [default.dig.cobble] = 0.5,
@@ -169,7 +173,7 @@ minetest.register_tool("default:pick_bronze", {
                 [default.dig.brick] = 0.5,
                 [default.dig.pressure_plate_stone] = 0.15,
                 [default.dig.ironblock] = 2, --mese
-            }, uses=451}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = 10,
@@ -181,8 +185,9 @@ minetest.register_tool("default:pick_mese", {
     description = "Mese Pickaxe",
     inventory_image = "default_tool_mesepick.png",
     groups = {mese=1},
-tool_capabilities = {
-        groupcaps = get_groupcaps(1200, "cracky",
+    uses = 700,
+    tool_capabilities = {
+        groupcaps = get_groupcaps(0, "cracky",
             {times={
                 [default.dig.stone] = 0.35,
                 [default.dig.cobble] = 0.45,
@@ -204,7 +209,7 @@ tool_capabilities = {
                 [default.dig.redstone_ore] = 0.65,
                 [default.dig.brick] = 0.45,
                 [default.dig.pressure_plate_stone] = 0.15,
-            }, uses=1200}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = -1,
@@ -215,8 +220,9 @@ tool_capabilities = {
 minetest.register_tool("default:pick_diamond", {
     description = "Diamond Pickaxe",
     inventory_image = "default_tool_diamondpick.png",
+    uses = 1562,
     tool_capabilities = {
-        groupcaps = get_groupcaps(1562, "cracky",
+        groupcaps = get_groupcaps(0, "cracky",
             {times={
                 [default.dig.stone] = 0.3,
                 [default.dig.cobble] = 0.4,
@@ -238,7 +244,7 @@ minetest.register_tool("default:pick_diamond", {
                 [default.dig.redstone_ore] = 0.6,
                 [default.dig.brick] = 0.4,
                 [default.dig.pressure_plate_stone] = 0.1,
-            }, uses=1562}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = 10,
@@ -248,8 +254,9 @@ minetest.register_tool("default:pick_diamond", {
 minetest.register_tool("default:pick_gold", {
     description = "Gold Pickaxe",
     inventory_image = "default_tool_goldpick.png",
+    uses = 33,
     tool_capabilities = {
-        groupcaps = get_groupcaps(33, "cracky",
+        groupcaps = get_groupcaps(0, "cracky",
             {times={
                 [default.dig.stone] = 0.2,
                 [default.dig.cobble] = 0.25,
@@ -263,7 +270,7 @@ minetest.register_tool("default:pick_gold", {
                 [default.dig.netherbrick] = 0.25,
                 [default.dig.brick] = 0.25,
                 [default.dig.pressure_plate_stone] = 0.1,
-            }, uses=33}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = 22,
@@ -278,8 +285,9 @@ minetest.register_tool("default:pick_gold", {
 minetest.register_tool("default:shovel_wood", {
     description = "Wooden Shovel",
     inventory_image = "default_tool_woodshovel.png",
+    uses = 60,
     tool_capabilities = {
-        groupcaps = get_groupcaps(60, "crumbly",
+        groupcaps = get_groupcaps(0, "crumbly",
             {times={
                 [default.dig.dirt_with_grass] = 0.45,
                 [default.dig.dirt] = 0.4,
@@ -289,7 +297,7 @@ minetest.register_tool("default:shovel_wood", {
                 [default.dig.snow] = 0.1,
                 [default.dig.snowblock] = 0.15,
                 [default.dig.nethersand] = 0.4,
-            }, uses=60}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = 15,
@@ -299,8 +307,9 @@ minetest.register_tool("default:shovel_wood", {
 minetest.register_tool("default:shovel_stone", {
     description = "Stone Shovel",
     inventory_image = "default_tool_stoneshovel.png",
+    uses = 132,
     tool_capabilities = {
-        groupcaps = get_groupcaps(132, "crumbly",
+        groupcaps = get_groupcaps(0, "crumbly",
             {times={
                 [default.dig.dirt_with_grass] = 0.25,
                 [default.dig.dirt] = 0.2,
@@ -310,7 +319,7 @@ minetest.register_tool("default:shovel_stone", {
                 [default.dig.snow] = 0.05,
                 [default.dig.snowblock] = 0.1,
                 [default.dig.nethersand] = 0.2,
-            }, uses=132}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = 5,
@@ -320,8 +329,9 @@ minetest.register_tool("default:shovel_stone", {
 minetest.register_tool("default:shovel_iron", {
     description = "Iron Shovel",
     inventory_image = "default_tool_ironshovel.png",
+    uses = 251,
     tool_capabilities = {
-        groupcaps = get_groupcaps(251, "crumbly",
+        groupcaps = get_groupcaps(0, "crumbly",
             {times={
                 [default.dig.dirt_with_grass] = 0.15,
                 [default.dig.dirt] = 0.15,
@@ -331,7 +341,7 @@ minetest.register_tool("default:shovel_iron", {
                 [default.dig.snow] = 0.05,
                 [default.dig.snowblock] = 0.05,
                 [default.dig.nethersand] = 0.15,
-            }, uses=251}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = 14,
@@ -341,8 +351,9 @@ minetest.register_tool("default:shovel_iron", {
 minetest.register_tool("default:shovel_bronze", {
     description = "Bronze Shovel",
     inventory_image = "default_tool_bronzeshovel.png",
+    uses = 351,
     tool_capabilities = {
-        groupcaps = get_groupcaps(451, "crumbly",
+        groupcaps = get_groupcaps(0, "crumbly",
             {times={
                 [default.dig.dirt_with_grass] = 0.15,
                 [default.dig.dirt] = 0.15,
@@ -352,7 +363,7 @@ minetest.register_tool("default:shovel_bronze", {
                 [default.dig.snow] = 0.05,
                 [default.dig.snowblock] = 0.05,
                 [default.dig.nethersand] = 0.15,
-            }, uses=451}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = 10,
@@ -362,8 +373,9 @@ minetest.register_tool("default:shovel_bronze", {
 minetest.register_tool("default:shovel_mese", {
     description = "Mese Shovel",
     inventory_image = "default_tool_diamondshovel.png",
+    uses = 700,
     tool_capabilities = {
-        groupcaps = get_groupcaps(1200, "crumbly",
+        groupcaps = get_groupcaps(0, "crumbly",
             {times={
                 [default.dig.dirt_with_grass] = 0.152,
                 [default.dig.dirt] = 0.152,
@@ -373,7 +385,7 @@ minetest.register_tool("default:shovel_mese", {
                 [default.dig.snow] = 0.052,
                 [default.dig.snowblock] = 0.052,
                 [default.dig.nethersand] = 0.152,
-            }, uses=1200}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = -1,
@@ -383,8 +395,9 @@ minetest.register_tool("default:shovel_mese", {
 minetest.register_tool("default:shovel_diamond", {
     description = "Diamond Shovel",
     inventory_image = "default_tool_diamondshovel.png",
+    uses = 1562,
     tool_capabilities = {
-        groupcaps = get_groupcaps(1562, "crumbly",
+        groupcaps = get_groupcaps(0, "crumbly",
             {times={
                 [default.dig.dirt_with_grass] = 0.15,
                 [default.dig.dirt] = 0.1,
@@ -394,7 +407,7 @@ minetest.register_tool("default:shovel_diamond", {
                 [default.dig.snow] = 0.05,
                 [default.dig.snowblock] = 0.05,
                 [default.dig.nethersand] = 0.1,
-            }, uses=1562}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = 10,
@@ -404,8 +417,9 @@ minetest.register_tool("default:shovel_diamond", {
 minetest.register_tool("default:shovel_gold", {
     description = "Gold Shovel",
     inventory_image = "default_tool_goldshovel.png",
+    uses = 33,
     tool_capabilities = {
-        groupcaps = get_groupcaps(33, "crumbly",
+        groupcaps = get_groupcaps(0, "crumbly",
             {times={
                 [default.dig.dirt_with_grass] = 0.1,
                 [default.dig.dirt] = 0.1,
@@ -415,7 +429,7 @@ minetest.register_tool("default:shovel_gold", {
                 [default.dig.snow] = 0.05,
                 [default.dig.snowblock] = 0.05,
                 [default.dig.nethersand] = 0.1,
-            }, uses=33}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = 22,
@@ -430,8 +444,9 @@ minetest.register_tool("default:shovel_gold", {
 minetest.register_tool("default:axe_wood", {
     description = "Wooden Axe",
     inventory_image = "default_tool_woodaxe.png",
+    uses = 60,
     tool_capabilities = {
-        groupcaps = get_groupcaps(60, "choppy",
+        groupcaps = get_groupcaps(0, "choppy",
             {times={
                 [default.dig.tree] = 1.5,
                 [default.dig.wood] = 1.5,
@@ -442,7 +457,7 @@ minetest.register_tool("default:axe_wood", {
                 [default.dig.wooden_door] = 2.25,
                 [default.dig.workbench] = 1.9,
                 [default.dig.pressure_plate_wood] = 0.4,
-            }, uses=60}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = 15,
@@ -452,8 +467,9 @@ minetest.register_tool("default:axe_wood", {
 minetest.register_tool("default:axe_stone", {
     description = "Stone Axe",
     inventory_image = "default_tool_stoneaxe.png",
+    uses = 132,
     tool_capabilities = {
-        groupcaps = get_groupcaps(132, "choppy",
+        groupcaps = get_groupcaps(0, "choppy",
             {times={
                 [default.dig.tree] = 0.75,
                 [default.dig.wood] = 0.75,
@@ -464,7 +480,7 @@ minetest.register_tool("default:axe_stone", {
                 [default.dig.wooden_door] = 1.15,
                 [default.dig.workbench] = 0.95,
                 [default.dig.pressure_plate_wood] = 0.2,
-            }, uses=132}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = 5,
@@ -474,8 +490,9 @@ minetest.register_tool("default:axe_stone", {
 minetest.register_tool("default:axe_iron", {
     description = "Iron Axe",
     inventory_image = "default_tool_ironaxe.png",
+    uses = 251,
     tool_capabilities = {
-        groupcaps = get_groupcaps(251, "choppy",
+        groupcaps = get_groupcaps(0, "choppy",
             {times={
                 [default.dig.tree] = 0.5,
                 [default.dig.wood] = 0.5,
@@ -486,7 +503,7 @@ minetest.register_tool("default:axe_iron", {
                 [default.dig.wooden_door] = 0.75,
                 [default.dig.workbench] = 0.65,
                 [default.dig.pressure_plate_wood] = 0.15,
-            }, uses=251}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = 14,
@@ -497,8 +514,9 @@ minetest.register_tool("default:axe_iron", {
 minetest.register_tool("default:axe_bronze", {
     description = "Brozen Axe",
     inventory_image = "default_tool_bronzeaxe.png",
+    uses = 351,
     tool_capabilities = {
-        groupcaps = get_groupcaps(451, "choppy",
+        groupcaps = get_groupcaps(0, "choppy",
             {times={
                 [default.dig.tree] = 0.5,
                 [default.dig.wood] = 0.5,
@@ -509,7 +527,7 @@ minetest.register_tool("default:axe_bronze", {
                 [default.dig.wooden_door] = 0.75,
                 [default.dig.workbench] = 0.65,
                 [default.dig.pressure_plate_wood] = 0.15,
-            }, uses=451}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = 10,
@@ -520,8 +538,9 @@ minetest.register_tool("default:axe_bronze", {
 minetest.register_tool("default:axe_mese", {
     description = "Mese Axe",
     inventory_image = "default_tool_meseaxe.png",
+    uses = 700,
     tool_capabilities = {
-        groupcaps = get_groupcaps(1200, "choppy",
+        groupcaps = get_groupcaps(0, "choppy",
             {times={
                 [default.dig.tree] = 0.4,
                 [default.dig.wood] = 0.4,
@@ -532,7 +551,7 @@ minetest.register_tool("default:axe_mese", {
                 [default.dig.wooden_door] = 0.6,
                 [default.dig.workbench] = 0.5,
                 [default.dig.pressure_plate_wood] = 0.1,
-            }, uses=1200}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = -1,
@@ -543,8 +562,9 @@ minetest.register_tool("default:axe_mese", {
 minetest.register_tool("default:axe_diamond", {
     description = "Diamond Axe",
     inventory_image = "default_tool_diamondaxe.png",
+    uses = 1562,
     tool_capabilities = {
-        groupcaps = get_groupcaps(1562, "choppy",
+        groupcaps = get_groupcaps(0, "choppy",
             {times={
                 [default.dig.tree] = 0.4,
                 [default.dig.wood] = 0.4,
@@ -555,7 +575,7 @@ minetest.register_tool("default:axe_diamond", {
                 [default.dig.wooden_door] = 0.6,
                 [default.dig.workbench] = 0.5,
                 [default.dig.pressure_plate_wood] = 0.1,
-            }, uses=1562}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = 10,
@@ -566,8 +586,9 @@ minetest.register_tool("default:axe_diamond", {
 minetest.register_tool("default:axe_gold", {
     description = "Gold Axe",
     inventory_image = "default_tool_goldaxe.png",
+    uses = 33,
     tool_capabilities = {
-        groupcaps = get_groupcaps(33, "choppy",
+        groupcaps = get_groupcaps(0, "choppy",
             {times={
                 [default.dig.tree] = 0.25,
                 [default.dig.wood] = 0.25,
@@ -578,7 +599,7 @@ minetest.register_tool("default:axe_gold", {
                 [default.dig.wooden_door] = 0.4,
                 [default.dig.workbench] = 0.35,
                 [default.dig.pressure_plate_wood] = 0.1,
-            }, uses=33}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = 22,
@@ -593,12 +614,13 @@ minetest.register_tool("default:axe_gold", {
 minetest.register_tool("default:sword_wood", {
     description = "Wooden Sword",
     inventory_image = "default_tool_woodsword.png",
+    uses = 60,
     tool_capabilities = {
-        groupcaps = get_groupcaps(30, "snappy",
+        groupcaps = get_groupcaps(0, "snappy",
             {times={
                 [default.dig.leaves] = 0.2,
                 [default.dig.wool] = 1.2,
-            }, uses=30}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = 15,
@@ -608,12 +630,13 @@ minetest.register_tool("default:sword_wood", {
 minetest.register_tool("default:sword_stone", {
     description = "Stone Sword",
     inventory_image = "default_tool_stonesword.png",
+    uses = 132,
     tool_capabilities = {
-        groupcaps = get_groupcaps(66, "snappy",
+        groupcaps = get_groupcaps(0, "snappy",
             {times={
                 [default.dig.leaves] = 0.2,
                 [default.dig.wool] = 1.2,
-            }, uses=66}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = 5,
@@ -623,12 +646,13 @@ minetest.register_tool("default:sword_stone", {
 minetest.register_tool("default:sword_iron", {
     description = "Iron Sword",
     inventory_image = "default_tool_ironsword.png",
+    uses = 251,
     tool_capabilities = {
-        groupcaps = get_groupcaps(125, "snappy",
+        groupcaps = get_groupcaps(0, "snappy",
             {times={
                 [default.dig.leaves] = 0.2,
                 [default.dig.wool] = 1.2,
-            }, uses=125}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = 14,
@@ -638,12 +662,13 @@ minetest.register_tool("default:sword_iron", {
 minetest.register_tool("default:sword_bronze", {
     description = "Bronze Sword",
     inventory_image = "default_tool_bronzesword.png",
+    uses = 351,
     tool_capabilities = {
-        groupcaps = get_groupcaps(225, "snappy",
+        groupcaps = get_groupcaps(0, "snappy",
             {times={
                 [default.dig.leaves] = 0.2,
                 [default.dig.wool] = 1.2,
-            }, uses=225}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = 10,
@@ -653,12 +678,13 @@ minetest.register_tool("default:sword_bronze", {
 minetest.register_tool("default:sword_mese", {
     description = "Mese Sword",
     inventory_image = "default_tool_mesesword.png",
+    uses = 700,
     tool_capabilities = {
-        groupcaps = get_groupcaps(351, "snappy",
+        groupcaps = get_groupcaps(0, "snappy",
             {times={
                 [default.dig.leaves] = 0.2,
                 [default.dig.wool] = 1.2,
-            }, uses=351}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = -1,
@@ -669,12 +695,13 @@ minetest.register_tool("default:sword_mese", {
 minetest.register_tool("default:sword_diamond", {
     description = "Diamond Sword",
     inventory_image = "default_tool_diamondsword.png",
+    uses = 1562,
     tool_capabilities = {
-        groupcaps = get_groupcaps(551, "snappy",
+        groupcaps = get_groupcaps(0, "snappy",
             {times={
                 [default.dig.leaves] = 0.2,
                 [default.dig.wool] = 1.2,
-            }, uses=551}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = 10,
@@ -685,12 +712,13 @@ minetest.register_tool("default:sword_diamond", {
 minetest.register_tool("default:sword_gold", {
     description = "Gold Sword",
     inventory_image = "default_tool_goldsword.png",
+    uses = 33,
     tool_capabilities = {
-        groupcaps = get_groupcaps(16, "snappy",
+        groupcaps = get_groupcaps(0, "snappy",
             {times={
                 [default.dig.leaves] = 0.2,
                 [default.dig.wool] = 1.2,
-            }, uses=16}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = 22,
@@ -704,12 +732,14 @@ minetest.register_tool("default:sword_gold", {
 minetest.register_tool("default:shears", {
     description = "Shears",
     inventory_image = "default_shears.png",
+    groups = {sharp=1},
+    uses = 238,
     tool_capabilities = {
         groupcaps = get_groupcaps(0, "snappy", {
             times = {
                 [default.dig.leaves] = 0.05,
                 [default.dig.wool] = 0.25,
-            }, uses=238}
+            }, uses=0}
         ),
         full_punch_interval = 1,
         enchantability = 13,
@@ -750,3 +780,21 @@ minetest.register_tool("default:flint_and_steel", {
     end,
 
 })
+
+-- below one was moved to the "enchantment" mod, near the "Everlast" boon piece of code
+
+--[[
+minetest.register_on_dignode(function(pos, oldnode, digger)
+    if digger and digger:is_player() then
+       local wstack = digger:get_wielded_item()
+       local wear = wstack:get_wear()
+       local uses = minetest.registered_items[wstack:get_name()].uses or 1562 -- diamond
+       if wear + 65535/uses >= 65535 then
+          wstack:clear()
+          minetest.sound_play("default_break_tool",{pos = digger:getpos(),gain = 0.5, max_hear_distance = 10,})
+       else
+           wstack:set_wear(wear + 65535/uses)
+       end
+       digger:set_wielded_item(wstack)
+    end
+end)]]--

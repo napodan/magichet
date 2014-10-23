@@ -9,7 +9,7 @@ dofile(minetest.get_modpath("awards").."/api.lua")
 local rus
 local locale = os.setlocale(nil, 'collate')
 if (locale:find('Russian') ~= nil) or (locale:find('ru_RU') ~= nil) then rus=true else rus = false end
---rus=false
+rus=false
 -- the beginning of russian
 if rus then
 -- Light it up

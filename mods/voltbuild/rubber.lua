@@ -110,13 +110,8 @@ minetest.register_node("voltbuild:rubber_leaves", {
                 if math.random(1, 40) == 1 then
                     nn = "voltbuild:rubber_sapling"
                 end
-                if minetest.setting_getbool("creative_mode") then
-                    local inv = digger:get_inventory()
-                    if not inv:contains_item("main", ItemStack(nn)) then
-                        inv:add_item("main", ItemStack(nn))
-                    end
-                else
-                    if digger:get_wielded_item():get_name() == "default:shears" or nn ~= "voltbuild:rubber_leaves" then
+                    local wielded = digger:get_wielded_item():get_name()
+                    if wielded == "default:shears" or nn ~= "voltbuild:rubber_leaves" or minetest.get_item_group(wielded, 'sharp')>0 then
                         local obj = minetest.add_item(pos, nn)
                         if obj ~= nil then
                             obj:get_luaentity().collect = true
@@ -131,7 +126,6 @@ minetest.register_node("voltbuild:rubber_leaves", {
                             obj:setvelocity({x=1/x, y=obj:getvelocity().y, z=1/z})
                         end
                     end
-                end
         end,
         sounds = default.node_sound_leaves_defaults(),
 })

@@ -101,6 +101,7 @@ minetest.register_globalstep(function(dtime)
               end
           else
               if need_to_stop[pll] then
+              local ph = default.player_physics[pll]
               default.ph_override(player, {gravity=1,speed=ph.speed/1.2})
               need_to_stop[pll] = nil
               end

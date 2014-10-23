@@ -1,2 +1,0 @@
-guiChatConsole 245 - console window pos
-guiChatConsole 421 - console window keys

@@ -7,7 +7,16 @@ function minetest.node_dig(pos, node, digger)
       local pll=digger:get_player_name()
        if not isghost[pll] or check_for_ghost_tool(digger) then
         --  minetest.debug('not a ghost')
-          local ent = minetest.add_entity(pos, "ghosts:ghostly_block")
+          local found = false
+          local ent
+          for _,obj in pairs(minetest.get_objects_inside_radius(pos, 0.1)) do
+             if obj.name == "ghosts:ghostly_block" then
+                ent = obj
+                found = true
+                break
+             end
+          end
+          if not found then ent = minetest.add_entity(pos, "ghosts:ghostly_block") end
            if ent then
               ent2=ent:get_luaentity()
               ent2.destroyer = pll
@@ -18,6 +27,7 @@ function minetest.node_dig(pos, node, digger)
                   else g_blocks_count[pll] = g_blocks_count[pll] + 1
                   end
               local node_textures = minetest.registered_nodes[node.name].tiles
+              if not node_textures then return end
               if #node_textures<6 then
                  for i=#node_textures+1,6 do
                      node_textures[i]=node_textures[i-1]

@@ -93,6 +93,7 @@ default.player_physics = {}
 default.player_status = {}
 default.player_vw = {}
 default.player_lpos = {}
+default.everyhud = {} -- keeps track of ALL huds
 
 -- overrides physics of a player and STORES the values
 function default.ph_override(player, ph)
@@ -165,34 +166,13 @@ function default.player_get_inv_width(pll)
    if not default.player_inv_widths[pll] then default.player_inv_widths[pll] = 9 end
    return default.player_inv_widths[pll]
 end
+
 function default.player_set_inv_width(pll,width)
    default.player_inv_widths[pll] = width
 end
 
 
-
--- Update appearance when the player joins
-minetest.register_on_joinplayer(function(player)
-    local inv = player:get_inventory()
-    local pll = player:get_player_name()
-    default.player_physics[pll] = {}
-    default.ph_override(player,{speed = 1, gravity = 1, jump = 1, sneak = true, sneak_glitch = false})
-
-    default.player_vw[pll] = 0
-    default.player_lpos[pll] = player:getpos()
-    default.player_lpos[pll].y = default.player_lpos[pll].y -1
-
-    default.player_status[pll] = {fall = 0,}
-    -- default status is NO statuses at all
-    default.player_status[pll] = {}
-
-    default.player_set_model(player, "character.x")
-    default.player_set_inv_width(pll,9)
-
-
-    -- MC-like inventory:
-        player:set_inventory_formspec(
-            "size[9,8.5;true]"..
+default.default_pl_fs = "size[9,8.5;true]"..
             "bgcolor[#bbbbbb;false]"..
             "listcolors[#777777;#cccccc;#333333;#555555;#dddddd]"..
 
@@ -215,12 +195,87 @@ minetest.register_on_joinplayer(function(player)
             "image_button[9.2,0.8;0.5,0.5;b_bg.png;sort_norm;Z;true;true]"..
             -- craft guide
             "image_button[1,0;1,1;inventory_plus_zcg.png;zgc;]"
-        )
+
+
+default.statuses = {}
+
+function default.load_statuses()
+local input = io.open(minetest.get_worldpath().."/player_statuses.lua", "r")
+   if input then
+      io.close(input)
+      dofile(minetest.get_worldpath().."/player_statuses.lua")
+   end
+end
+
+-- load statuses
+default.load_statuses()
+
+function default.save_statuses()
+    local output = io.open(minetest.get_worldpath().."/player_statuses.lua", "w")
+    if output then
+       o  = minetest.serialize(default.statuses)
+       i  = string.find(o, "return")
+       o1 = string.sub(o, 1, i-1)
+       o2 = string.sub(o, i-1, -1)
+       output:write(o1 .. "\n")
+       output:write("default.statuses = minetest.deserialize('" .. o2 .. "')\n")
+       io.close(output)
+    end
+end
+
+function default.init_status(pll)
+    default.statuses[pll] = {}
+    default.statuses[pll].speed = 0 -- +20%\15% per level
+    default.statuses[pll].add_damage = 0 -- x1.3\x0.75 per level
+    default.statuses[pll].heal = 0 -- adds\subs 3 hp per level
+    default.statuses[pll].jump = 0 -- +0.5\-0.1 node per level, fall tolerance +1
+    default.statuses[pll].wobble = false -- is wobble hud enabled?
+    default.statuses[pll].regen = 0 -- 1 hp per level per sec
+    default.statuses[pll].proof = 0 -- reduce\increase taken damage by 20%\15% per level
+    default.statuses[pll].diggin = 0 -- de\in~crease digging times by 20%\15% per level
+    default.statuses[pll].lava_damage = 0 -- +X damage by lava\fire
+    default.statuses[pll].aqualung = 0 -- + 5 secs per level underwater
+    default.statuses[pll].nv = 0 -- +\- 0.3 light per level
+    default.statuses[pll].hunger = 0 -- +\-0.0025 food_exaustion\food_points per tick per level
+    default.statuses[pll].poison = 0 -- X*1hp per 25 ticks, can't kill
+    default.statuses[pll].wither = 0 -- X*1hp per 40 ticks, CAN kill
+    default.statuses[pll].health_boost = 0 -- +X hearts max
+    default.statuses[pll].atack = false
+end
+
+-- Update appearance when the player joins
+minetest.register_on_joinplayer(function(player)
+
+    local inv = player:get_inventory()
+    local pll = player:get_player_name()
+
+    if not default.statuses[pll] then
+       default.init_status(pll)
+    end
+
+    default.player_physics[pll] = {}
+    default.ph_override(player,{speed = 1, gravity = 1, jump = 1, sneak = true, sneak_glitch = false})
+
+    default.player_vw[pll] = 0
+    default.player_lpos[pll] = player:getpos()
+    default.player_lpos[pll].y = default.player_lpos[pll].y -1
+
+    default.player_status[pll] = {fall = 0,}
+    -- default status is NO statuses at all
+    default.player_status[pll] = {}
+
+    default.player_set_model(player, "character.x")
+    default.player_set_inv_width(pll,9)
+
+
+    -- MC-like inventory:
+        player:set_inventory_formspec(default.default_pl_fs)
 
         -- common lists
         inv:set_width("craft", 3)
         inv:set_size("craft", 9)
         inv:set_size("main", 9*4)
+        inv:set_size("wormhole", 9*3)
         -- armour lists
         inv:set_size("helm", 1)
         inv:set_size("torso", 1)
@@ -241,7 +296,7 @@ default.sort_inv = function(player, formname, fields, pos)
     if fields.sort_horz then
        local inv = player:get_inventory()
        local pll = player:get_player_name()
-       print(pll..' sorts inventory =')
+       --print(pll..' sorts inventory =')
        local sinv = minetest.get_inventory({type="detached", name=pll..'_sort'})
        if inv and sinv then
           local width = default.player_get_inv_width(pll)
@@ -264,7 +319,7 @@ default.sort_inv = function(player, formname, fields, pos)
     elseif fields.sort_vert then
        local inv = player:get_inventory()
        local pll = player:get_player_name()
-       print(pll..' sorts inventory ||')
+       --print(pll..' sorts inventory ||')
        local sinv = minetest.get_inventory({type="detached", name=pll..'_sort'})
        if inv and sinv then
           local width = default.player_get_inv_width(pll)
@@ -287,7 +342,7 @@ default.sort_inv = function(player, formname, fields, pos)
     elseif fields.sort_norm then
        local inv = player:get_inventory()
        local pll = player:get_player_name()
-       print(pll..' sorts inventory Z')
+       --print(pll..' sorts inventory Z')
        local sinv = minetest.get_inventory({type="detached", name=pll..'_sort'})
        if inv and sinv then
           local width = default.player_get_inv_width(pll)
@@ -313,9 +368,12 @@ default.sort_inv = function(player, formname, fields, pos)
               end
         end
     elseif fields.quit then
+       if formname == '' then
+          pos = player:getpos()
+       end
        if pos then
           -- drop down a workbench's inventory
-           if minetest.get_node(pos).name=='default:workbench' then
+           if minetest.get_node(pos).name=='default:workbench' or formname=='' then
               local inv = player:get_inventory()
               local pll = player:get_player_name()
               pos.y=pos.y+1
@@ -357,11 +415,15 @@ default.sort_inv = function(player, formname, fields, pos)
       -- close 3dchests at pos
            if formname:find('default:3dchest') then
               local pos = minetest.deserialize(string.split(formname,'_')[2])
+              if not pos then return end
               local objs = minetest.get_objects_inside_radius(pos, 0.1)
               for i,obj in ipairs(objs) do
                   if not obj:is_player() then
                      local self = obj:get_luaentity()
-                     if self.name == 'default:3dchest' then
+                     if self.name == 'default:3dchest'
+                     or self.name == 'default:3dchest2'
+                     or self.name == 'default:3dchest3'
+                     or self.name == 'default:3dchest4' then
                         self.object:set_animation({x=25,y=40}, 60, 0)
                         minetest.sound_play('chestclosed', {pos = pos, gain = 0.3, max_hear_distance = 5})
                         minetest.after(0.1, function(dtime)
@@ -373,6 +435,74 @@ default.sort_inv = function(player, formname, fields, pos)
               end
            end
 
+    end
+
+    if formname:find('default:3dchest2') then
+           if fields.open then
+              local pll = player:get_player_name()
+              local pos = minetest.deserialize(string.split(formname,'_')[2])
+              local meta = minetest.env:get_meta(pos)
+              local locked = meta:get_int('locked')
+              if default.has_locked_chest_privilege(meta,player) then
+                    if   locked == 0
+                    then locked = 1
+                    else locked = 0
+                    end
+                    meta:set_int('locked',locked)
+                    local fs = default.get_locked_chest_formspec(pos)
+                    meta:set_string("formspect", fs)
+                    minetest.show_formspec(pll, formname, fs)
+              else
+                  if locked == 1 then
+                     minetest.chat_send_player(player:get_player_name(),'Don\'t you try to get other people\'s stuff!')
+                  end
+              end
+           end
+    elseif formname:find('default:3dchest3') then
+           local pll = player:get_player_name()
+           local pos = minetest.deserialize(string.split(formname,'_')[2])
+           local meta = minetest.env:get_meta(pos)
+           if default.has_shared_chest_privilege(meta, player) then
+              local locked = meta:get_int('locked')
+              if fields.open then
+                 if   locked == 0
+                 then locked = 1
+                 else locked = 0
+                 end
+                 meta:set_int('locked',locked)
+                 local fs =  default.get_shared_chest_formspec(pos)
+                 meta:set_string("formspect", fs)
+                 minetest.show_formspec(pll, formname, fs)
+              end
+           else
+               if locked == 1 then
+                  minetest.chat_send_player(player:get_player_name(),'Don\'t you try to get other people\'s stuff!')
+               end
+           end
+           if default.has_locked_chest_privilege(meta,player) then
+              if fields.add then
+                 local shared = minetest.deserialize(meta:get_string('shared'))
+                 if shared and not shared.user and fields.user~='' then
+                    table.insert(shared,fields.user)
+                    meta:set_string('shared', minetest.serialize(shared))
+                    local fs =  default.get_shared_chest_formspec(pos)
+                    meta:set_string("formspect", fs)
+                    minetest.show_formspec(pll, formname, fs)
+                 end
+              end
+              if fields.rem then
+                 local list = fields.list
+                 local shared = minetest.deserialize(meta:get_string('shared'))
+                 if shared and not shared.user then
+                    table.remove(shared,list)
+                    meta:set_string('shared', minetest.serialize(shared))
+                    local fs =  default.get_shared_chest_formspec(pos)
+                    meta:set_string("formspect", fs)
+                    minetest.show_formspec(pll, formname, fs)
+                 end
+                 minetest.show_formspec(pll, 'chest', meta:get_string("formspect"))
+              end
+           end
     end
 end
 
@@ -417,11 +547,11 @@ minetest.register_globalstep(function(dtime)
 
         if node1 == 'air' then
             if node2 == 'air' then
-               if poso.y>posn.y                
+               if poso.y>posn.y
                then
                   default.player_vw[pll] = default.player_vw[pll]+default.distance(poso, posn)
                else
-                  default.player_vw[pll] = 0 
+                  default.player_vw[pll] = 0
                end
             else
                local wn = 0
@@ -440,7 +570,7 @@ minetest.register_globalstep(function(dtime)
                   if default.player_vw[pll]>fall_tolerance and not isghost[pll] then
                      player:set_hp(player:get_hp()- math.floor(default.player_vw[pll])+3)
                   end
-                  --print('felt down from ' .. default.player_vw[pll] .. ' nodes.')  
+                  --print('felt down from ' .. default.player_vw[pll] .. ' nodes.')
                   -- ToDo: need to disable fall damage in the engine
                   default.player_vw[pll] = 0
 

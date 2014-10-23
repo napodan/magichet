@@ -3,31 +3,31 @@ kill_list = {}
 hp_list = {}
 
 minetest.register_privilege("kill", {
-    description = "Убивает игрока", 
+    description = "Kills a player", 
     give_to_singleplayer = true
   })
 
 minetest.register_privilege("set_hp", {
-    description = "Позволяет менять кол-во здоровья игрокам", 
+    description = "Sets HP of a player", 
     give_to_singleplayer = true
   })
 
 
 minetest.register_chatcommand("kill", {
-    params = "<имя игрока> | используй без параметров и увидишь справку",
-    description = "Немедленно убивает игрока",
+    params = "<playername> | use w/o params to see help message",
+    description = "Instantly kills playername",
     privs = {kill=true},
     func = function(name, param)
         if param == "" then
-            minetest.chat_send_player(name, "Ипользовать так: /kill <имя игрока>")            
+            minetest.chat_send_player(name, "Use like this: /kill <playername>")
             return
         end
         if param == "/me" then
            table.insert(kill_list, name)
         elseif minetest.get_player_by_name(param) then
             table.insert(kill_list, param)
-            minetest.chat_send_all(param .. " был убит. Это сделал " .. name .. ".")
-           -- minetest.log("action", param .. " был убит. Это сделал " .. name .. ".")
+            minetest.chat_send_all(param .. " has been killed by " .. name .. ".")
+            --minetest.log("action", param .. " has been killed by " .. name .. ".")
             return
         end
     end
@@ -35,36 +35,36 @@ minetest.register_chatcommand("kill", {
 
 
 minetest.register_chatcommand("killme", {    
-    description = "Совершить суицид",  
+    description = "Commit suicide",
     func = function(name, param)
            table.insert(kill_list, name)        
             suicide[name]=1
-            minetest.chat_send_all(name .. " сделал себе харакири...")
-          --  minetest.log("action", name .. " сделал себе харакири...")
+            minetest.chat_send_all(name .. " has performed a harakiri...")
+            --minetest.log("action", name .. " has performed a harakiri...")
     return   
     end
 })
 
 minetest.register_chatcommand("hp", {
-    params = "<имя игрока> <кол-во очков жизни> | используй без параметров и увидишь справку",
-    description = "Позволяет менять кол-во здоровья игрокам. /hp <имя игорока> 0 ничем не отличается от команды /kill",
+    params = "<playername> <desired HP> | Use w/o any params to see a help message",
+    description = "Sets playername HP. \"/hp <playername> 0\" equals to \"/kill\"",
     privs = {set_hp=true},
     func = function(name, param)
         if param == "" then
-            minetest.chat_send_player(name, "Использовать так: /hp <имя игрока> <кол-во очков жизни>")
+            minetest.chat_send_player(name, "Use it like this: /hp <playername> <desired HP>")
             return
         end
         user, hp = string.match(param, " *([%w%-]+) *(%d*)")
         hp = tonumber(hp) 
         if type(hp) ~= "number" then
-            minetest.chat_send_player(name, "Не могу сделать чьё-то здоровье равным ЭТОМУ!\n" .. 
-                                            "Нужно указать целое положительное число.")
+            minetest.chat_send_player(name, "Can't set anyone's HP to THIS!\n" .. 
+                                            "Try to use a whole positive number.")
            return
         end
         if minetest.get_player_by_name(user) then
             table.insert(hp_list, {user, hp})
-            minetest.chat_send_player(name, user .. ": кол-во очков жизни теперь равно " .. hp .. ".")
-         --   minetest.log("action", name .. " установил кол-во очков жизни юзеру " .. user .. " равным " .. hp ..".")
+            minetest.chat_send_player(name, user .. ": HP has been set to " .. hp .. ".")
+            --minetest.log("action", name .. " has set " .. user .. "\'s HP to " .. hp ..".")
             return
         end
     end

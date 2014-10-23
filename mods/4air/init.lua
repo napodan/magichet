@@ -5,7 +5,7 @@ minetest.register_on_joinplayer(function(player)
      local pll = player:get_player_name()
      air_hud[pll] = 0
      minetest.after(0, function()
-     -- add hunger hud background     
+     -- add hunger hud background
      air_hud[pll]=player:hud_add({
         hud_elem_type = "statbar",
         position = {x=0.5,y=1},
@@ -15,7 +15,7 @@ minetest.register_on_joinplayer(function(player)
         alignment = {x=-1,y=-1},
         offset = {x=12, y=-80},
      })
-     player:hud_set_flags({breathbar = false, healthbar = true})
+     player:hud_set_flags({breathbar = false})
 
      end)
   end

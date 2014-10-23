@@ -28,6 +28,7 @@ c_desert_stone  = minetest.get_content_id("default:desert_stone")
 vvvg = {}
 -- default water level
 water_level = 1
+wseed = nil
 
 local function save_villages()
     local output = io.open(minetest.get_worldpath().."/villages.lua", "w")
@@ -172,17 +173,25 @@ local function copytable(t)
 end
 
 local loot = {}
-local all_items = minetest.registered_items
--- fill the "loot" table conserning the rarity of the items
-for i=1,#all_items do
-   if all_items.rarity then
-      for j=1,all_items[i].rarity do
-          table.insert(loot,all_items[i].name)
-      end
-   else
-       table.insert(loot,all_items[i].name)
-   end
-end
+local all_items
+
+minetest.after(0,function()
+        all_items = minetest.registered_items
+        -- fill the "loot" table conserning the rarity of the items
+        for i,def in pairs(all_items) do        
+           if not def.groups
+           or (not def.groups.not_in_creative_inventory and not def.groups.not_in_craft_guide) then
+                   if def.rarity then
+                      for j=1,def.rarity do
+                          table.insert(loot,def.name)
+                      end
+                   else
+                       table.insert(loot,def.name)
+                   end
+           end
+        end
+end)
+
 
 -- Func to get random element from a table
 local function random_elem(array)
@@ -257,15 +266,15 @@ local function mg_generate(minp, maxp, emin, emax, vm)
                      local inv = meta:get_inventory()
                      local items = inv:get_list("main")
                      -- every chest may contain up to numitems items
-                     local numitems = pr:next(3, 20)
+                     local numitems = pr:next(0, 5)
                      for i=1,numitems do
                          local itemname = random_elem(loot)
-                         local wear = math.random()*65000 -- never get a new item
                          local stack = ItemStack(itemname)
-                         stack:set_wear(wear)
-                         if stack:get_wear() == 0 then
-                            -- never get more than 50 items
-                            stack:set_count(math.random(1,50))
+                         if not minetest.registered_items[itemname].tool_capabilities then                            
+                            stack:set_count(math.random(0,10))
+                         else
+                             local wear = math.random()*65000 -- never get a new item                             
+                             stack:set_wear(wear)                         
                          end
                          local size = inv:get_size("main")
                          local ind = pr:next(1, size)

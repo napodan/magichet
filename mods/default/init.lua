@@ -86,6 +86,23 @@ default.dig = {
     immediate = 1,
 }
 
+-- This fits me perfectly (taken from http://lua-users.org/wiki/CopyTable)
+function default.deepcopy(orig)
+    local orig_type = type(orig)
+    local copy
+    if orig_type == 'table' then
+        copy = {}
+        for orig_key, orig_value in next, orig, nil do
+            copy[default.deepcopy(orig_key)] = default.deepcopy(orig_value)
+        end
+        setmetatable(copy, default.deepcopy(getmetatable(orig)))
+    else -- number, string, boolean, etc
+        copy = orig
+    end
+    return copy
+end
+
+
 -- Load files
 dofile(minetest.get_modpath("default").."/player.lua")
 dofile(minetest.get_modpath("default").."/functions.lua")
@@ -95,5 +112,6 @@ dofile(minetest.get_modpath("default").."/craftitems.lua")
 dofile(minetest.get_modpath("default").."/crafting.lua")
 dofile(minetest.get_modpath("default").."/mapgen.lua")
 dofile(minetest.get_modpath("default").."/trees.lua")
+dofile(minetest.get_modpath("default").."/shafts.lua")
 
 print('[OK] Default loaded')

@@ -629,6 +629,31 @@ minetest.register_craft({
        }
 })
 
+minetest.register_craft({
+    output = 'snow:snow_brick',
+    recipe = {
+        {'default:snowblock', 'default:snowblock'},
+        {'default:snowblock', 'default:snowblock'},
+    },
+})
+
+minetest.register_craft({
+    output = "default:wormhole_chest",
+    recipe = {
+        {"default:obsidian", "default:obsidian", "default:obsidian"},
+        {"default:obsidian", "4items:antimatter", "default:obsidian"},
+        {"default:obsidian", "default:obsidian", "default:obsidian"},
+    },
+})
+
+minetest.register_craft({
+    output = "default:workbench",
+    recipe = {
+        {"group:wood", "group:wood"},
+        {"group:wood", "group:wood"},
+    },
+})
+
 --
 -- Crafting (tool repair)
 --
@@ -794,3 +819,4 @@ minetest.register_craft({
     recipe = "default:grass_1",
     burntime = 2,
 })
+

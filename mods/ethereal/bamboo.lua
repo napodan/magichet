@@ -5,7 +5,6 @@ minetest.register_node("ethereal:bamboo_dirt", {
     description = "Bamboo Dirt",
     tiles = {"ethereal_grass_bamboo_top.png",
     "default_dirt.png","default_dirt.png^ethereal_grass_bamboo_side.png"},
-    is_ground_content = true,
     groups = {crumbly=default.dig.dirt_with_grass, soil=1,ethereal_grass=1},
     drop = 'default:dirt',
     sounds = default.node_sound_dirt_defaults()
@@ -20,7 +19,6 @@ minetest.register_node("ethereal:bamboo", {
     inventory_image = "bamboo.png",
     wield_image = "bamboo.png",
     paramtype = "light",
-    is_ground_content = true,
     selection_box = {
         type = "fixed",
         fixed = {-0.3, -0.5, -0.3, 0.3, 0.5, 0.3}
@@ -40,7 +38,6 @@ minetest.register_node("ethereal:bamboo_sprout", {
         wield_image = "bamboo_sprout.png",
         paramtype = "light",
         walkable = false,
-        is_ground_content = true,
         buildable_to = true,
         groups = {snappy=default.dig.wool,flora=1,attached_node=1},
         sounds = default.node_sound_leaves_defaults(),
@@ -110,7 +107,6 @@ minetest.register_node('ethereal:bamboo_floor', {
     sunlight_propagates = true,
     paramtype = 'light',
     paramtype2 = "wallmounted",
-    is_ground_content = true,
     walkable = false,
     groups = { snappy = 3, choppy = 3 },
     sounds = default.node_sound_wood_defaults(),
